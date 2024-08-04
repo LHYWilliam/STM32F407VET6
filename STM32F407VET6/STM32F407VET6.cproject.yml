@@ -5,6 +5,10 @@ project:
     - group: Source Files
       files:
         - file: ./main.c
+    - group: system
+      files:
+        - file: ./system/gpio.h
+        - file: ./system/gpio.c
 
   # List components to use for your application.
   # A software component is a re-usable unit that may be configurable.
