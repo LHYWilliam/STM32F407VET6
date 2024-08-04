@@ -1,0 +1,11 @@
+{
+    "cmsis-csolution.actions": [
+        {
+            "path": "STM32F407VET6.csolution.yml",
+            "target": "STM32F407VET6",
+            "config": {
+                "run": "Flash Device"
+            }
+        }
+    ]
+}
