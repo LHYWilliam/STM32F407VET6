@@ -35,8 +35,8 @@ void Encoder_init(Encoder *encoder) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-int32_t Encoder_get(Encoder *encoder) {
-    int32_t count = (int32_t)__HAL_TIM_GetCounter(&encoder->Handler);
+int16_t Encoder_get(Encoder *encoder) {
+    int16_t count = (int16_t)__HAL_TIM_GetCounter(&encoder->Handler);
     __HAL_TIM_SetCounter(&encoder->Handler, 0);
     return count;
 }
