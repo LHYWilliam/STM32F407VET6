@@ -1,5 +1,6 @@
 #include "stm32f4xx_hal.h"
 
+#include "stm32f4xx_hal_gpio.h"
 #include "string.h"
 
 #include "gpio.h"
@@ -15,6 +16,8 @@ void LED_init(LED *led) {
 
     led->GPIOx = led_gpio.GPIOx[0];
     led->GPIO_Pin = led_gpio.GPIO_Pin[0];
+
+    LED_off(led);
 }
 
 void LED_on(LED *led) {
@@ -29,5 +32,7 @@ void LED_off(LED *led) {
 
 void LED_toggle(LED *led) {
     HAL_GPIO_WritePin(led->GPIOx, led->GPIO_Pin,
-                      ~HAL_GPIO_ReadPin(led->GPIOx, led->GPIO_Pin));
+                      HAL_GPIO_ReadPin(led->GPIOx, led->GPIO_Pin)
+                          ? GPIO_PIN_RESET
+                          : GPIO_PIN_SET);
 }

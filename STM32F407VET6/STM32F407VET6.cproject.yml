@@ -1,16 +1,20 @@
 # A project translates into one executable or library.
 project:
   groups:
-    - group: Source Files
+    - group: User
       files:
         - file: ./main.c
+        - file: user/sysclock.c
+        - file: user/interrupt.c
 
-    - group: system
+    - group: System
       files:
-        - file: ./system/gpio.h
-        - file: ./system/gpio.c
+        - file: system/gpio.h
+        - file: system/gpio.c
+        - file: system/tim.h
+        - file: system/tim.c
 
-    - group: hardware
+    - group: Hardware
       files:
         - file: hardware/led.h
         - file: hardware/led.c
