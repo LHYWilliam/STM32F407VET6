@@ -43,12 +43,19 @@
      : (x) == TIM7 ? TIM7_IRQn                                                 \
                    : NULL)
 
+#define TIM_CHANNEL_x(x)                                                       \
+    ((x[0]) == '1'   ? TIM_CHANNEL_1                                           \
+     : (x[0]) == '2' ? TIM_CHANNEL_2                                           \
+     : (x[0]) == '3' ? TIM_CHANNEL_3                                           \
+     : (x[0]) == '4' ? TIM_CHANNEL_4                                           \
+                     : NULL)
+
 typedef struct {
     TIM_TypeDef *TIM;
     uint32_t Prescaler;
     uint32_t Period;
-
     TIM_HandleTypeDef *Handler;
+    HAL_StatusTypeDef (*HAL_TIM_Init)(TIM_HandleTypeDef *htim);
 } TIM;
 
 void TIM_init(TIM *tim);

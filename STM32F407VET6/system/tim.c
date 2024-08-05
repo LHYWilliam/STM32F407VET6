@@ -11,5 +11,5 @@ void TIM_init(TIM *tim) {
                 .ClockDivision = TIM_CLOCKDIVISION_DIV1,
             },
     };
-    HAL_TIM_Base_Init(tim->Handler);
+    tim->HAL_TIM_Init(tim->Handler);
 }

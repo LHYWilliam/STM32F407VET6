@@ -16,9 +16,11 @@ void GPIO_init(GPIO *gpio) {
             .Pin = gpio->GPIO_Pin[count],
             .Mode = gpio->Mode[count],
             .Pull = gpio->Pull[count],
+            .Alternate = gpio->Alternate[count],
             .Speed = GPIO_SPEED_FREQ_HIGH,
         };
         HAL_GPIO_Init(gpio->GPIOx[count], &GPIO_Init);
 
-    } while ((temp = strchr(temp, '|')) && (temp = temp + 2) && (count++));
+    } while ((temp = strchr(temp, '|')) && (temp = temp + 2) &&
+             (count = count + 1));
 }

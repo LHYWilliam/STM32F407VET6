@@ -3,8 +3,6 @@
 
 #include "stm32f4xx_hal.h"
 
-#include "tim.h"
-
 typedef struct {
     TIM_TypeDef *TIM;
     uint32_t ms;
