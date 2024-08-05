@@ -50,6 +50,9 @@
      : (x[0]) == '4' ? TIM_CHANNEL_4                                           \
                      : NULL)
 
+static uint8_t TIM_Channel[] = {NULL, TIM_CHANNEL_1, TIM_CHANNEL_2,
+                                TIM_CHANNEL_3, TIM_CHANNEL_4};
+
 typedef struct {
     TIM_TypeDef *TIM;
     uint32_t Prescaler;

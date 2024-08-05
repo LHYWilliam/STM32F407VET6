@@ -1,4 +1,4 @@
-#include "string.h"
+#include <string.h>
 
 #include "pwm.h"
 #include "tim.h"
@@ -13,7 +13,7 @@ void PWM_init(PWM *pwm) {
     };
     TIM_init(&tim);
 
-    TIM_OC_InitTypeDef oc = {
+    TIM_OC_InitTypeDef OC = {
         .OCMode = TIM_OCMODE_PWM1,
         .Pulse = 0,
         .OCPolarity = TIM_OCPOLARITY_HIGH,
@@ -21,13 +21,12 @@ void PWM_init(PWM *pwm) {
 
     char *temp = pwm->channel;
     do {
-        pwm->_channel[temp[0] - '0'] = TIM_CHANNEL_x(temp);
-        HAL_TIM_PWM_ConfigChannel(tim.Handler, &oc,
-                                  pwm->_channel[temp[0] - '0']);
-        HAL_TIM_PWM_Start(tim.Handler, pwm->_channel[temp[0] - '0']);
+        uint8_t channel = TIM_CHANNEL_x(temp);
+        HAL_TIM_PWM_ConfigChannel(tim.Handler, &OC, channel);
+        HAL_TIM_PWM_Start(tim.Handler, channel);
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
 void PWM_set(PWM *pwm, uint8_t channel, uint32_t value) {
-    __HAL_TIM_SET_COMPARE(&pwm->Handler, pwm->_channel[channel], value);
+    __HAL_TIM_SetCompare(&pwm->Handler, TIM_Channel[channel], value);
 }

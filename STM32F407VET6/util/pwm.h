@@ -3,13 +3,12 @@
 
 #include "stm32f4xx_hal.h"
 
-#include "tim.h"
-
 typedef struct {
     TIM_TypeDef *TIM;
     char channel[32];
     uint32_t Prescaler;
     uint32_t Period;
+    char GPIOxPiny[32];
 
     TIM_HandleTypeDef Handler;
 

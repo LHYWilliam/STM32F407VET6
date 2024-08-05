@@ -1,0 +1,42 @@
+#include <string.h>
+
+#include "encoder.h"
+#include "tim.h"
+
+void Encoder_init(Encoder *encoder) {
+    encoder->Handler = (TIM_HandleTypeDef){
+        .Instance = encoder->TIM,
+        .Init =
+            {
+                .Prescaler = 84 - 1,
+                .Period = 0xFFFFFFFF - 1,
+                .CounterMode = TIM_COUNTERMODE_UP,
+                .ClockDivision = TIM_CLOCKDIVISION_DIV1,
+            },
+    };
+    TIM_Encoder_InitTypeDef IC = {
+        .EncoderMode = TIM_ENCODERMODE_TI12,
+
+        .IC1Filter = 0xF,
+        .IC1Prescaler = TIM_ICPSC_DIV1,
+        .IC1Selection = TIM_ICSELECTION_DIRECTTI,
+        .IC1Polarity = TIM_INPUTCHANNELPOLARITY_BOTHEDGE,
+
+        .IC2Filter = 0xF,
+        .IC2Prescaler = TIM_ICPSC_DIV1,
+        .IC2Selection = TIM_ICSELECTION_DIRECTTI,
+        .IC2Polarity = TIM_INPUTCHANNELPOLARITY_BOTHEDGE,
+    };
+    HAL_TIM_Encoder_Init(&encoder->Handler, &IC);
+
+    char *temp = encoder->channel;
+    do {
+        HAL_TIM_Encoder_Start(&encoder->Handler, TIM_CHANNEL_x(temp));
+    } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
+}
+
+int16_t Encoder_get(Encoder *encoder) {
+    int16_t count = __HAL_TIM_GetCounter(&encoder->Handler);
+    __HAL_TIM_SetCounter(&encoder->Handler, 0);
+    return count;
+}
