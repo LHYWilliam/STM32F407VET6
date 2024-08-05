@@ -51,14 +51,6 @@ typedef struct {
     TIM_HandleTypeDef *Handler;
 } TIM;
 
-typedef struct {
-    TIM_TypeDef *TIM;
-    uint32_t ms;
-
-    TIM_HandleTypeDef Handler;
-} Timer;
-
 void TIM_init(TIM *tim);
-void Timer_init(Timer *timer);
 
 #endif
