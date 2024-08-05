@@ -21,6 +21,12 @@ project:
         - file: hardware/key.h
         - file: hardware/key.c
 
+    - group: OLED
+      files:
+        - file: oled/OLED.h
+        - file: oled/OLED_Font.h
+        - file: oled/OLED.c
+
     - group: Util
       files:
         - file: util/timer.h

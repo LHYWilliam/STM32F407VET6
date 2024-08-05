@@ -8,8 +8,8 @@ void Encoder_init(Encoder *encoder) {
         .Instance = encoder->TIM,
         .Init =
             {
-                .Prescaler = 84 - 1,
-                .Period = 0xFFFFFFFF - 1,
+                .Prescaler = 1 - 1,
+                .Period = 65536 - 1,
                 .CounterMode = TIM_COUNTERMODE_UP,
                 .ClockDivision = TIM_CLOCKDIVISION_DIV1,
             },
@@ -20,12 +20,12 @@ void Encoder_init(Encoder *encoder) {
         .IC1Filter = 0xF,
         .IC1Prescaler = TIM_ICPSC_DIV1,
         .IC1Selection = TIM_ICSELECTION_DIRECTTI,
-        .IC1Polarity = TIM_INPUTCHANNELPOLARITY_BOTHEDGE,
+        .IC1Polarity = TIM_ENCODERINPUTPOLARITY_RISING,
 
         .IC2Filter = 0xF,
         .IC2Prescaler = TIM_ICPSC_DIV1,
         .IC2Selection = TIM_ICSELECTION_DIRECTTI,
-        .IC2Polarity = TIM_INPUTCHANNELPOLARITY_BOTHEDGE,
+        .IC2Polarity = TIM_ENCODERINPUTPOLARITY_RISING,
     };
     HAL_TIM_Encoder_Init(&encoder->Handler, &IC);
 
@@ -35,8 +35,8 @@ void Encoder_init(Encoder *encoder) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-int16_t Encoder_get(Encoder *encoder) {
-    int16_t count = __HAL_TIM_GetCounter(&encoder->Handler);
+int32_t Encoder_get(Encoder *encoder) {
+    int32_t count = (int32_t)__HAL_TIM_GetCounter(&encoder->Handler);
     __HAL_TIM_SetCounter(&encoder->Handler, 0);
     return count;
 }

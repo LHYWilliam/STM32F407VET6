@@ -13,6 +13,6 @@ typedef struct {
 
 void Encoder_init(Encoder *encoder);
 
-int16_t Encoder_get(Encoder *encoder);
+int32_t Encoder_get(Encoder *encoder);
 
 #endif
