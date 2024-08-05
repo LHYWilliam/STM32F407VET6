@@ -48,8 +48,6 @@ typedef struct {
     uint32_t Prescaler;
     uint32_t Period;
 
-    uint8_t interrupt;
-
     TIM_HandleTypeDef *Handler;
 } TIM;
 
