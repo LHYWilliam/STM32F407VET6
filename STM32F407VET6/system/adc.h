@@ -48,4 +48,7 @@ void ADC_init(mADC *adc);
 
 uint16_t ADC_get(mADC *adc);
 
+void ADC_Start(mADC *adc);
+void ADC_DMAStart(mADC *adc, uint32_t *data, uint8_t length);
+
 #endif
