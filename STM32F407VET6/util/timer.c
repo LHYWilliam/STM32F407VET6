@@ -11,5 +11,7 @@ void Timer_init(Timer *timer) {
     };
     TIM_init(&tim);
 
+    __HAL_TIM_CLEAR_IT(tim.Handler, TIM_FLAG_UPDATE);
+
     HAL_TIM_Base_Start_IT(tim.Handler);
 };

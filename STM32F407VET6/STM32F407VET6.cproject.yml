@@ -4,8 +4,8 @@ project:
     - group: User
       files:
         - file: ./main.c
+        - file: user/msp.c
         - file: user/sysclock.c
-        - file: user/interrupt.c
 
     - group: System
       files:
