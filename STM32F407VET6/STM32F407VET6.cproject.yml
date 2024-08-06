@@ -13,6 +13,8 @@ project:
         - file: system/gpio.c
         - file: system/tim.h
         - file: system/tim.c
+        - file: system/adc.c
+        - file: system/adc.h
 
     - group: Hardware
       files:
@@ -76,6 +78,6 @@ project:
     - component: Keil::Device:STM32Cube HAL:UART
     - component: Keil::Device:STM32Cube HAL:USART
     - component: Keil::Device:STM32Cube HAL:WWDG
-    - component: Keil::Device:STM32Cube Framework:Classic@1.8.1
+    - component: Keil::Device:STM32Cube Framework:Classic
   packs:
     - pack: Keil::STM32F4xx_DFP@2.17.1
