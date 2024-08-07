@@ -17,6 +17,8 @@ project:
         - file: system/adc.h
         - file: system/dma.c
         - file: system/dma.h
+        - file: system/dac.c
+        - file: system/dac.h
 
     - group: Hardware
       files:

@@ -39,6 +39,7 @@
 typedef struct {
     ADC_TypeDef *ADCx;
     char channel[32];
+
     char GPIOxPiny[32];
 
     ADC_HandleTypeDef Handler;
