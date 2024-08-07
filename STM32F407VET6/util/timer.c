@@ -11,6 +11,13 @@ void Timer_init(Timer *timer) {
     };
     TIM_init(&tim);
 
+    if (timer->Trigger) {
+        TIM_MasterConfigTypeDef trigger = {
+            .MasterOutputTrigger = timer->Trigger,
+        };
+        HAL_TIMEx_MasterConfigSynchronization(&timer->Handler, &trigger);
+    }
+
     __HAL_TIM_CLEAR_IT(tim.Handler, TIM_FLAG_UPDATE);
 
     HAL_TIM_Base_Start_IT(tim.Handler);

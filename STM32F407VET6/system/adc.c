@@ -41,10 +41,10 @@ void ADC_init(mADC *adc) {
              (rank = rank + 1));
 }
 
-uint16_t ADC_get(mADC *adc) { return HAL_ADC_GetValue(&adc->Handler); }
-
 void ADC_Start(mADC *adc) { HAL_ADC_Start(&adc->Handler); };
 
 void ADC_DMAStart(mADC *adc, uint32_t *data, uint8_t length) {
     HAL_ADC_Start_DMA(&adc->Handler, data, length);
 };
+
+uint16_t ADC_get(mADC *adc) { return HAL_ADC_GetValue(&adc->Handler); }

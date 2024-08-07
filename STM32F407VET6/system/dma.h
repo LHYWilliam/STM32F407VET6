@@ -59,13 +59,10 @@ typedef struct {
     uint8_t channel;
     uint8_t stream;
 
-    uint32_t sourceAddr;
     uint8_t sourceInc;
-
-    uint32_t targetAddr;
-    uint8_t targetInc;
-
     uint8_t sourceSize;
+
+    uint8_t targetInc;
     uint8_t targetSize;
 
     uint8_t invert;

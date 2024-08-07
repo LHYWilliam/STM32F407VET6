@@ -37,7 +37,8 @@
     } while (0)
 
 #define TIMx_IRQN(x)                                                           \
-    ((x) == TIM3   ? TIM3_IRQn                                                 \
+    ((x) == TIM2   ? TIM2_IRQn                                                 \
+     : (x) == TIM3 ? TIM3_IRQn                                                 \
      : (x) == TIM4 ? TIM4_IRQn                                                 \
      : (x) == TIM5 ? TIM5_IRQn                                                 \
      : (x) == TIM7 ? TIM7_IRQn                                                 \

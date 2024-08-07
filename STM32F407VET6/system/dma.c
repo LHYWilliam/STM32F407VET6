@@ -12,12 +12,17 @@ void DMA_init(DMA *dma) {
                 .Direction =
                     dma->invert ? DMA_MEMORY_TO_PERIPH : DMA_PERIPH_TO_MEMORY,
 
-                .PeriphInc =
-                    dma->sourceInc ? DMA_PINC_ENABLE : DMA_PINC_DISABLE,
-                .PeriphDataAlignment = DMA_PDATAALIGN_SIZE(dma->sourceSize),
+                .PeriphInc = (dma->invert ? dma->targetInc : dma->sourceInc)
+                                 ? DMA_PINC_ENABLE
+                                 : DMA_PINC_DISABLE,
+                .PeriphDataAlignment = DMA_PDATAALIGN_SIZE(
+                    dma->invert ? dma->targetSize : dma->sourceSize),
 
-                .MemInc = dma->targetInc ? DMA_MINC_ENABLE : DMA_MINC_DISABLE,
-                .MemDataAlignment = DMA_MDATAALIGN_SIZE(dma->targetSize),
+                .MemInc = (dma->invert ? dma->sourceInc : dma->targetInc)
+                              ? DMA_MINC_ENABLE
+                              : DMA_MINC_DISABLE,
+                .MemDataAlignment = DMA_MDATAALIGN_SIZE(
+                    dma->invert ? dma->sourceSize : dma->targetSize),
             },
     };
     HAL_DMA_Init(&dma->Handler);

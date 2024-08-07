@@ -8,8 +8,12 @@
 
 static uint8_t DAC_CHANNEL[] = {NULL, DAC_CHANNEL_1, DAC_CHANNEL_2};
 
+#define DMA_Handlex(x)                                                         \
+    ((x[0]) == '1' ? DMA_Handle1 : (x[0]) == '2' ? DMA_Handle2 : NULL)
+
 typedef struct {
     char channel[32];
+    uint32_t Trigger;
 
     char GPIOxPiny[32];
 
@@ -18,7 +22,8 @@ typedef struct {
 
 void DAC_init(mDAC *dac);
 void DAC_start(mDAC *dac);
+void DAC_DMAStart(mDAC *dac, uint32_t *data, uint8_t length);
 
-void DAC_set(mDAC *dac, uint8_t channel, float value);
+void DAC_set(mDAC *dac, uint8_t channel, uint16_t value);
 
 #endif
