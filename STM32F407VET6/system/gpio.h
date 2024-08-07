@@ -57,6 +57,18 @@
      : (x[1]) == '1' ? GPIO_PIN_1                                              \
                      : NULL)
 
+#define GPIO_AFx_TIMy(x)                                                       \
+    ((x) == TIM1    ? GPIO_AF1_TIM1                                            \
+     : (x) == TIM2  ? GPIO_AF1_TIM2                                            \
+     : (x) == TIM3  ? GPIO_AF2_TIM3                                            \
+     : (x) == TIM4  ? GPIO_AF2_TIM4                                            \
+     : (x) == TIM5  ? GPIO_AF2_TIM5                                            \
+     : (x) == TIM8  ? GPIO_AF3_TIM8                                            \
+     : (x) == TIM9  ? GPIO_AF3_TIM9                                            \
+     : (x) == TIM10 ? GPIO_AF3_TIM10                                           \
+     : (x) == TIM11 ? GPIO_AF3_TIM11                                           \
+                    : NULL)
+
 #define GPIO_INIT_MAX_COUNT 4
 
 typedef struct {
