@@ -41,6 +41,8 @@ project:
         - file: util/pwm.c
         - file: util/encoder.h
         - file: util/encoder.c
+        - file: util/serial.h
+        - file: util/serial.c
 
   # List components to use for your application.
   # A software component is a re-usable unit that may be configurable.
