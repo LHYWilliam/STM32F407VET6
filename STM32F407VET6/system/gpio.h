@@ -73,9 +73,9 @@
 
 typedef struct {
     char GPIOxPiny[GPIO_INIT_MAX_COUNT * 8];
-    uint32_t Mode[GPIO_INIT_MAX_COUNT];
-    uint32_t Pull[GPIO_INIT_MAX_COUNT];
-    uint32_t Alternate[GPIO_INIT_MAX_COUNT];
+    uint32_t Mode;
+    uint32_t Pull;
+    uint32_t Alternate;
 
     GPIO_TypeDef *GPIOx[GPIO_INIT_MAX_COUNT];
     uint32_t GPIO_Pin[GPIO_INIT_MAX_COUNT];

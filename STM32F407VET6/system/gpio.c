@@ -14,9 +14,9 @@ void GPIO_init(GPIO *gpio) {
 
         GPIO_InitTypeDef GPIO_Init = {
             .Pin = gpio->GPIO_Pin[count],
-            .Mode = gpio->Mode[count],
-            .Pull = gpio->Pull[count],
-            .Alternate = gpio->Alternate[count],
+            .Mode = gpio->Mode,
+            .Pull = gpio->Pull,
+            .Alternate = gpio->Alternate,
             .Speed = GPIO_SPEED_FREQ_HIGH,
         };
         HAL_GPIO_Init(gpio->GPIOx[count], &GPIO_Init);
