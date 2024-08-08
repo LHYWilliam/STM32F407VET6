@@ -122,7 +122,9 @@ int main() {
     Timer_init(&timer);
 
     for (;;) {
-        serialFlag = Key_read(&key);
+        if (Key_read(&key) == KEYDOWN) {
+            serialFlag = !serialFlag;
+        };
     }
 }
 

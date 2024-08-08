@@ -18,10 +18,11 @@ void Key_init(Key *key) {
 uint8_t Key_read(Key *key) {
     if (HAL_GPIO_ReadPin(key->GPIOx, key->GPIO_Pin) == key->Mode) {
         HAL_Delay(10);
-        if (HAL_GPIO_ReadPin(key->GPIOx, key->GPIO_Pin) == key->Mode) {
-
-            return KEYDOWN;
+        while (HAL_GPIO_ReadPin(key->GPIOx, key->GPIO_Pin) == key->Mode) {
         }
+
+        HAL_Delay(10);
+        return KEYDOWN;
     }
 
     return NOKEYDOWN;
