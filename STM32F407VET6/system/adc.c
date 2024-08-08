@@ -43,7 +43,7 @@ void ADC_init(mADC *adc) {
 
 void ADC_Start(mADC *adc) { HAL_ADC_Start(&adc->Handler); };
 
-void ADC_DMAStart(mADC *adc, uint32_t *data, uint8_t length) {
+void ADC_DMAStart(mADC *adc, uint32_t *data, uint16_t length) {
     HAL_ADC_Start_DMA(&adc->Handler, data, length);
 };
 

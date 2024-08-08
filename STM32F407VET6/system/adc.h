@@ -46,10 +46,9 @@ typedef struct {
 } mADC;
 
 void ADC_init(mADC *adc);
+void ADC_Start(mADC *adc);
+void ADC_DMAStart(mADC *adc, uint32_t *data, uint16_t length);
 
 uint16_t ADC_get(mADC *adc);
-
-void ADC_Start(mADC *adc);
-void ADC_DMAStart(mADC *adc, uint32_t *data, uint8_t length);
 
 #endif

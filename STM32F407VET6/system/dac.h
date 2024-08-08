@@ -22,7 +22,7 @@ typedef struct {
 
 void DAC_init(mDAC *dac);
 void DAC_start(mDAC *dac);
-void DAC_DMAStart(mDAC *dac, uint32_t *data, uint8_t length);
+void DAC_DMAStart(mDAC *dac, uint32_t *data, uint16_t length);
 
 void DAC_set(mDAC *dac, uint8_t channel, uint16_t value);
 

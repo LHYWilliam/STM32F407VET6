@@ -19,7 +19,7 @@ void Serial_init(Serial *serial) {
     HAL_UART_Init(&serial->Handler);
 }
 
-void Serial_RXITStrart(Serial *serial, uint8_t size) {
+void Serial_RXITStart(Serial *serial, uint8_t size) {
     HAL_UART_Receive_IT(&serial->Handler, serial->RXBuffer, size);
 }
 

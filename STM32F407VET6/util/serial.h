@@ -44,7 +44,7 @@ typedef struct {
 } Serial;
 
 void Serial_init(Serial *serial);
-void Serial_RXITStrart(Serial *serial, uint8_t size);
+void Serial_RXITStart(Serial *serial, uint8_t size);
 
 void Serial_sendBytes(Serial *serial, uint8_t *bytes, uint8_t length);
 void Serial_printf(Serial *serial, char *format, ...);

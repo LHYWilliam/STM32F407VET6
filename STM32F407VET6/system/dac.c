@@ -25,7 +25,7 @@ void DAC_start(mDAC *dac) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-void DAC_DMAStart(mDAC *dac, uint32_t *data, uint8_t length) {
+void DAC_DMAStart(mDAC *dac, uint32_t *data, uint16_t length) {
     HAL_DAC_Start_DMA(&dac->Handler, DAC_CHANNEL_x(dac->channel), data, length,
                       DAC_ALIGN_12B_R);
 }

@@ -26,8 +26,8 @@ Key key = {
 };
 
 OLED oled = {
-    .SCL = "C0",
-    .SDA = "C1",
+    .SCL = "C2",
+    .SDA = "C3",
 };
 
 Serial serial = {
@@ -63,7 +63,7 @@ DMA ADC_DMA = {
     .stream = 0,
     .sourceInc = DISABLE,
     .sourceSize = 32,
-    .targetInc = DISABLE,
+    .targetInc = ENABLE,
     .targetSize = 32,
 };
 
@@ -90,8 +90,11 @@ Timer timer = {
     .Trigger = TIM_TRGO_UPDATE,
 };
 
-uint8_t i = 0, state = 1;
-uint32_t adcValue;
+#define DATA_LENGTH 256
+
+uint16_t i;
+uint8_t serialFlag;
+uint32_t adcValue[DATA_LENGTH];
 
 void SystemClock_Config(void);
 
@@ -99,31 +102,27 @@ int main() {
     HAL_Init();
     SystemClock_Config();
 
-    // LED_init(&LED0);
+    LED_init(&LED0);
     LED_init(&LED1);
     Key_init(&key);
 
-    OLED_Init(&oled);
     Serial_init(&serial);
-    Serial_RXITStrart(&serial, 1);
-
-    PWM_init(&pwm);
+    Serial_RXITStart(&serial, 1);
 
     ADC_init(&adc);
     DMA_init(&ADC_DMA);
-    ADC_DMAStart(&adc, &adcValue, 1);
+    ADC_DMAStart(&adc, adcValue, DATA_LENGTH);
     ADC_Start(&adc);
 
     DAC_init(&dac);
     DMA_init(&DAC_DMA);
-    DAC_DMAStart(&dac, (uint32_t *)sing, 100);
+    DAC_DMAStart(&dac, (uint32_t *)sinUint, DATA_LENGTH);
     DAC_start(&dac);
-    DAC_set(&dac, 1, 4095);
 
     Timer_init(&timer);
 
     for (;;) {
-        OLED_ShowNum(&oled, 1, 1, adcValue, 4);
+        serialFlag = Key_read(&key);
     }
 }
 
@@ -137,15 +136,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == serial.usart) {
     }
 
-    Serial_RXITStrart(&serial, 1);
+    Serial_RXITStart(&serial, 1);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim == &timer.Handler) {
-        PWM_set(&pwm, 2, i);
-        state ? i++ : i--;
-        state = (i == 0 || i == 100) ? !state : state;
-
-        Serial_printf(&serial, "%d\n", adcValue);
+        if (serialFlag == ENABLE) {
+            Serial_printf(&serial, "%f\n", adcValue[i] / 4095.0);
+            i++;
+            i %= DATA_LENGTH;
+        }
     }
 }
