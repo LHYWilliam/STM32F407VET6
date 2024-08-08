@@ -5,8 +5,8 @@
 
 void Key_init(Key *key) {
     GPIO key_gpio = {
-        .Mode = {GPIO_MODE_INPUT},
-        .Pull = {key->Mode ? GPIO_PULLDOWN : GPIO_PULLUP},
+        .Mode = GPIO_MODE_INPUT,
+        .Pull = key->Mode ? GPIO_PULLDOWN : GPIO_PULLUP,
     };
     strcpy(key_gpio.GPIOxPiny, key->GPIOxPiny);
     GPIO_init(&key_gpio);

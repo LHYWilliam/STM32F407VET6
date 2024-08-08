@@ -5,8 +5,8 @@
 
 void LED_init(LED *led) {
     GPIO led_gpio = {
-        .Mode = {GPIO_MODE_OUTPUT_PP},
-        .Pull = {led->Mode ? GPIO_PULLDOWN : GPIO_PULLUP},
+        .Mode = GPIO_MODE_OUTPUT_PP,
+        .Pull = led->Mode ? GPIO_PULLDOWN : GPIO_PULLUP,
     };
     strcpy(led_gpio.GPIOxPiny, led->GPIOxPiny);
     GPIO_init(&led_gpio);

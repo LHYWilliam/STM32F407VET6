@@ -86,5 +86,7 @@ project:
     - component: Keil::Device:STM32Cube HAL:USART
     - component: Keil::Device:STM32Cube HAL:WWDG
     - component: Keil::Device:STM32Cube Framework:Classic
+    - component: ARM::CMSIS:DSP&Source
   packs:
     - pack: Keil::STM32F4xx_DFP@2.17.1
+    - pack: ARM::CMSIS-DSP@1.16.2
