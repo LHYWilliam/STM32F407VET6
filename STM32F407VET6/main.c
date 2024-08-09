@@ -99,8 +99,6 @@ uint32_t adcValue[DATA_LENGTH];
 float32_t FFT_Input[DATA_LENGTH * 2];
 float32_t FFT_Output[DATA_LENGTH];
 
-arm_cfft_radix4_instance_f32 scfft;
-
 void SystemClock_Config(void);
 
 int main() {
@@ -126,7 +124,8 @@ int main() {
 
     Timer_init(&timer);
 
-    arm_cfft_radix4_init_f32(&scfft, DATA_LENGTH, DISABLE, ENABLE);
+    arm_cfft_instance_f32 scfft;
+    arm_cfft_init_f32(&scfft, DATA_LENGTH);
 
     for (;;) {
         if (Key_read(&key) == KEYDOWN) {
@@ -138,7 +137,7 @@ int main() {
                 FFT_Input[i * 2] = adcValue[i] / 4095.;
                 FFT_Input[i * 2 + 1] = 0;
             }
-            arm_cfft_radix4_f32(&scfft, FFT_Input);
+            arm_cfft_f32(&scfft, FFT_Input, DISABLE, ENABLE);
             arm_cmplx_mag_f32(FFT_Input, FFT_Output, DATA_LENGTH);
         }
     }
