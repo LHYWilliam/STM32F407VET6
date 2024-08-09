@@ -42,6 +42,8 @@ typedef struct {
 
     char GPIOxPiny[32];
 
+    uint32_t trigger;
+
     ADC_HandleTypeDef Handler;
 } mADC;
 

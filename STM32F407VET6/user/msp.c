@@ -2,6 +2,7 @@
 
 #include <string.h>
 
+#include "OLED.h"
 #include "adc.h"
 #include "dac.h"
 #include "dma.h"
@@ -12,9 +13,26 @@
 #include "tim.h"
 #include "timer.h"
 
+OLED oled = {
+    .SCL = "C2",
+    .SDA = "C3",
+};
+
+PWM pwm = {
+    .TIM = TIM5,
+    .channel = "2",
+    .Prescaler = 8400 - 1,
+    .Period = 100 - 1,
+    .GPIOxPiny = "A1",
+};
+
+Encoder encoder = {
+    .TIM = TIM8,
+    .channel = "1 | 2",
+    .GPIOxPiny = "C6 | C7",
+};
+
 extern Serial serial;
-extern PWM pwm;
-extern Encoder encoder;
 extern mADC adc;
 extern DMA ADC_DMA;
 extern mDAC dac;

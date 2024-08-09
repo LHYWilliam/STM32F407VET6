@@ -23,7 +23,7 @@ void ADC_init(mADC *adc) {
 
                 .NbrOfConversion = NbrOfConversion,
 
-                .ExternalTrigConv = ADC_SOFTWARE_START,
+                .ExternalTrigConv = adc->trigger,
             },
     };
     HAL_ADC_Init(&adc->Handler);

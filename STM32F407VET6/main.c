@@ -1,13 +1,10 @@
 #include "arm_math.h"
 
-#include "OLED.h"
 #include "adc.h"
 #include "dac.h"
 #include "dma.h"
-#include "encoder.h"
 #include "key.h"
 #include "led.h"
-#include "pwm.h"
 #include "serial.h"
 #include "timer.h"
 
@@ -26,11 +23,6 @@ Key key = {
     .Mode = HIGH,
 };
 
-OLED oled = {
-    .SCL = "C2",
-    .SDA = "C3",
-};
-
 Serial serial = {
     .usart = USART1,
     .baudrate = 115200,
@@ -38,24 +30,11 @@ Serial serial = {
     .RX = "A10",
 };
 
-PWM pwm = {
-    .TIM = TIM5,
-    .channel = "2",
-    .Prescaler = 8400 - 1,
-    .Period = 100 - 1,
-    .GPIOxPiny = "A1",
-};
-
-Encoder encoder = {
-    .TIM = TIM8,
-    .channel = "1 | 2",
-    .GPIOxPiny = "C6 | C7",
-};
-
 mADC adc = {
     .ADCx = ADC1,
     .channel = "6",
     .GPIOxPiny = "A6",
+    .trigger = ADC_EXTERNALTRIGCONV_T2_TRGO,
 };
 
 DMA ADC_DMA = {
