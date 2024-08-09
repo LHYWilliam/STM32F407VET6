@@ -1,3 +1,5 @@
+#include "arm_math.h"
+
 #include "OLED.h"
 #include "adc.h"
 #include "dac.h"
@@ -7,7 +9,6 @@
 #include "led.h"
 #include "pwm.h"
 #include "serial.h"
-#include "signal.h"
 #include "timer.h"
 
 LED LED0 = {
@@ -117,9 +118,17 @@ int main() {
     ADC_DMAStart(&adc, adcValue, DATA_LENGTH);
     ADC_Start(&adc);
 
+    uint32_t data[DATA_LENGTH];
+    for (uint16_t i = 0; i < DATA_LENGTH; i++) {
+        data[i] =
+            (uint32_t)(2048 +
+                       (2048 * arm_sin_f32(1 * 2 * PI * i / DATA_LENGTH)));
+        data[i] = data[i] > 4095 ? 4095 : data[i];
+    }
+
     DAC_init(&dac);
     DMA_init(&DAC_DMA);
-    DAC_DMAStart(&dac, (uint32_t *)sinUint, DATA_LENGTH);
+    DAC_DMAStart(&dac, (uint32_t *)data, DATA_LENGTH);
     DAC_start(&dac);
 
     Timer_init(&timer);
@@ -129,7 +138,8 @@ int main() {
 
     for (;;) {
         if (Key_read(&key) == KEYDOWN) {
-            serialFlag = !serialFlag;
+            serialFlag = serialFlag ? DISABLE : ENABLE;
+            i = 0;
         };
 
         if (serialFlag == DISABLE) {
