@@ -11,7 +11,7 @@ void DAC_init(mDAC *dac) {
     char *temp = dac->channel;
     do {
         DAC_ChannelConfTypeDef channel = {
-            .DAC_Trigger = dac->Trigger ? dac->Trigger : DAC_TRIGGER_NONE,
+            .DAC_Trigger = dac->Trigger,
             .DAC_OutputBuffer = DAC_OUTPUTBUFFER_DISABLE,
         };
         HAL_DAC_ConfigChannel(&dac->Handler, &channel, DAC_CHANNEL_x(temp));

@@ -13,17 +13,15 @@ void ADC_init(mADC *adc) {
         .Instance = adc->ADCx,
         .Init =
             {
-                .DataAlign = ADC_DATAALIGN_RIGHT,
-                .Resolution = ADC_RESOLUTION_12B,
-                .ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4,
-
                 .ScanConvMode = ENABLE,
                 .ContinuousConvMode = ENABLE,
                 .DMAContinuousRequests = ENABLE,
 
-                .NbrOfConversion = NbrOfConversion,
+                .ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4,
 
                 .ExternalTrigConv = adc->trigger,
+
+                .NbrOfConversion = NbrOfConversion,
             },
     };
     HAL_ADC_Init(&adc->Handler);

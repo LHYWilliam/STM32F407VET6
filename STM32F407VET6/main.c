@@ -101,7 +101,6 @@ int main() {
     ADC_init(&adc);
     DMA_init(&ADC_DMA);
     ADC_DMAStart(&adc, adcValue, DATA_LENGTH);
-    ADC_Start(&adc);
 
     uint32_t data[DATA_LENGTH];
     for (uint16_t i = 0; i < DATA_LENGTH; i++) {
@@ -114,7 +113,6 @@ int main() {
     DAC_init(&dac);
     DMA_init(&DAC_DMA);
     DAC_DMAStart(&dac, (uint32_t *)data, DATA_LENGTH);
-    DAC_start(&dac);
 
     Timer_init(&sampler);
     Timer_init(&timer);
