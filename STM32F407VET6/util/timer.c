@@ -4,8 +4,10 @@
 void Timer_init(Timer *timer) {
     TIM tim = {
         .TIM = timer->TIM,
-        .Prescaler = 8400 - 1,
-        .Period = timer->ms * 10 - 1,
+        .Prescaler = timer->ms ? (8400 - 1) : (timer->Hz ? 1 - 1 : NULL),
+        .Period = timer->ms ? (timer->ms * 10 - 1)
+                            : (timer->Hz ? (uint32_t)(84000000. / timer->Hz - 1)
+                                         : NULL),
         .Handler = &timer->Handler,
         .HAL_TIM_Init = HAL_TIM_Base_Init,
     };
