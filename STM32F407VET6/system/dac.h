@@ -19,7 +19,7 @@ typedef struct {
 
     char GPIOxPiny[32];
 
-    DMA dma;
+    DMA DMA;
 
     DAC_HandleTypeDef Handler;
 } mDAC;

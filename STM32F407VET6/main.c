@@ -24,9 +24,9 @@ Key key = {
 
 Serial serial = {
     .usart = USART1,
-    .baudrate = 115200,
     .TX = "A9",
     .RX = "A10",
+    .baudrate = 115200,
 };
 
 mADC adc = {
@@ -35,7 +35,7 @@ mADC adc = {
     .GPIOxPiny = "A6",
     .continuous = DISABLE,
     .trigger = ADC_EXTERNALTRIGCONV_T2_TRGO,
-    .dma =
+    .DMA =
         {
             .DMAx = DMA2,
             .channel = 0,
@@ -47,7 +47,7 @@ mDAC dac = {
     .channel = "1",
     .GPIOxPiny = "A4",
     .Trigger = DAC_TRIGGER_T2_TRGO,
-    .dma =
+    .DMA =
         {
             .DMAx = DMA1,
             .channel = 7,

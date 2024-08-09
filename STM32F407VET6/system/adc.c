@@ -40,13 +40,13 @@ void ADC_init(mADC *adc) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2) &&
              (rank = rank + 1));
 
-    if (adc->dma.DMAx) {
-        adc->dma.sourceInc = DISABLE;
-        adc->dma.sourceSize = 32;
-        adc->dma.targetInc = ENABLE;
-        adc->dma.targetSize = 32;
+    if (adc->DMA.DMAx) {
+        adc->DMA.sourceInc = DISABLE;
+        adc->DMA.sourceSize = 32;
+        adc->DMA.targetInc = ENABLE;
+        adc->DMA.targetSize = 32;
 
-        DMA_init(&adc->dma);
+        DMA_init(&adc->DMA);
     }
 }
 

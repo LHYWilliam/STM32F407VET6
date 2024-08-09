@@ -47,7 +47,7 @@ typedef struct {
     uint8_t continuous;
     uint32_t trigger;
 
-    DMA dma;
+    DMA DMA;
 
     ADC_HandleTypeDef Handler;
 } mADC;

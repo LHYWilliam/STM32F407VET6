@@ -121,9 +121,9 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
         strcpy(gpio.GPIOxPiny, adc.GPIOxPiny);
         GPIO_init(&gpio);
 
-        if (dac.dma.DMAx) {
-            __HAL_RCC_DMAx_CLK_ENABLE(adc.dma.DMAx);
-            __HAL_LINKDMA(&adc.Handler, DMA_Handle, adc.dma.Handler);
+        if (dac.DMA.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(adc.DMA.DMAx);
+            __HAL_LINKDMA(&adc.Handler, DMA_Handle, adc.DMA.Handler);
         }
     }
 }
@@ -139,9 +139,9 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
         strcpy(gpio.GPIOxPiny, dac.GPIOxPiny);
         GPIO_init(&gpio);
 
-        if (dac.dma.DMAx) {
-            __HAL_RCC_DMAx_CLK_ENABLE(dac.dma.DMAx);
-            __HAL_LINKDMA(&dac.Handler, DMA_Handle1, dac.dma.Handler);
+        if (dac.DMA.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(dac.DMA.DMAx);
+            __HAL_LINKDMA(&dac.Handler, DMA_Handle1, dac.DMA.Handler);
         }
     }
 }
