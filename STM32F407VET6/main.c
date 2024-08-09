@@ -85,10 +85,16 @@ DMA DAC_DMA = {
     .invert = ENABLE,
 };
 
-Timer timer = {
+Timer sampler = {
     .TIM = TIM2,
-    .ms = 1,
+    .Hz = 1000,
     .Trigger = TIM_TRGO_UPDATE,
+};
+
+Timer timer = {
+    .TIM = TIM3,
+    .ms = 1,
+    .interrupt = ENABLE,
 };
 
 #define DATA_LENGTH 256
@@ -131,6 +137,7 @@ int main() {
     DAC_DMAStart(&dac, (uint32_t *)data, DATA_LENGTH);
     DAC_start(&dac);
 
+    Timer_init(&sampler);
     Timer_init(&timer);
 
     arm_cfft_instance_f32 scfft;
@@ -157,7 +164,7 @@ void SysTick_Handler(void) { HAL_IncTick(); }
 
 void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&serial.Handler); }
 
-void TIM2_IRQHandler(void) { HAL_TIM_IRQHandler(&timer.Handler); }
+void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&timer.Handler); }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == serial.usart) {

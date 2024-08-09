@@ -19,6 +19,7 @@ extern mADC adc;
 extern DMA ADC_DMA;
 extern mDAC dac;
 extern DMA DAC_DMA;
+extern Timer sampler;
 extern Timer timer;
 
 extern int16_t count;
@@ -55,8 +56,12 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == timer.TIM) {
+    if (htim->Instance == sampler.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(sampler.TIM);
+
+    } else if (htim->Instance == timer.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(timer.TIM);
+
         HAL_NVIC_SetPriority(TIMx_IRQN(timer.TIM), 1, 3);
         HAL_NVIC_EnableIRQ(TIMx_IRQN(timer.TIM));
     }

@@ -20,7 +20,12 @@ void Timer_init(Timer *timer) {
         HAL_TIMEx_MasterConfigSynchronization(&timer->Handler, &trigger);
     }
 
-    __HAL_TIM_CLEAR_IT(tim.Handler, TIM_FLAG_UPDATE);
+    if (timer->interrupt) {
+        __HAL_TIM_CLEAR_IT(tim.Handler, TIM_FLAG_UPDATE);
 
-    HAL_TIM_Base_Start_IT(tim.Handler);
+        HAL_TIM_Base_Start_IT(tim.Handler);
+
+    } else {
+        HAL_TIM_Base_Start(tim.Handler);
+    }
 };

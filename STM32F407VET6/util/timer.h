@@ -7,6 +7,8 @@ typedef struct {
     TIM_TypeDef *TIM;
     uint32_t ms;
     uint32_t Hz;
+
+    uint8_t interrupt;
     uint32_t Trigger;
 
     TIM_HandleTypeDef Handler;
