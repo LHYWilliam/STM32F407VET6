@@ -35,8 +35,9 @@ Encoder encoder = {
 extern Serial serial;
 extern mADC adc;
 extern mDAC dac;
-extern Timer sampler;
-extern Timer timer;
+extern Timer signalGeneratorTimer;
+extern Timer signalSamplerTimer;
+extern Timer taskTimer;
 
 extern int16_t count;
 
@@ -71,14 +72,17 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == sampler.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(sampler.TIM);
+    if (htim->Instance == signalGeneratorTimer.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(signalGeneratorTimer.TIM);
 
-    } else if (htim->Instance == timer.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(timer.TIM);
+    } else if (htim->Instance == signalSamplerTimer.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(signalSamplerTimer.TIM);
 
-        HAL_NVIC_SetPriority(TIMx_IRQN(timer.TIM), 1, 3);
-        HAL_NVIC_EnableIRQ(TIMx_IRQN(timer.TIM));
+    } else if (htim->Instance == taskTimer.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(taskTimer.TIM);
+
+        HAL_NVIC_SetPriority(TIMx_IRQN(taskTimer.TIM), 1, 3);
+        HAL_NVIC_EnableIRQ(TIMx_IRQN(taskTimer.TIM));
     }
 }
 

@@ -29,6 +29,18 @@ Serial serial = {
     .baudrate = 115200,
 };
 
+mDAC dac = {
+    .channel = "1",
+    .GPIOxPiny = "A4",
+    .Trigger = DAC_TRIGGER_T4_TRGO,
+    .DMA =
+        {
+            .DMAx = DMA1,
+            .channel = 7,
+            .stream = 5,
+        },
+};
+
 mADC adc = {
     .ADCx = ADC1,
     .channel = "6",
@@ -43,31 +55,25 @@ mADC adc = {
         },
 };
 
-mDAC dac = {
-    .channel = "1",
-    .GPIOxPiny = "A4",
-    .Trigger = DAC_TRIGGER_T2_TRGO,
-    .DMA =
-        {
-            .DMAx = DMA1,
-            .channel = 7,
-            .stream = 5,
-        },
-};
-
-Timer sampler = {
-    .TIM = TIM2,
-    .Hz = 1000,
+Timer signalGeneratorTimer = {
+    .TIM = TIM4,
+    .Hz = 10000,
     .Trigger = TIM_TRGO_UPDATE,
 };
 
-Timer timer = {
+Timer signalSamplerTimer = {
+    .TIM = TIM2,
+    .Hz = 10000,
+    .Trigger = TIM_TRGO_UPDATE,
+};
+
+Timer taskTimer = {
     .TIM = TIM3,
     .ms = 1,
     .interrupt = ENABLE,
 };
 
-#define DATA_LENGTH 256
+#define DATA_LENGTH 4096
 
 uint16_t i;
 uint8_t serialFlag;
@@ -103,8 +109,9 @@ int main() {
     DAC_init(&dac);
     DAC_DMAStart(&dac, (uint32_t *)data, DATA_LENGTH);
 
-    Timer_init(&sampler);
-    Timer_init(&timer);
+    Timer_init(&signalGeneratorTimer);
+    Timer_init(&signalSamplerTimer);
+    Timer_init(&taskTimer);
 
     arm_cfft_instance_f32 scfft;
     arm_cfft_init_f32(&scfft, DATA_LENGTH);
@@ -130,7 +137,7 @@ void SysTick_Handler(void) { HAL_IncTick(); }
 
 void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&serial.Handler); }
 
-void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&timer.Handler); }
+void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&taskTimer.Handler); }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == serial.usart) {
@@ -140,7 +147,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    if (htim == &timer.Handler) {
+    if (htim == &taskTimer.Handler) {
         if (serialFlag == ENABLE) {
             Serial_printf(&serial, "%f,%f\n", FFT_Output[i],
                           adcValue[i] / 4095.);
