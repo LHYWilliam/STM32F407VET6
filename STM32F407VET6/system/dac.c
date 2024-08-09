@@ -16,6 +16,16 @@ void DAC_init(mDAC *dac) {
         };
         HAL_DAC_ConfigChannel(&dac->Handler, &channel, DAC_CHANNEL_x(temp));
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
+
+    if (dac->dma.DMAx) {
+        dac->dma.sourceInc = ENABLE;
+        dac->dma.sourceSize = 32;
+        dac->dma.targetInc = DISABLE;
+        dac->dma.targetSize = 32;
+        dac->dma.invert = ENABLE;
+
+        DMA_init(&dac->dma);
+    }
 }
 
 void DAC_start(mDAC *dac) {

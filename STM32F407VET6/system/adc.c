@@ -13,13 +13,15 @@ void ADC_init(mADC *adc) {
         .Instance = adc->ADCx,
         .Init =
             {
-                .ScanConvMode = ENABLE,
-                .ContinuousConvMode = ENABLE,
+                .ScanConvMode = NbrOfConversion > 1 ? ENABLE : DISABLE,
+                .ContinuousConvMode = adc->continuous,
                 .DMAContinuousRequests = ENABLE,
+                .EOCSelection = ADC_EOC_SINGLE_CONV,
 
                 .ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4,
 
                 .ExternalTrigConv = adc->trigger,
+                .ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING,
 
                 .NbrOfConversion = NbrOfConversion,
             },
@@ -37,6 +39,15 @@ void ADC_init(mADC *adc) {
         HAL_ADC_ConfigChannel(&adc->Handler, &channel);
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2) &&
              (rank = rank + 1));
+
+    if (adc->dma.DMAx) {
+        adc->dma.sourceInc = DISABLE;
+        adc->dma.sourceSize = 32;
+        adc->dma.targetInc = ENABLE;
+        adc->dma.targetSize = 32;
+
+        DMA_init(&adc->dma);
+    }
 }
 
 void ADC_Start(mADC *adc) { HAL_ADC_Start(&adc->Handler); };

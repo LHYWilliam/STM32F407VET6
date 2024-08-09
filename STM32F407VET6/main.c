@@ -2,7 +2,6 @@
 
 #include "adc.h"
 #include "dac.h"
-#include "dma.h"
 #include "key.h"
 #include "led.h"
 #include "serial.h"
@@ -34,34 +33,26 @@ mADC adc = {
     .ADCx = ADC1,
     .channel = "6",
     .GPIOxPiny = "A6",
+    .continuous = DISABLE,
     .trigger = ADC_EXTERNALTRIGCONV_T2_TRGO,
-};
-
-DMA ADC_DMA = {
-    .DMAx = DMA2,
-    .channel = 0,
-    .stream = 0,
-    .sourceInc = DISABLE,
-    .sourceSize = 32,
-    .targetInc = ENABLE,
-    .targetSize = 32,
+    .dma =
+        {
+            .DMAx = DMA2,
+            .channel = 0,
+            .stream = 0,
+        },
 };
 
 mDAC dac = {
     .channel = "1",
     .GPIOxPiny = "A4",
     .Trigger = DAC_TRIGGER_T2_TRGO,
-};
-
-DMA DAC_DMA = {
-    .DMAx = DMA1,
-    .channel = 7,
-    .stream = 5,
-    .sourceInc = ENABLE,
-    .sourceSize = 32,
-    .targetInc = DISABLE,
-    .targetSize = 32,
-    .invert = ENABLE,
+    .dma =
+        {
+            .DMAx = DMA1,
+            .channel = 7,
+            .stream = 5,
+        },
 };
 
 Timer sampler = {
@@ -99,7 +90,6 @@ int main() {
     Serial_RXITStart(&serial, 1);
 
     ADC_init(&adc);
-    DMA_init(&ADC_DMA);
     ADC_DMAStart(&adc, adcValue, DATA_LENGTH);
 
     uint32_t data[DATA_LENGTH];
@@ -111,7 +101,6 @@ int main() {
     }
 
     DAC_init(&dac);
-    DMA_init(&DAC_DMA);
     DAC_DMAStart(&dac, (uint32_t *)data, DATA_LENGTH);
 
     Timer_init(&sampler);

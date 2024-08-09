@@ -3,6 +3,8 @@
 
 #include "stm32f4xx.h"
 
+#include "dma.h"
+
 #define DAC_CHANNEL_x(x)                                                       \
     ((x[0]) == '1' ? DAC_CHANNEL_1 : (x[0]) == '2' ? DAC_CHANNEL_2 : NULL)
 
@@ -16,6 +18,8 @@ typedef struct {
     uint32_t Trigger;
 
     char GPIOxPiny[32];
+
+    DMA dma;
 
     DAC_HandleTypeDef Handler;
 } mDAC;

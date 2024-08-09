@@ -34,16 +34,13 @@ Encoder encoder = {
 
 extern Serial serial;
 extern mADC adc;
-extern DMA ADC_DMA;
 extern mDAC dac;
-extern DMA DAC_DMA;
 extern Timer sampler;
 extern Timer timer;
 
 extern int16_t count;
 
 void HAL_MspInit(void) {
-
     __HAL_RCC_SYSCFG_CLK_ENABLE();
     __HAL_RCC_PWR_CLK_ENABLE();
 }
@@ -124,9 +121,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
         strcpy(gpio.GPIOxPiny, adc.GPIOxPiny);
         GPIO_init(&gpio);
 
-        __HAL_RCC_DMAx_CLK_ENABLE(ADC_DMA.DMAx);
-
-        __HAL_LINKDMA(&adc.Handler, DMA_Handle, ADC_DMA.Handler);
+        if (dac.dma.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(adc.dma.DMAx);
+            __HAL_LINKDMA(&adc.Handler, DMA_Handle, adc.dma.Handler);
+        }
     }
 }
 
@@ -141,8 +139,9 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
         strcpy(gpio.GPIOxPiny, dac.GPIOxPiny);
         GPIO_init(&gpio);
 
-        __HAL_RCC_DMAx_CLK_ENABLE(DAC_DMA.DMAx);
-
-        __HAL_LINKDMA(&dac.Handler, DMA_Handle1, DAC_DMA.Handler);
+        if (dac.dma.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(dac.dma.DMAx);
+            __HAL_LINKDMA(&dac.Handler, DMA_Handle1, dac.dma.Handler);
+        }
     }
 }

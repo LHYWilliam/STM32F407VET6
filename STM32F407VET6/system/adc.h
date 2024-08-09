@@ -3,6 +3,8 @@
 
 #include "stm32f4xx_hal.h"
 
+#include "dma.h"
+
 #define ADC_CHANNEL_x(x)                                                       \
     ((x[0]) == '0'   ? ADC_CHANNEL_0                                           \
      : (x[1]) == '8' ? ADC_CHANNEL_18                                          \
@@ -42,7 +44,10 @@ typedef struct {
 
     char GPIOxPiny[32];
 
+    uint8_t continuous;
     uint32_t trigger;
+
+    DMA dma;
 
     ADC_HandleTypeDef Handler;
 } mADC;
