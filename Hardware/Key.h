@@ -1,0 +1,19 @@
+#ifndef KEY_H
+#define KEY_H
+
+#include "stm32f4xx_hal.h"
+
+typedef enum { NoKeyDown, KeyDown } KeyState;
+
+typedef struct {
+    char GPIOxPiny[4];
+
+    GPIO_TypeDef *GPIOx;
+    uint32_t GPIO_Pin;
+} Key;
+
+void Key_Init(Key *key);
+
+KeyState Key_Read(Key *key);
+
+#endif
