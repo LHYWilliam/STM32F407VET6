@@ -525,16 +525,6 @@
               <FilePath>.\Hardware\OLED\OLED_Font.h</FilePath>
             </File>
             <File>
-              <FileName>Menu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\OLED\Menu\Menu.c</FilePath>
-            </File>
-            <File>
-              <FileName>Menu.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\OLED\Menu\Menu.h</FilePath>
-            </File>
-            <File>
               <FileName>Key.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Hardware\Key.c</FilePath>
