@@ -389,6 +389,26 @@
               <FileType>1</FileType>
               <FilePath>.\User\main.c</FilePath>
             </File>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\interrupt.c</FilePath>
+            </File>
+            <File>
+              <FileName>msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>sysclock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\sysclock.c</FilePath>
+            </File>
+            <File>
+              <FileName>task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
