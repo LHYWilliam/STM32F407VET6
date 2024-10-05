@@ -76,6 +76,5 @@ uint8_t GT1151_IIC_ReadByte(unsigned char ack);
 void GT1151_IIC_Ack(void);
 void GT1151_IIC_NAck(void);
 uint8_t GT1151_IIC_WaitAck(void);
-static void GT1151_Delay(void) { Delay_us(2); }
 
 #endif

@@ -88,6 +88,8 @@ uint8_t Touch_ScanChannel(Touch_Handler *touch, LCD_Handler *lcd,
     return touch->TouchFlag & (1 << channel);
 }
 
+static void GT1151_Delay(void) { Delay_us(2); }
+
 uint8_t GT1151_Init(void) {
     uint8_t temp[5];
     GPIO_InitTypeDef GPIO_Initure;
