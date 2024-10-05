@@ -3,12 +3,12 @@
 #include "LCD.h"
 #include "Touch.h"
 
-void Touch_Init(Touch *touch) {
+void Touch_Init(Touch_Handler *touch) {
     UNUSED(touch);
     GT1151_Init();
 }
 
-uint8_t Touch_Scan(Touch *touch, LCD_Handler *lcd) {
+uint8_t Touch_Scan(Touch_Handler *touch, LCD_Handler *lcd) {
     static uint8_t t = 0;
     uint8_t mode = 0, resault = 0;
 
@@ -82,7 +82,8 @@ uint8_t Touch_Scan(Touch *touch, LCD_Handler *lcd) {
     return resault;
 }
 
-uint8_t Touch_ScanChannel(Touch *touch, LCD_Handler *lcd, uint8_t channel) {
+uint8_t Touch_ScanChannel(Touch_Handler *touch, LCD_Handler *lcd,
+                          uint8_t channel) {
     Touch_Scan(touch, lcd);
     return touch->TouchFlag & (1 << channel);
 }
