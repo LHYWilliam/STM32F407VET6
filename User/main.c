@@ -2,11 +2,12 @@
 #include "task.h"
 #include "timers.h"
 
+#include "ADC.h"
+#include "DAC.h"
 #include "Key.h"
-#include "LCD.h"
 #include "LED.h"
 #include "Serial.h"
-#include "Touch.h"
+#include "Timer.h"
 
 LED LED0 = {
     .GPIOxPiny = "A1",
@@ -33,22 +34,59 @@ Serial serial = {
     .RxITSize = 1,
 };
 
-LCD mLCD = {
-    .Direction = LCD_Vertical,
+const uint32_t DAC_DataLength = 16;
+const uint32_t DAC_Frequency = 2000;
+const uint32_t ADC_DataLength = 16;
+const uint32_t ADC_Frequency = DAC_Frequency * 16;
+
+uint32_t DACData[] = {
+    2047, 2830, 3494, 3938, 4094, 3938, 3494, 2830,
+    2047, 1263, 599,  155,  0,    155,  599,  1263,
+};
+uint32_t ADCValue[ADC_DataLength];
+
+mDAC dac = {
+    .Channel = "1",
+    .GPIOxPiny = "A4",
+    .Trigger = DAC_TRIGGER_T2_TRGO,
     .DMA =
         {
-            .DMAx = DMA2,
-            .Stream = 0,
-            .Channel = 0,
+            .DMAx = DMA1,
+            .Channel = 7,
+            .Stream = 5,
         },
 };
 
-Touch mTouch = {
-    .Direction = LCD_Vertical,
+mADC adc = {
+    .ADCx = ADC1,
+    .Channel = "5",
+    .GPIOxPiny = "A5",
+    .Trigger = ADC_EXTERNALTRIGCONV_T3_TRGO,
+    .DMA =
+        {
+            .DMAx = DMA2,
+            .Channel = 0,
+            .Stream = 0,
+        },
+};
+
+Timer generator = {
+    .TIM = TIM2,
+    .Hz = DAC_Frequency * DAC_DataLength,
+    .Trigger = TIM_TRGO_UPDATE,
+};
+
+Timer sampler = {
+    .TIM = TIM3,
+    .Hz = ADC_Frequency,
+    .Trigger = TIM_TRGO_UPDATE,
 };
 
 TimerHandle_t LEDTimer;
 void vLEDTimerCallback(TimerHandle_t xTimer);
+
+TimerHandle_t SerialTimer;
+void vSerialTimerCallback(TimerHandle_t xTimer);
 
 void SystemClock_Config(void);
 
@@ -61,13 +99,23 @@ int main() {
     Key_Init(&key0);
     Key_Init(&key1);
     Serial_Init(&serial);
-    LCD_Init(&mLCD);
-    Touch_Init(&mTouch, &mLCD);
+
+    DAC_Init(&dac);
+    DAC_DMAStart(&dac, DACData, ADC_DataLength);
+
+    ADC_Init(&adc);
+    ADC_DMAStart(&adc, ADCValue, ADC_DataLength);
+
+    Timer_Init(&sampler);
+    Timer_Init(&generator);
 
     LEDTimer = xTimerCreate("LEDTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
                             vLEDTimerCallback);
+    SerialTimer = xTimerCreate("SerialTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
+                               vSerialTimerCallback);
 
     xTimerStart(LEDTimer, 0);
+    xTimerStart(SerialTimer, 0);
     vTaskStartScheduler();
 
     for (;;) {
