@@ -4,15 +4,15 @@
 #include "LED.h"
 
 void LED_Init(LED *led) {
-    GPIO led_gpio = {
+    GPIO gpio = {
         .Mode = GPIO_MODE_OUTPUT_PP,
         .Pull = GPIO_PULLUP,
     };
-    strcpy(led_gpio.GPIOxPiny, led->GPIOxPiny);
-    GPIO_Init(&led_gpio);
+    strcpy(gpio.GPIOxPiny, led->GPIOxPiny);
+    GPIO_Init(&gpio);
 
-    led->GPIOx = led_gpio.GPIOx;
-    led->GPIO_Pin = led_gpio.GPIO_Pin;
+    led->GPIOx = gpio.GPIOx;
+    led->GPIO_Pin = gpio.GPIO_Pin;
 
     LED_Off(led);
 }

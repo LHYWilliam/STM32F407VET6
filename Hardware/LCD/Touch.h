@@ -59,7 +59,7 @@ typedef struct Touch {
     uint16_t Y[MAX_TOUCH];
 } Touch;
 
-void Touch_Init(Touch *touch, LCD *lcd);
+void Touch_Init(Touch *touch);
 uint8_t Touch_Scan(Touch *touch, LCD *lcd);
 uint8_t Touch_ScanChannel(Touch *touch, LCD *lcd, uint8_t channel);
 

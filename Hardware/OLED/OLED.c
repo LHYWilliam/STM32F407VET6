@@ -169,7 +169,7 @@ void OLED_ShowString(OLED *oled, uint8_t Line, uint8_t Column, char *String) {
  * @brief  OLED次方函数
  * @retval 返回值等于X的Y次方
  */
-uint32_t OLED_Pow(OLED *oled, uint32_t X, uint32_t Y) {
+uint32_t OLED_Pow(uint32_t X, uint32_t Y) {
     uint32_t Result = 1;
     while (Y--) {
         Result *= X;
@@ -190,7 +190,7 @@ void OLED_ShowNum(OLED *oled, uint8_t Line, uint8_t Column, uint32_t Number,
     uint8_t i;
     for (i = 0; i < Length; i++) {
         OLED_ShowChar(oled, Line, Column + i,
-                      Number / OLED_Pow(oled, 10, Length - i - 1) % 10 + '0');
+                      Number / OLED_Pow(10, Length - i - 1) % 10 + '0');
     }
 }
 
@@ -215,7 +215,7 @@ void OLED_ShowSignedNum(OLED *oled, uint8_t Line, uint8_t Column,
     }
     for (i = 0; i < Length; i++) {
         OLED_ShowChar(oled, Line, Column + i + 1,
-                      Number1 / OLED_Pow(oled, 10, Length - i - 1) % 10 + '0');
+                      Number1 / OLED_Pow(10, Length - i - 1) % 10 + '0');
     }
 }
 
@@ -231,7 +231,7 @@ void OLED_ShowHexNum(OLED *oled, uint8_t Line, uint8_t Column, uint32_t Number,
                      uint8_t Length) {
     uint8_t i, SingleNumber;
     for (i = 0; i < Length; i++) {
-        SingleNumber = Number / OLED_Pow(oled, 16, Length - i - 1) % 16;
+        SingleNumber = Number / OLED_Pow(16, Length - i - 1) % 16;
         if (SingleNumber < 10) {
             OLED_ShowChar(oled, Line, Column + i, SingleNumber + '0');
         } else {
@@ -253,7 +253,7 @@ void OLED_ShowBinNum(OLED *oled, uint8_t Line, uint8_t Column, uint32_t Number,
     uint8_t i;
     for (i = 0; i < Length; i++) {
         OLED_ShowChar(oled, Line, Column + i,
-                      Number / OLED_Pow(oled, 2, Length - i - 1) % 2 + '0');
+                      Number / OLED_Pow(2, Length - i - 1) % 2 + '0');
     }
 }
 

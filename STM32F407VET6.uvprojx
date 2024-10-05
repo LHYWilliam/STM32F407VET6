@@ -323,7 +323,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>3</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>1</uC99>
@@ -412,6 +412,71 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Hardware</GroupName>
+          <Files>
+            <File>
+              <FileName>LCD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LCD\LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>LCD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LCD\LCD.h</FilePath>
+            </File>
+            <File>
+              <FileName>LCD_Font.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LCD\LCD_Font.h</FilePath>
+            </File>
+            <File>
+              <FileName>Touch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LCD\Touch.c</FilePath>
+            </File>
+            <File>
+              <FileName>Touch.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LCD\Touch.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Font.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED_Font.h</FilePath>
+            </File>
+            <File>
+              <FileName>Key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\Key.c</FilePath>
+            </File>
+            <File>
+              <FileName>Key.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\Key.h</FilePath>
+            </File>
+            <File>
+              <FileName>LED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\LED.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\LED.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>System</GroupName>
           <Files>
             <File>
@@ -478,71 +543,6 @@
               <FileName>TIM.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\System\TIM.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>Hardware</GroupName>
-          <Files>
-            <File>
-              <FileName>LCD.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\LCD\LCD.c</FilePath>
-            </File>
-            <File>
-              <FileName>LCD.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\LCD\LCD.h</FilePath>
-            </File>
-            <File>
-              <FileName>LCD_Font.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\LCD\LCD_Font.h</FilePath>
-            </File>
-            <File>
-              <FileName>Touch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\LCD\Touch.c</FilePath>
-            </File>
-            <File>
-              <FileName>Touch.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\LCD\Touch.h</FilePath>
-            </File>
-            <File>
-              <FileName>OLED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\OLED\OLED.c</FilePath>
-            </File>
-            <File>
-              <FileName>OLED.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\OLED\OLED.h</FilePath>
-            </File>
-            <File>
-              <FileName>OLED_Font.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\OLED\OLED_Font.h</FilePath>
-            </File>
-            <File>
-              <FileName>Key.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\Key.c</FilePath>
-            </File>
-            <File>
-              <FileName>Key.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\Key.h</FilePath>
-            </File>
-            <File>
-              <FileName>LED.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\LED.c</FilePath>
-            </File>
-            <File>
-              <FileName>LED.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\LED.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -5,15 +5,15 @@
 #include "Key.h"
 
 void Key_Init(Key *key) {
-    GPIO key_gpio = {
+    GPIO gpio = {
         .Mode = GPIO_MODE_INPUT,
         .Pull = GPIO_PULLDOWN,
     };
-    strcpy(key_gpio.GPIOxPiny, key->GPIOxPiny);
-    GPIO_Init(&key_gpio);
+    strcpy(gpio.GPIOxPiny, key->GPIOxPiny);
+    GPIO_Init(&gpio);
 
-    key->GPIOx = key_gpio.GPIOx;
-    key->GPIO_Pin = key_gpio.GPIO_Pin;
+    key->GPIOx = gpio.GPIOx;
+    key->GPIO_Pin = gpio.GPIO_Pin;
 }
 
 KeyState Key_Read(Key *key) {

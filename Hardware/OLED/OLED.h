@@ -25,7 +25,5 @@ void OLED_ShowHexNum(OLED *oled, uint8_t Line, uint8_t Column, uint32_t Number,
                      uint8_t Length);
 void OLED_ShowBinNum(OLED *oled, uint8_t Line, uint8_t Column, uint32_t Number,
                      uint8_t Length);
-void OLED_W_SCL(OLED *oled, uint8_t x);
-void OLED_W_SDA(OLED *oled, uint8_t x);
 
 #endif

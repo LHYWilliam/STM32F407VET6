@@ -290,6 +290,11 @@ void LCD_ShowImage(LCD *lcd, uint16_t x, uint16_t y, uint16_t width,
     }
 }
 
+static void opt_delay(uint8_t i) {
+    while (i--)
+        ;
+}
+
 uint16_t LCD_ReadPoint(LCD *lcd, uint16_t x, uint16_t y) {
     uint16_t r = 0, g = 0, b = 0;
     if (x >= lcd->Width || y >= lcd->Height)

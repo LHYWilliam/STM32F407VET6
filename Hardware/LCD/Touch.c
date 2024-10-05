@@ -3,7 +3,10 @@
 #include "LCD.h"
 #include "Touch.h"
 
-void Touch_Init(Touch *touch, LCD *lcd) { GT1151_Init(); }
+void Touch_Init(Touch *touch) {
+    UNUSED(touch);
+    GT1151_Init();
+}
 
 uint8_t Touch_Scan(Touch *touch, LCD *lcd) {
     static uint8_t t = 0;

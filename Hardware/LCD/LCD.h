@@ -108,9 +108,4 @@ void LCD_ShowxNum(LCD *lcd, uint16_t x, uint16_t y, uint32_t num,
 void LCD_ShowString(LCD *lcd, uint16_t x, uint16_t y, uint16_t width,
                     uint16_t height, uint8_t size, char *p);
 
-static void opt_delay(uint8_t i) {
-    while (i--)
-        ;
-}
-
 #endif
