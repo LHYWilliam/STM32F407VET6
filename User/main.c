@@ -7,7 +7,6 @@
 #include "Key.h"
 #include "LED.h"
 #include "Serial.h"
-#include "Timer.h"
 
 LED LED0 = {
     .GPIOxPiny = "A1",
@@ -34,26 +33,25 @@ Serial serial = {
     .RxITSize = 1,
 };
 
-const uint32_t DAC_DataLength = 16;
-const uint32_t DAC_Frequency = 2000;
-const uint32_t ADC_DataLength = 16;
-const uint32_t ADC_Frequency = DAC_Frequency * 16;
-
-uint32_t DACData[] = {
-    2047, 2830, 3494, 3938, 4094, 3938, 3494, 2830,
-    2047, 1263, 599,  155,  0,    155,  599,  1263,
-};
-uint32_t ADCValue[ADC_DataLength];
+#define DAC_DataLength 16
+#define ADC_DataLength 16
+#define DAC_Frequency  2000
+#define ADC_Frequency  DAC_Frequency * 16
 
 mDAC dac = {
     .Channel = "1",
     .GPIOxPiny = "A4",
-    .Trigger = DAC_TRIGGER_T2_TRGO,
+    .Length = DAC_DataLength,
     .DMA =
         {
             .DMAx = DMA1,
             .Channel = 7,
             .Stream = 5,
+        },
+    .Timer =
+        {
+            .TIMx = TIM2,
+            .Hz = DAC_Frequency,
         },
 };
 
@@ -61,26 +59,25 @@ mADC adc = {
     .ADCx = ADC1,
     .Channel = "5",
     .GPIOxPiny = "A5",
-    .Trigger = ADC_EXTERNALTRIGCONV_T3_TRGO,
+    .Length = ADC_DataLength,
     .DMA =
         {
             .DMAx = DMA2,
             .Channel = 0,
             .Stream = 0,
         },
+    .Timer =
+        {
+            .TIMx = TIM3,
+            .Hz = ADC_Frequency,
+        },
 };
 
-Timer generator = {
-    .TIM = TIM2,
-    .Hz = DAC_Frequency * DAC_DataLength,
-    .Trigger = TIM_TRGO_UPDATE,
+uint32_t DACData[] = {
+    2047, 2830, 3494, 3938, 4094, 3938, 3494, 2830,
+    2047, 1263, 599,  155,  0,    155,  599,  1263,
 };
-
-Timer sampler = {
-    .TIM = TIM3,
-    .Hz = ADC_Frequency,
-    .Trigger = TIM_TRGO_UPDATE,
-};
+uint32_t ADCValue[ADC_DataLength];
 
 TimerHandle_t LEDTimer;
 void vLEDTimerCallback(TimerHandle_t xTimer);
@@ -101,13 +98,10 @@ int main() {
     Serial_Init(&serial);
 
     DAC_Init(&dac);
-    DAC_DMAStart(&dac, DACData, ADC_DataLength);
+    DAC_DMAStart(&dac, DACData, dac.Length);
 
     ADC_Init(&adc);
-    ADC_DMAStart(&adc, ADCValue, ADC_DataLength);
-
-    Timer_Init(&sampler);
-    Timer_Init(&generator);
+    ADC_DMAStart(&adc, ADCValue, adc.Length);
 
     LEDTimer = xTimerCreate("LEDTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
                             vLEDTimerCallback);

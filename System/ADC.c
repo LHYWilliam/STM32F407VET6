@@ -9,6 +9,10 @@ void ADC_Init(mADC *adc) {
         NbrOfConversion++;
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 
+    if (adc->Timer.TIMx) {
+        adc->Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(adc->Timer.TIMx);
+    }
+
     adc->Handler = (ADC_HandleTypeDef){
         .Instance = adc->ADCx,
         .Init =
@@ -49,6 +53,11 @@ void ADC_Init(mADC *adc) {
         adc->DMA.Direction = DMA_PERIPH_TO_MEMORY;
 
         DMA_Init(&adc->DMA);
+    }
+
+    if (adc->Timer.TIMx) {
+        adc->Timer.Trigger = TIM_TRGO_UPDATE;
+        Timer_Init(&adc->Timer);
     }
 }
 

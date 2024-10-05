@@ -8,6 +8,10 @@ void DAC_Init(mDAC *dac) {
     };
     HAL_DAC_Init(&dac->Handler);
 
+    if (dac->DMA.DMAx && dac->Timer.TIMx) {
+        dac->Trigger = DAC_TRIGGER_Tx_TRGO(dac->Timer.TIMx);
+    }
+
     char *temp = dac->Channel;
     do {
         DAC_ChannelConfTypeDef channel = {
@@ -26,6 +30,12 @@ void DAC_Init(mDAC *dac) {
         dac->DMA.Direction = DMA_MEMORY_TO_PERIPH;
 
         DMA_Init(&dac->DMA);
+    }
+
+    if (dac->Timer.TIMx) {
+		dac->Timer.Hz *= dac->Length;
+        dac->Timer.Trigger = TIM_TRGO_UPDATE;
+        Timer_Init(&dac->Timer);
     }
 }
 

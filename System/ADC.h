@@ -4,6 +4,13 @@
 #include "stm32f4xx_hal.h"
 
 #include "DMA.h"
+#include "Timer.h"
+
+#define ADC_EXTERNALTRIGCONV_Tx_TRGO(x)                                        \
+    ((x) == TIM2   ? ADC_EXTERNALTRIGCONV_T2_TRGO                              \
+     : (x) == TIM3 ? ADC_EXTERNALTRIGCONV_T3_TRGO                              \
+     : (x) == TIM5 ? ADC_EXTERNALTRIGCONV_T8_TRGO                              \
+                   : NULL)
 
 #define ADC_CHANNEL_x(x)                                                       \
     ((x[0]) == '0'   ? ADC_CHANNEL_0                                           \
@@ -43,11 +50,13 @@ typedef struct {
     char Channel[32];
 
     char GPIOxPiny[32];
-
+	
+	uint32_t Trigger;
     uint8_t Continuous;
-    uint32_t Trigger;
-
+	
+	uint32_t Length;
     DMA DMA;
+    Timer Timer;
 
     ADC_HandleTypeDef Handler;
 } mADC;

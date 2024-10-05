@@ -9,9 +9,7 @@
 extern Serial serial;
 
 extern mDAC dac;
-extern Timer generator;
 extern mADC adc;
-extern Timer sampler;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -82,10 +80,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == generator.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(generator.TIM);
+    if (htim->Instance == dac.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(dac.Timer.TIMx);
 
-    } else if (htim->Instance == sampler.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(sampler.TIM);
+    } else if (htim->Instance == adc.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(adc.Timer.TIMx);
     }
 }

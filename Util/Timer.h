@@ -6,7 +6,7 @@
 #include "TIM.h"
 
 typedef struct {
-    TIM_TypeDef *TIM;
+    TIM_TypeDef *TIMx;
     uint32_t ms;
     uint32_t Hz;
 
