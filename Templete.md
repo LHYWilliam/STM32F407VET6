@@ -3,18 +3,9 @@
 ```
 LED LED0 = {
     .GPIOxPiny = "A1",
-    .Mode = LOW,
 };
 
 LED_Init(&LED0);
-```
-
-* msp.c
-```
-```
-
-* interrupt.c
-```
 ```
 
 
@@ -23,38 +14,31 @@ LED_Init(&LED0);
 ```
 LED LED1 = {
     .GPIOxPiny = "A2",
-    .Mode = LOW,
 };
 
 LED_Init(&LED1);
 ```
 
-* msp.c
-```
-```
 
-* interrupt.c
-```
-```
-
-
-# Key
+# Key0
 * main.c
 ```
-Key key = {
+Key key0 = {
     .GPIOxPiny = "C0",
-    .Mode = HIGH,
 };
 
 Key_Init(&key);
 ```
 
-* msp.c
-```
-```
 
-* interrupt.c
+# Key1
+* main.c
 ```
+Key key1 = {
+    .GPIOxPiny = "A0",
+};
+
+Key_Init(&key);
 ```
 
 
@@ -62,26 +46,27 @@ Key_Init(&key);
 * main.c
 ```
 Serial serial = {
-    .usart = USARTx,
-    .TX = "xx",
-    .RX = "xx",
-    .baudrate = x,
+    .USART = USART1,
+    .TX = "A9",
+    .RX = "A10",
+    .Baudrate = 115200,
+    .RxIT = ENABLE,
+    .RxITSize = 1,
 };
 
 Serial_Init(&serial);
-Serial_RXITStart(&serial, 1);
 ```
 
 * msp.c
 ```
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-    if (huart->Instance == serial.usart) {
-        __HAL_RCC_USARTx_CLK_ENABLE(serial.usart);
+    if (huart->Instance == serial.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(serial.USART);
 
         GPIO RX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
-            .Alternate = GPIO_AF7_USARTx(serial.usart),
+            .Alternate = GPIO_AF7_USARTx(serial.USART),
         };
         strcpy(RX.GPIOxPiny, serial.RX);
         GPIO_Init(&RX);
@@ -89,23 +74,23 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         GPIO TX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
-            .Alternate = GPIO_AF7_USARTx(serial.usart),
+            .Alternate = GPIO_AF7_USARTx(serial.USART),
         };
         strcpy(TX.GPIOxPiny, serial.TX);
         GPIO_Init(&TX);
 
-        HAL_NVIC_EnableIRQ(USARTx_IRQn(serial.usart));
-        HAL_NVIC_SetPriority(USARTx_IRQn(serial.usart), x, 0);
+        HAL_NVIC_EnableIRQ(USARTx_IRQn(serial.USART));
+        HAL_NVIC_SetPriority(USARTx_IRQn(serial.USART), 4, 0);
     }
 }
 ```
 
 * interrupt.c
 ```
-void USARTx_IRQHandler(void) { HAL_UART_IRQHandler(&serial.Handler); }
+void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&serial.Handler); }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    if (huart->Instance == serial.usart) {
+    if (huart->Instance == serial.USART) {
     }
 
     Serial_RXITStart(&serial, 1);
@@ -122,14 +107,6 @@ OLED oled = {
 };
 
 OLED_Init(&oled);
-```
-
-* msp.c
-```
-```
-
-* interrupt.c
-```
 ```
 
 
@@ -238,31 +215,28 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
 ```
 
 
-# DAC & SignalGenerator
+# DAC
 * main.c
 ```
 mDAC dac = {
-    .Channel = "x",
-    .GPIOxPiny = "xx",
-    .Trigger = DAC_TRIGGER_Tx_TRGO,
+    .Channel = "1",
+    .GPIOxPiny = "A4",
+    .Length = DAC_DataLength,
     .DMA =
         {
-            .DMAx = DMAx,
-            .Channel = x,
-            .Stream = x,
+            .DMAx = DMA1,
+            .Channel = 7,
+            .Stream = 5,
+        },
+    .Timer =
+        {
+            .TIMx = TIM2,
+            .Hz = DAC_Frequency,
         },
 };
 
-SignalGenerator generator = {
-    .TIM = TIMx,
-    .Hz = x * DAC_DATA_LENGTH,
-    .Trigger = TIM_TRGO_UPDATE,
-};
-
 DAC_Init(&dac);
-DAC_DMAStart(&dac, (uint32_t *)data, DAC_DATA_LENGTH);
-
- SignalGenerator_Init(&generator);
+DAC_DMAStart(&dac, DACData, dac.Length);
 ```
 
 * msp.c
@@ -281,50 +255,43 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
         if (dac.DMA.DMAx) {
             __HAL_RCC_DMAx_CLK_ENABLE(dac.DMA.DMAx);
 
-            __HAL_LINKDMA(&dac.Handler, DMA_Handlex, dac.DMA.Handler);
+            __HAL_LINKDMA(&dac.Handler, DMA_Handle1, dac.DMA.Handler);
         }
     }
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == generator.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(generator.TIM);
+    if (htim->Instance == dac.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(dac.Timer.TIMx);
+
     }
 }
 ```
 
-* interrupt.c
-```
-```
 
-
-# ADC & SignalSampler
+# ADC
 * main.c
 ```
 mADC adc = {
-    .ADCx = ADCx,
-    .Channel = "x",
-    .GPIOxPiny = "xx",
-    .Continuous = DISABLE,
-    .Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO,
+    .ADCx = ADC1,
+    .Channel = "5",
+    .GPIOxPiny = "A5",
+    .Length = ADC_DataLength,
     .DMA =
         {
-            .DMAx = DMAx,
-            .Channel = x,
-            .Stream = x,
+            .DMAx = DMA2,
+            .Channel = 0,
+            .Stream = 0,
+        },
+    .Timer =
+        {
+            .TIMx = TIM3,
+            .Hz = ADC_Frequency,
         },
 };
 
-SignalSampler sampler = {
-    .TIM = TIMx,
-    .Hz = x,
-    .Trigger = TIM_TRGO_UPDATE,
-};
-
 ADC_Init(&adc);
-ADC_DMAStart(&adc, adcValue, ADC_DATA_LENGTH);
-
-SignalSampler_Init(&sampler);
+ADC_DMAStart(&adc, ADCValue, adc.Length);
 ```
 
 * msp.c
@@ -349,15 +316,12 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == sampler.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(sampler.TIM);
+    if (htim->Instance == adc.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(adc.Timer.TIMx);
     }
 }
 ```
 
-* interrupt.c
-```
-```
 
 # LCD
 * main.c
