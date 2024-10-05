@@ -7,8 +7,7 @@
 
 extern Serial_Handler serial;
 
-extern DAC_Handler dac;
-extern ADC_Handler adc;
+extern Timer_Handler LVGLTimer;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -37,6 +36,15 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
         HAL_NVIC_EnableIRQ(USARTx_IRQn(serial.USART));
         HAL_NVIC_SetPriority(USARTx_IRQn(serial.USART), 4, 0);
+    }
+}
+
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == LVGLTimer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(LVGLTimer.TIMx);
+
+        HAL_NVIC_SetPriority(TIMx_IRQN(LVGLTimer.TIMx), 15, 0);
+        HAL_NVIC_EnableIRQ(TIMx_IRQN(LVGLTimer.TIMx));
     }
 }
 

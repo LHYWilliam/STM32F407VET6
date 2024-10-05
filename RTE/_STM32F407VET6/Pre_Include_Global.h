@@ -11,6 +11,10 @@
 
 /* Keil::Device:STM32Cube HAL:Common@1.8.1 */
 #define USE_HAL_DRIVER
+/* LVGL::LVGL&LVGL:lvgl:Essential@8.4.0 */
+/*! \brief use lv_config_cmsis.h which will be pre-included */
+#define LV_CONF_SKIP
+#define LV_LVGL_H_INCLUDE_SIMPLE    1
 
 
 #endif /* PRE_INCLUDE_GLOBAL_H */

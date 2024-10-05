@@ -102,6 +102,9 @@
 #define RTE_DEVICE_HAL_WWDG
 /* Keil::Device:Startup@2.6.3 */
 #define RTE_DEVICE_STARTUP_STM32F4XX    /* Device Startup for STM32F4 */
+/* LVGL::LVGL&LVGL:lvgl:Essential@8.4.0 */
+/*! \brief Enable LVGL */
+#define RTE_GRAPHICS_LVGL
 
 
 #endif /* RTE_COMPONENTS_H */

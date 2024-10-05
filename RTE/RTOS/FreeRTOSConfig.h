@@ -116,7 +116,7 @@
 //  <i> Enable callback function call during each tick interrupt.
 //  <i> Callback function vApplicationTickHook implementation is required when tick hook is enabled.
 //  <i> Default: 0
-#define configUSE_TICK_HOOK                       0
+#define configUSE_TICK_HOOK                       1
 
 //  <q>Use deamon task startup hook
 //  <i> Enable callback function call when timer service starts.
