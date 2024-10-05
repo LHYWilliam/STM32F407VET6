@@ -3,7 +3,7 @@
 #include "Encoder.h"
 #include "TIM.h"
 
-void Encoder_Init(Encoder *encoder) {
+void Encoder_Init(Encoder_Handler *encoder) {
     encoder->Handler = (TIM_HandleTypeDef){
         .Instance = encoder->TIM,
         .Init =
@@ -35,7 +35,7 @@ void Encoder_Init(Encoder *encoder) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-int16_t Encoder_Get(Encoder *encoder) {
+int16_t Encoder_Get(Encoder_Handler *encoder) {
     int16_t count = (int16_t)__HAL_TIM_GetCounter(&encoder->Handler);
     __HAL_TIM_SetCounter(&encoder->Handler, 0);
     return count;

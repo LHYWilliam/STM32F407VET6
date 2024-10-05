@@ -1,6 +1,6 @@
 #include "TIM.h"
 
-void TIM_Init(TIM *tim) {
+void TIM_Init(TIM_Handler *tim) {
     *(tim->Handler) = (TIM_HandleTypeDef){
         .Instance = tim->TIM,
         .Init =

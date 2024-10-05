@@ -89,8 +89,8 @@ typedef struct {
     uint32_t Direction;
 
     DMA_HandleTypeDef Handler;
-} DMA;
+} DMA_Handler;
 
-void DMA_Init(DMA *dma);
+void DMA_Init(DMA_Handler *dma);
 
 #endif

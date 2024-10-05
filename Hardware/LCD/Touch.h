@@ -60,8 +60,8 @@ typedef struct Touch {
 } Touch;
 
 void Touch_Init(Touch *touch);
-uint8_t Touch_Scan(Touch *touch, LCD *lcd);
-uint8_t Touch_ScanChannel(Touch *touch, LCD *lcd, uint8_t channel);
+uint8_t Touch_Scan(Touch *touch, LCD_Handler *lcd);
+uint8_t Touch_ScanChannel(Touch *touch, LCD_Handler *lcd, uint8_t channel);
 
 uint8_t GT1151_Init(void);
 void GT1151_ReadBytes(uint16_t reg, uint8_t *buffer, uint8_t length);

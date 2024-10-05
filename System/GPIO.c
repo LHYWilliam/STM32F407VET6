@@ -2,7 +2,7 @@
 
 #include "GPIO.h"
 
-void GPIO_Init(GPIO *gpio) {
+void GPIO_Init(GPIO_Handler *gpio) {
     char *temp = gpio->GPIOxPiny;
 
     GPIO_InitTypeDef GPIO_Init = {

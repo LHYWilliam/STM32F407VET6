@@ -9,10 +9,10 @@ typedef struct {
     char GPIOxPiny[32];
 
     TIM_HandleTypeDef Handler;
-} Encoder;
+} Encoder_Handler;
 
-void Encoder_Init(Encoder *encoder);
+void Encoder_Init(Encoder_Handler *encoder);
 
-int16_t Encoder_Get(Encoder *encoder);
+int16_t Encoder_Get(Encoder_Handler *encoder);
 
 #endif

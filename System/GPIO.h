@@ -78,8 +78,8 @@ typedef struct {
 
     GPIO_TypeDef *GPIOx;
     uint32_t GPIO_Pin;
-} GPIO;
+} GPIO_Handler;
 
-void GPIO_Init(GPIO *gpio);
+void GPIO_Init(GPIO_Handler *gpio);
 
 #endif

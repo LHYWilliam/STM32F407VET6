@@ -28,18 +28,18 @@ typedef struct {
     uint32_t Trigger;
 
     char GPIOxPiny[32];
-	
-	uint32_t Length;
-    DMA DMA;
-    Timer Timer;
+
+    uint32_t Length;
+    DMA_Handler DMA;
+    Timer_Handler Timer;
 
     DAC_HandleTypeDef Handler;
-} mDAC;
+} DAC_Handler;
 
-void DAC_Init(mDAC *dac);
-void DAC_Start(mDAC *dac);
-void DAC_DMAStart(mDAC *dac, uint32_t *data, uint16_t length);
+void DAC_Init(DAC_Handler *dac);
+void DAC_Start(DAC_Handler *dac);
+void DAC_DMAStart(DAC_Handler *dac, uint32_t *data, uint16_t length);
 
-void DAC_Set(mDAC *dac, uint8_t channel, uint16_t value);
+void DAC_Set(DAC_Handler *dac, uint8_t channel, uint16_t value);
 
 #endif

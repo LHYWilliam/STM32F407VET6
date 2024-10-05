@@ -8,23 +8,23 @@
 #include "LED.h"
 #include "Serial.h"
 
-LED LED0 = {
+LED_Handler LED0 = {
     .GPIOxPiny = "A1",
 };
 
-LED LED1 = {
+LED_Handler LED1 = {
     .GPIOxPiny = "A2",
 };
 
-Key key0 = {
+Key_Handler key0 = {
     .GPIOxPiny = "C0",
 };
 
-Key key1 = {
+Key_Handler key1 = {
     .GPIOxPiny = "A0",
 };
 
-Serial serial = {
+Serial_Handler serial = {
     .USART = USART1,
     .TX = "A9",
     .RX = "A10",
@@ -38,7 +38,7 @@ Serial serial = {
 #define DAC_Frequency  2000
 #define ADC_Frequency  DAC_Frequency * 16
 
-mDAC dac = {
+DAC_Handler dac = {
     .Channel = "1",
     .GPIOxPiny = "A4",
     .Length = DAC_DataLength,
@@ -55,7 +55,7 @@ mDAC dac = {
         },
 };
 
-mADC adc = {
+ADC_Handler adc = {
     .ADCx = ADC1,
     .Channel = "5",
     .GPIOxPiny = "A5",

@@ -50,21 +50,21 @@ typedef struct {
     char Channel[32];
 
     char GPIOxPiny[32];
-	
-	uint32_t Trigger;
+
+    uint32_t Trigger;
     uint8_t Continuous;
-	
-	uint32_t Length;
-    DMA DMA;
-    Timer Timer;
+
+    uint32_t Length;
+    DMA_Handler DMA;
+    Timer_Handler Timer;
 
     ADC_HandleTypeDef Handler;
-} mADC;
+} ADC_Handler;
 
-void ADC_Init(mADC *adc);
-void ADC_Start(mADC *adc);
-void ADC_DMAStart(mADC *adc, uint32_t *data, uint16_t length);
+void ADC_Init(ADC_Handler *adc);
+void ADC_Start(ADC_Handler *adc);
+void ADC_DMAStart(ADC_Handler *adc, uint32_t *data, uint16_t length);
 
-uint16_t ADC_Get(mADC *adc);
+uint16_t ADC_Get(ADC_Handler *adc);
 
 #endif

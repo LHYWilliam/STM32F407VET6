@@ -5,10 +5,10 @@
 
 typedef struct {
     RNG_HandleTypeDef Handler;
-} mRNG;
+} RNG_Handler;
 
-void RNG_Init(mRNG *rng);
+void RNG_Init(RNG_Handler *rng);
 
-uint32_t RNG_RandomInt(mRNG *rng, int min, int max);
+uint32_t RNG_RandomInt(RNG_Handler *rng, int min, int max);
 
 #endif

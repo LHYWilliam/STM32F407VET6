@@ -5,11 +5,11 @@
 #include "LED.h"
 #include "Serial.h"
 
-extern LED LED0;
-extern Serial serial;
+extern LED_Handler LED0;
+extern Serial_Handler serial;
 
 extern uint32_t ADCValue[];
-extern mADC adc;
+extern ADC_Handler adc;
 
 void vLEDTimerCallback(TimerHandle_t xTimer) {
     LED_Toggle(&LED0);

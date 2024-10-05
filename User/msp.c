@@ -6,10 +6,10 @@
 #include "Serial.h"
 #include "Timer.h"
 
-extern Serial serial;
+extern Serial_Handler serial;
 
-extern mDAC dac;
-extern mADC adc;
+extern DAC_Handler dac;
+extern ADC_Handler adc;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -20,7 +20,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     if (huart->Instance == serial.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(serial.USART);
 
-        GPIO RX = {
+        GPIO_Handler RX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(serial.USART),
@@ -28,7 +28,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         strcpy(RX.GPIOxPiny, serial.RX);
         GPIO_Init(&RX);
 
-        GPIO TX = {
+        GPIO_Handler TX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(serial.USART),
@@ -45,7 +45,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
     if (hdac->Instance == dac.Handler.Instance) {
         __HAL_RCC_DAC_CLK_ENABLE();
 
-        GPIO gpio = {
+        GPIO_Handler gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };
@@ -64,7 +64,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
     if (hadc->Instance == adc.ADCx) {
         __HAL_RCC_ADCx_CLK_ENABLE(adc.ADCx);
 
-        GPIO gpio = {
+        GPIO_Handler gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };

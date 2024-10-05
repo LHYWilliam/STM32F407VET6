@@ -9,9 +9,9 @@
 
 #define SignalSampler_init   Timer_init
 
-typedef Timer SignalGenerator;
+typedef Timer_Handler SignalGenerator;
 
-typedef Timer SignalSampler;
+typedef Timer_Handler SignalSampler;
 
 void Sing_Generator(uint32_t *data, uint32_t length);
 

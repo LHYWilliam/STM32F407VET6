@@ -44,12 +44,12 @@ typedef struct {
     uint8_t RXBuffer[RXBUFFER_SIZE];
 
     UART_HandleTypeDef Handler;
-} Serial;
+} Serial_Handler;
 
-void Serial_Init(Serial *serial);
-void Serial_RXITStart(Serial *serial, uint8_t size);
+void Serial_Init(Serial_Handler *serial);
+void Serial_RXITStart(Serial_Handler *serial, uint8_t size);
 
-void Serial_SendBytes(Serial *serial, uint8_t *bytes, uint8_t length);
-void Serial_Printf(Serial *serial, char *format, ...);
+void Serial_SendBytes(Serial_Handler *serial, uint8_t *bytes, uint8_t length);
+void Serial_Printf(Serial_Handler *serial, char *format, ...);
 
 #endif
