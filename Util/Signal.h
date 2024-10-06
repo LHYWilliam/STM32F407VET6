@@ -6,11 +6,14 @@
 #include "ADC.h"
 #include "DAC.h"
 
+#undef DAC
+#undef ADC
+
 typedef struct {
     uint32_t *Data;
     uint32_t Length;
 
-    DAC_Handler _DAC;
+    DAC_Handler DAC;
     DMA_Handler DMA;
     Timer_Handler Timer;
 } SignalGenerator_Handler;
@@ -19,7 +22,7 @@ typedef struct {
     uint32_t *Data;
     uint32_t Length;
 
-    ADC_Handler _ADC;
+    ADC_Handler ADC;
     DMA_Handler DMA;
     Timer_Handler Timer;
 } SignalSampler_Handler;

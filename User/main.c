@@ -38,12 +38,12 @@ Serial_Handler serial = {
 #define ADC_Frequency  DAC_Frequency * 32
 
 uint32_t DAC_Data[DAC_DataLength];
-uint32_t ADC_Data[DAC_DataLength];
+uint32_t ADC_Data[ADC_DataLength];
 
 SignalGenerator_Handler generator = {
     .Data = DAC_Data,
     .Length = DAC_DataLength,
-    ._DAC =
+    .DAC =
         {
             .Channel = "1",
             .GPIOxPiny = "A4",
@@ -64,7 +64,7 @@ SignalGenerator_Handler generator = {
 SignalSampler_Handler sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
-    ._ADC =
+    .ADC =
         {
             .ADCx = ADC1,
             .Channel = "5",
@@ -107,8 +107,7 @@ int main() {
 
     LEDTimer = xTimerCreate("LEDTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
                             vLEDTimerCallback);
-    xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1,
-                &xKeyTaskHandle);
+    xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
 
     xTimerStart(LEDTimer, 0);
     vTaskStartScheduler();

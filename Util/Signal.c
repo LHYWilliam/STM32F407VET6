@@ -4,8 +4,8 @@
 
 void SignalGenerator_Init(SignalGenerator_Handler *generator) {
 
-    generator->_DAC.Trigger = DAC_TRIGGER_Tx_TRGO(generator->Timer.TIMx);
-    DAC_Init(&generator->_DAC);
+    generator->DAC.Trigger = DAC_TRIGGER_Tx_TRGO(generator->Timer.TIMx);
+    DAC_Init(&generator->DAC);
 
     generator->DMA.PeriphInc = DISABLE;
     generator->DMA.PeriphSize = 32;
@@ -18,18 +18,18 @@ void SignalGenerator_Init(SignalGenerator_Handler *generator) {
     generator->Timer.Hz *= generator->Length;
     generator->Timer.Trigger = TIM_TRGO_UPDATE;
     Timer_Init(&generator->Timer);
-    
+
     SignalGenerator_Start(generator, generator->Data, generator->Length);
 }
 
 void SignalGenerator_Start(SignalGenerator_Handler *generator, uint32_t *data,
                            uint32_t length) {
-    DAC_DMAStart(&generator->_DAC, data, length);
+    DAC_DMAStart(&generator->DAC, data, length);
 }
 
 void SignalSampler_Init(SignalSampler_Handler *sampler) {
-    sampler->_ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(sampler->Timer.TIMx);
-    ADC_Init(&sampler->_ADC);
+    sampler->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(sampler->Timer.TIMx);
+    ADC_Init(&sampler->ADC);
 
     sampler->DMA.PeriphInc = DISABLE;
     sampler->DMA.PeriphSize = 32;
@@ -42,13 +42,13 @@ void SignalSampler_Init(SignalSampler_Handler *sampler) {
 
     sampler->Timer.Trigger = TIM_TRGO_UPDATE;
     Timer_Init(&sampler->Timer);
-    
+
     SignalSampler_Start(sampler, sampler->Data, sampler->Length);
 }
 
 void SignalSampler_Start(SignalSampler_Handler *sampler, uint32_t *data,
                          uint32_t length) {
-    ADC_DMAStart(&sampler->_ADC, data, length);
+    ADC_DMAStart(&sampler->ADC, data, length);
 }
 
 void Sin_Generate(uint32_t *data, uint32_t length) {

@@ -40,40 +40,41 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 }
 
 void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
-    if (hdac->Instance == generator._DAC.Handler.Instance) {
+    if (hdac->Instance == generator.DAC.Handler.Instance) {
         __HAL_RCC_DAC_CLK_ENABLE();
 
         GPIO_Handler gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };
-        strcpy(gpio.GPIOxPiny, generator._DAC.GPIOxPiny);
+        strcpy(gpio.GPIOxPiny, generator.DAC.GPIOxPiny);
         GPIO_Init(&gpio);
 
         if (generator.DMA.DMAx) {
             __HAL_RCC_DMAx_CLK_ENABLE(generator.DMA.DMAx);
 
-            __HAL_LINKDMA(&generator._DAC.Handler, DMA_Handle1,
+            __HAL_LINKDMA(&generator.DAC.Handler, DMA_Handle1,
                           generator.DMA.Handler);
         }
     }
 }
 
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
-    if (hadc->Instance == sampler._ADC.ADCx) {
-        __HAL_RCC_ADCx_CLK_ENABLE(sampler._ADC.ADCx);
+    if (hadc->Instance == sampler.ADC.ADCx) {
+        __HAL_RCC_ADCx_CLK_ENABLE(sampler.ADC.ADCx);
 
         GPIO_Handler gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };
-        strcpy(gpio.GPIOxPiny, sampler._ADC.GPIOxPiny);
+        strcpy(gpio.GPIOxPiny, sampler.ADC.GPIOxPiny);
         GPIO_Init(&gpio);
 
         if (sampler.DMA.DMAx) {
             __HAL_RCC_DMAx_CLK_ENABLE(sampler.DMA.DMAx);
 
-            __HAL_LINKDMA(&sampler._ADC.Handler, DMA_Handle, sampler.DMA.Handler);
+            __HAL_LINKDMA(&sampler.ADC.Handler, DMA_Handle,
+                          sampler.DMA.Handler);
         }
     }
 }
