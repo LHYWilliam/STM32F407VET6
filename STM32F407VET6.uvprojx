@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\System;.\Util;.\U8g2;.\LVGL</IncludePath>
+              <IncludePath>.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\System;.\U8g2;.\LVGL;.\Util</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -598,6 +598,11 @@
               <FileName>Serial.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Util\Serial.h</FilePath>
+            </File>
+            <File>
+              <FileName>Signal.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\Signal.c</FilePath>
             </File>
             <File>
               <FileName>Signal.h</FileName>

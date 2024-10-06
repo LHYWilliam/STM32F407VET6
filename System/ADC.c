@@ -9,10 +9,6 @@ void ADC_Init(ADC_Handler *adc) {
         NbrOfConversion++;
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 
-    if (adc->Timer.TIMx) {
-        adc->Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(adc->Timer.TIMx);
-    }
-
     adc->Handler = (ADC_HandleTypeDef){
         .Instance = adc->ADCx,
         .Init =
@@ -43,27 +39,11 @@ void ADC_Init(ADC_Handler *adc) {
         HAL_ADC_ConfigChannel(&adc->Handler, &channel);
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2) &&
              (rank = rank + 1));
-
-    if (adc->DMA.DMAx) {
-        adc->DMA.PeriphInc = DISABLE;
-        adc->DMA.PeriphSize = 32;
-        adc->DMA.MemInc = ENABLE;
-        adc->DMA.MemSize = 32;
-        adc->DMA.Mode = DMA_CIRCULAR;
-        adc->DMA.Direction = DMA_PERIPH_TO_MEMORY;
-
-        DMA_Init(&adc->DMA);
-    }
-
-    if (adc->Timer.TIMx) {
-        adc->Timer.Trigger = TIM_TRGO_UPDATE;
-        Timer_Init(&adc->Timer);
-    }
 }
 
 void ADC_Start(ADC_Handler *adc) { HAL_ADC_Start(&adc->Handler); };
 
-void ADC_DMAStart(ADC_Handler *adc, uint32_t *data, uint16_t length) {
+void ADC_DMAStart(ADC_Handler *adc, uint32_t *data, uint32_t length) {
     HAL_ADC_Start_DMA(&adc->Handler, data, length);
 };
 

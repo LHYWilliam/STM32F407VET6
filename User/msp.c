@@ -1,11 +1,13 @@
 #include <string.h>
 
-#include "ADC.h"
-#include "DAC.h"
 #include "GPIO.h"
 #include "Serial.h"
+#include "Signal.h"
 
 extern Serial_Handler serial;
+
+extern SignalGenerator_Handler generator;
+extern SignalSampler_Handler sampler;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -34,5 +36,53 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
         HAL_NVIC_EnableIRQ(USARTx_IRQn(serial.USART));
         HAL_NVIC_SetPriority(USARTx_IRQn(serial.USART), 4, 0);
+    }
+}
+
+void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
+    if (hdac->Instance == generator._DAC.Handler.Instance) {
+        __HAL_RCC_DAC_CLK_ENABLE();
+
+        GPIO_Handler gpio = {
+            .Mode = GPIO_MODE_ANALOG,
+            .Pull = GPIO_NOPULL,
+        };
+        strcpy(gpio.GPIOxPiny, generator._DAC.GPIOxPiny);
+        GPIO_Init(&gpio);
+
+        if (generator.DMA.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(generator.DMA.DMAx);
+
+            __HAL_LINKDMA(&generator._DAC.Handler, DMA_Handle1,
+                          generator.DMA.Handler);
+        }
+    }
+}
+
+void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
+    if (hadc->Instance == sampler._ADC.ADCx) {
+        __HAL_RCC_ADCx_CLK_ENABLE(sampler._ADC.ADCx);
+
+        GPIO_Handler gpio = {
+            .Mode = GPIO_MODE_ANALOG,
+            .Pull = GPIO_NOPULL,
+        };
+        strcpy(gpio.GPIOxPiny, sampler._ADC.GPIOxPiny);
+        GPIO_Init(&gpio);
+
+        if (sampler.DMA.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(sampler.DMA.DMAx);
+
+            __HAL_LINKDMA(&sampler._ADC.Handler, DMA_Handle, sampler.DMA.Handler);
+        }
+    }
+}
+
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == generator.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(generator.Timer.TIMx);
+
+    } else if (htim->Instance == sampler.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(sampler.Timer.TIMx);
     }
 }

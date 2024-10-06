@@ -1,18 +1,37 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
-// #include "arm_math.h"
+#include "stm32f4xx_hal.h"
 
-#include "Timer.h"
+#include "ADC.h"
+#include "DAC.h"
 
-#define SignalGenerator_init Timer_init
+typedef struct {
+    uint32_t *Data;
+    uint32_t Length;
 
-#define SignalSampler_init   Timer_init
+    DAC_Handler _DAC;
+    DMA_Handler DMA;
+    Timer_Handler Timer;
+} SignalGenerator_Handler;
 
-typedef Timer_Handler SignalGenerator;
+typedef struct {
+    uint32_t *Data;
+    uint32_t Length;
 
-typedef Timer_Handler SignalSampler;
+    ADC_Handler _ADC;
+    DMA_Handler DMA;
+    Timer_Handler Timer;
+} SignalSampler_Handler;
 
-void Sing_Generator(uint32_t *data, uint32_t length);
+void SignalGenerator_Init(SignalGenerator_Handler *generator);
+void SignalGenerator_Start(SignalGenerator_Handler *generator, uint32_t *data,
+                           uint32_t length);
+
+void SignalSampler_Init(SignalSampler_Handler *sampler);
+void SignalSampler_Start(SignalSampler_Handler *sampler, uint32_t *data,
+                         uint32_t length);
+
+void Sin_Generate(uint32_t *data, uint32_t length);
 
 #endif

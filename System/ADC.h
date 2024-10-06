@@ -54,16 +54,12 @@ typedef struct {
     uint32_t Trigger;
     uint8_t Continuous;
 
-    uint32_t Length;
-    DMA_Handler DMA;
-    Timer_Handler Timer;
-
     ADC_HandleTypeDef Handler;
 } ADC_Handler;
 
 void ADC_Init(ADC_Handler *adc);
 void ADC_Start(ADC_Handler *adc);
-void ADC_DMAStart(ADC_Handler *adc, uint32_t *data, uint16_t length);
+void ADC_DMAStart(ADC_Handler *adc, uint32_t *data, uint32_t length);
 
 uint16_t ADC_Get(ADC_Handler *adc);
 
