@@ -13,7 +13,7 @@ GPIO_TypeDef *SDA_GPIOx;
 uint32_t SDA_GPIO_Pin;
 
 void U8G2_Init(U8G2 *u8g2) {
-    GPIO SCL = {
+    GPIO_Handler SCL = {
         .Mode = GPIO_MODE_OUTPUT_OD,
         .Pull = GPIO_PULLUP,
     };
@@ -22,7 +22,7 @@ void U8G2_Init(U8G2 *u8g2) {
     SCL_GPIOx = SCL.GPIOx;
     SCL_GPIO_Pin = SCL.GPIO_Pin;
 
-    GPIO SDA = {
+    GPIO_Handler SDA = {
         .Mode = GPIO_MODE_OUTPUT_OD,
         .Pull = GPIO_PULLUP,
     };
