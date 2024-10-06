@@ -6,6 +6,8 @@
 #include "DMA.h"
 #include "Timer.h"
 
+#undef ADC
+
 #define ADC_EXTERNALTRIGCONV_Tx_TRGO(x)                                        \
     ((x) == TIM2   ? ADC_EXTERNALTRIGCONV_T2_TRGO                              \
      : (x) == TIM3 ? ADC_EXTERNALTRIGCONV_T3_TRGO                              \

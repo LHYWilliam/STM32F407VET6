@@ -6,6 +6,8 @@
 #include "DMA.h"
 #include "Timer.h"
 
+#undef DAC
+
 #define DAC_TRIGGER_Tx_TRGO(x)                                                 \
     ((x) == TIM2   ? DAC_TRIGGER_T2_TRGO                                       \
      : (x) == TIM4 ? DAC_TRIGGER_T4_TRGO                                       \

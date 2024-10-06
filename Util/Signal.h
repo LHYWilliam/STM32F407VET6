@@ -6,9 +6,6 @@
 #include "ADC.h"
 #include "DAC.h"
 
-#undef DAC
-#undef ADC
-
 typedef struct {
     uint32_t *Data;
     uint32_t Length;

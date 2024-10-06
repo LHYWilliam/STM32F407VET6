@@ -4,7 +4,7 @@
 
 void DAC_Init(DAC_Handler *dac) {
     dac->Handler = (DAC_HandleTypeDef){
-        .Instance = DAC,
+        .Instance = DAC1,
     };
     HAL_DAC_Init(&dac->Handler);
 
