@@ -3,9 +3,11 @@
 #include "timers.h"
 
 #include "Key.h"
+#include "LCD.h"
 #include "LED.h"
 #include "Serial.h"
 #include "Signal.h"
+#include "Touch.h"
 
 LED_Handler LED0 = {
     .GPIOxPiny = "A1",
@@ -15,21 +17,35 @@ LED_Handler LED1 = {
     .GPIOxPiny = "A2",
 };
 
-Key_Handler key0 = {
+Key_Handler Key0 = {
     .GPIOxPiny = "C0",
 };
 
-Key_Handler key1 = {
+Key_Handler Key1 = {
     .GPIOxPiny = "A0",
 };
 
-Serial_Handler serial = {
+Serial_Handler Serial = {
     .USART = USART1,
     .TX = "A9",
     .RX = "A10",
     .Baudrate = 115200,
     .RxIT = ENABLE,
     .RxITSize = 1,
+};
+
+LCD_Handler LCD = {
+    .Direction = LCD_Vertical,
+    .DMA =
+        {
+            .DMAx = DMA2,
+            .Stream = 0,
+            .Channel = 0,
+        },
+};
+
+Touch_Handler Touch = {
+    .Direction = LCD_Vertical,
 };
 
 #define DAC_DataLength 32
@@ -40,7 +56,7 @@ Serial_Handler serial = {
 uint32_t DAC_Data[DAC_DataLength];
 uint32_t ADC_Data[ADC_DataLength];
 
-SignalGenerator_Handler generator = {
+SignalGenerator_Handler Generator = {
     .Data = DAC_Data,
     .Length = DAC_DataLength,
     .DAC =
@@ -61,7 +77,7 @@ SignalGenerator_Handler generator = {
         },
 };
 
-SignalSampler_Handler sampler = {
+SignalSampler_Handler Sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
     .ADC =
@@ -97,13 +113,16 @@ int main() {
 
     LED_Init(&LED0);
     LED_Init(&LED1);
-    Key_Init(&key0);
-    Key_Init(&key1);
-    Serial_Init(&serial);
+    Key_Init(&Key0);
+    Key_Init(&Key1);
+    Serial_Init(&Serial);
 
-    Sin_Generate(generator.Data, generator.Length);
-    SignalGenerator_Init(&generator);
-    SignalSampler_Init(&sampler);
+    LCD_Init(&LCD);
+    Touch_Init(&Touch);
+
+    Sin_Generate(Generator.Data, Generator.Length);
+    SignalGenerator_Init(&Generator);
+    SignalSampler_Init(&Sampler);
 
     LEDTimer = xTimerCreate("LEDTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
                             vLEDTimerCallback);
