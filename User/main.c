@@ -2,6 +2,11 @@
 #include "task.h"
 #include "timers.h"
 
+#include "lvgl.h"
+
+#include "lv_port_disp.h"
+#include "lv_port_indev.h"
+
 #include "Key.h"
 #include "LCD.h"
 #include "LED.h"
@@ -102,8 +107,8 @@ SignalSampler_Handler Sampler = {
 TimerHandle_t LEDTimer;
 void vLEDTimerCallback(TimerHandle_t xTimer);
 
-TaskHandle_t xKeyTaskHandle;
-void vKeyTaskCode(void *pvParameters);
+TaskHandle_t xLVGLTaskHandle;
+void vLVGLTaskCode(void *pvParameters);
 
 void SystemClock_Config(void);
 
@@ -117,16 +122,20 @@ int main() {
     Key_Init(&Key1);
     Serial_Init(&Serial);
 
-    LCD_Init(&LCD);
-    Touch_Init(&Touch);
+    // LCD_Init(&LCD);
+    // Touch_Init(&Touch);
 
-    Sin_Generate(Generator.Data, Generator.Length);
-    SignalGenerator_Init(&Generator);
-    SignalSampler_Init(&Sampler);
+    // Sin_Generate(Generator.Data, Generator.Length);
+    // SignalGenerator_Init(&Generator);
+    // SignalSampler_Init(&Sampler);
+
+    // lv_init();
+    // lv_port_disp_init();
+    // lv_port_indev_init();
 
     LEDTimer = xTimerCreate("LEDTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
                             vLEDTimerCallback);
-    xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
+    // xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
 
     xTimerStart(LEDTimer, 0);
     vTaskStartScheduler();

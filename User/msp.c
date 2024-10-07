@@ -82,8 +82,6 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
         .Alternate = GPIO_AF12_FSMC,
     };
     GPIO_Init(&FSMC_A18);
-
-    UNUSED(hsram);
 }
 
 void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {

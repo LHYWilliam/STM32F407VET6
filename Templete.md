@@ -389,8 +389,6 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
         .Alternate = GPIO_AF12_FSMC,
     };
     GPIO_Init(&FSMC_A18);
-
-    UNUSED(hsram);
 }
 ```
 
@@ -398,43 +396,25 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
 # LVGL
 * main.c
 ```
-Timer_Handler LVGLTimer = {
-    .TIMx = TIM2,
-    .ms = 6,
-    .Interrupt = ENABLE,
-};
+TaskHandle_t xLVGLTaskHandle;
+void vLVGLTaskCode(void *pvParameters);
 
 lv_init();
 lv_port_disp_init();
 lv_port_indev_init();
 
-Timer_Init(&LVGLTimer);
-```
-
-* msp.c
-```
-void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == LVGLTimer.TIMx) {
-        __HAL_RCC_TIMx_CLK_ENABLE(LVGLTimer.TIMx);
-
-        HAL_NVIC_SetPriority(TIMx_IRQN(LVGLTimer.TIMx), 15, 0);
-        HAL_NVIC_EnableIRQ(TIMx_IRQN(LVGLTimer.TIMx));
-    }
-}
+xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
 ```
 
 * task.c
 ```
-void vApplicationTickHook() { lv_tick_inc(1); }
-```
-
-* interrupt.c
-```
-void TIM2_IRQHandler(void) { HAL_TIM_IRQHandler(&LVGLTimer.Handler); }
-
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    if (htim == &LVGLTimer.Handler) {
+void vLVGLTaskCode(void *pvParameters) {
+    for (;;) {
         lv_timer_handler();
+        
+        vTaskDelay(pdMS_TO_TICKS(5));
     }
 }
+
+void vApplicationTickHook() { lv_tick_inc(1); }
 ```
