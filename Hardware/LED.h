@@ -8,12 +8,12 @@ typedef struct {
 
     GPIO_TypeDef *GPIOx;
     uint32_t GPIO_Pin;
-} LED_Handler;
+} LED_t;
 
-void LED_Init(LED_Handler *self);
+void LED_Init(LED_t *self);
 
-void LED_On(LED_Handler *self);
-void LED_Off(LED_Handler *self);
-void LED_Toggle(LED_Handler *self);
+void LED_On(LED_t *self);
+void LED_Off(LED_t *self);
+void LED_Toggle(LED_t *self);
 
 #endif

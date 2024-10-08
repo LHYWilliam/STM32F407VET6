@@ -2,7 +2,7 @@
 
 #include "GPIO.h"
 
-void GPIO_Init(GPIO_Handler *self) {
+void GPIO_Init(GPIO_t *self) {
     GPIO_InitTypeDef GPIO_Init = {
         .Mode = self->Mode,
         .Pull = self->Pull,

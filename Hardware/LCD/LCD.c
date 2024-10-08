@@ -15,7 +15,7 @@ void LCD_DisplayOn(void) { LCD_WriteREG(0X29); }
 
 void LCD_DisplayOff(void) { LCD_WriteREG(0X28); }
 
-void LCD_SetCursor(LCD_Handler *self, uint16_t x, uint16_t y) {
+void LCD_SetCursor(LCD_t *self, uint16_t x, uint16_t y) {
     LCD_WriteREG(self->SetXCMD);
     LCD_WriteDATA(x >> 8);
     LCD_WriteDATA(x & 0XFF);
@@ -25,7 +25,7 @@ void LCD_SetCursor(LCD_Handler *self, uint16_t x, uint16_t y) {
     LCD_WriteDATA(y & 0XFF);
 }
 
-void LCD_SetWindow(LCD_Handler *self, uint16_t x1, uint16_t y1, uint16_t width,
+void LCD_SetWindow(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t width,
                    uint16_t height) {
     uint16_t x2 = x1 + width - 1, y2 = y1 + height - 1;
 
@@ -42,7 +42,7 @@ void LCD_SetWindow(LCD_Handler *self, uint16_t x1, uint16_t y1, uint16_t width,
     LCD_WriteDATA(y2 & 0XFF);
 }
 
-void LCD_SetDisplayDirection(LCD_Handler *self, LCD_Direction direction) {
+void LCD_SetDisplayDirection(LCD_t *self, LCD_Direction direction) {
     self->Direction = direction;
 
     if (direction == LCD_Vertical) {
@@ -60,7 +60,7 @@ void LCD_SetDisplayDirection(LCD_Handler *self, LCD_Direction direction) {
     }
 }
 
-void LCD_SetScanDirection(LCD_Handler *self, LCD_Direction direction) {
+void LCD_SetScanDirection(LCD_t *self, LCD_Direction direction) {
     if (self->Direction == LCD_Horizontal) {
         switch (direction) {
         case L2R_U2D:
@@ -151,15 +151,13 @@ void LCD_SetScanDirection(LCD_Handler *self, LCD_Direction direction) {
     }
 }
 
-void LCD_SetPointColor(LCD_Handler *self, uint16_t color) {
+void LCD_SetPointColor(LCD_t *self, uint16_t color) {
     self->PointColor = color;
 }
 
-void LCD_SetBackColor(LCD_Handler *self, uint16_t color) {
-    self->BackColor = color;
-}
+void LCD_SetBackColor(LCD_t *self, uint16_t color) { self->BackColor = color; }
 
-void LCD_Clear(LCD_Handler *self, uint16_t color) {
+void LCD_Clear(LCD_t *self, uint16_t color) {
     LCD_SetCursor(self, 0x00, 0x0000);
 
     LCD_WriteGRAM(self);
@@ -169,7 +167,7 @@ void LCD_Clear(LCD_Handler *self, uint16_t color) {
     }
 }
 
-void LCD_Fill(LCD_Handler *self, uint16_t x, uint16_t y, uint16_t width,
+void LCD_Fill(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
               uint16_t height, uint16_t color) {
     LCD_SetWindow(self, x, y, width, height);
 
@@ -180,13 +178,13 @@ void LCD_Fill(LCD_Handler *self, uint16_t x, uint16_t y, uint16_t width,
     }
 }
 
-void LCD_DrawPoint(LCD_Handler *self, uint16_t x, uint16_t y, uint16_t color) {
+void LCD_DrawPoint(LCD_t *self, uint16_t x, uint16_t y, uint16_t color) {
     LCD_SetCursor(self, x, y);
     LCD_WriteGRAM(self);
     LCD_WriteDATA(color);
 }
 
-void LCD_DrawLine(LCD_Handler *self, uint16_t x1, uint16_t y1, uint16_t x2,
+void LCD_DrawLine(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t x2,
                   uint16_t y2) {
     int32_t xerr = 0, yerr = 0, delta_x = x2 - x1, delta_y = y2 - y1, distance;
     int32_t incx, incy, uRow = x1, uCol = y1;
@@ -233,7 +231,7 @@ void LCD_DrawLine(LCD_Handler *self, uint16_t x1, uint16_t y1, uint16_t x2,
     }
 }
 
-void LCD_DrawRectangle(LCD_Handler *self, uint16_t x1, uint16_t y1, uint16_t x2,
+void LCD_DrawRectangle(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t x2,
                        uint16_t y2) {
     LCD_DrawLine(self, x1, y1, x2, y1);
     LCD_DrawLine(self, x1, y1, x1, y2);
@@ -241,7 +239,7 @@ void LCD_DrawRectangle(LCD_Handler *self, uint16_t x1, uint16_t y1, uint16_t x2,
     LCD_DrawLine(self, x2, y1, x2, y2);
 }
 
-void LCD_DrawCircle(LCD_Handler *self, uint16_t x0, uint16_t y0, uint8_t r) {
+void LCD_DrawCircle(LCD_t *self, uint16_t x0, uint16_t y0, uint8_t r) {
     int32_t a = 0, b = r, di = 3 - (r << 1);
 
     while (a <= b) {
@@ -264,7 +262,7 @@ void LCD_DrawCircle(LCD_Handler *self, uint16_t x0, uint16_t y0, uint8_t r) {
     }
 }
 
-void LCD_ShowImage(LCD_Handler *self, uint16_t x, uint16_t y, uint16_t width,
+void LCD_ShowImage(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                    uint16_t height, const uint8_t *image) {
     LCD_SetWindow(self, x, y, width, height);
     LCD_WriteGRAM(self);
@@ -299,7 +297,7 @@ static void opt_delay(uint8_t i) {
         ;
 }
 
-uint16_t LCD_ReadPoint(LCD_Handler *self, uint16_t x, uint16_t y) {
+uint16_t LCD_ReadPoint(LCD_t *self, uint16_t x, uint16_t y) {
     uint16_t r = 0, g = 0, b = 0;
     if (x >= self->Width || y >= self->Height)
         return 0;
@@ -321,7 +319,7 @@ uint16_t LCD_ReadPoint(LCD_Handler *self, uint16_t x, uint16_t y) {
     return (((r >> 11) << 11) | ((g >> 10) << 5) | (b >> 11));
 }
 
-void LCD_ShowChar(LCD_Handler *self, uint16_t x, uint16_t y, uint8_t num,
+void LCD_ShowChar(LCD_t *self, uint16_t x, uint16_t y, uint8_t num,
                   uint8_t size, uint8_t mode) {
     uint16_t y0 = y;
     num = num - ' ';
@@ -378,7 +376,7 @@ uint32_t LCD_Pow(uint8_t m, uint8_t n) {
     return result;
 }
 
-void LCD_ShowNum(LCD_Handler *self, uint16_t x, uint16_t y, uint32_t num,
+void LCD_ShowNum(LCD_t *self, uint16_t x, uint16_t y, uint32_t num,
                  uint8_t length, uint8_t size) {
     uint8_t temp, enshow = 0;
     for (uint8_t t = 0; t < length; t++) {
@@ -397,7 +395,7 @@ void LCD_ShowNum(LCD_Handler *self, uint16_t x, uint16_t y, uint32_t num,
     }
 }
 
-void LCD_ShowxNum(LCD_Handler *self, uint16_t x, uint16_t y, uint32_t num,
+void LCD_ShowxNum(LCD_t *self, uint16_t x, uint16_t y, uint32_t num,
                   uint8_t length, uint8_t size, uint8_t mode) {
     uint8_t temp, enshow = 0;
     for (uint8_t t = 0; t < length; t++) {
@@ -421,7 +419,7 @@ void LCD_ShowxNum(LCD_Handler *self, uint16_t x, uint16_t y, uint32_t num,
     }
 }
 
-void LCD_ShowString(LCD_Handler *self, uint16_t x, uint16_t y, uint16_t width,
+void LCD_ShowString(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                     uint16_t height, uint8_t size, char *string) {
     uint8_t x0 = x;
     width += x;
@@ -443,15 +441,15 @@ void LCD_ShowString(LCD_Handler *self, uint16_t x, uint16_t y, uint16_t width,
     }
 }
 
-void LCD_Init(LCD_Handler *self) {
-    GPIO_Handler LCD_RST_ = {
+void LCD_Init(LCD_t *self) {
+    GPIO_t LCD_RST_ = {
         .GPIOxPiny = "D11 ",
         .Pull = GPIO_PULLUP,
         .Mode = GPIO_MODE_OUTPUT_PP,
     };
     GPIO_Init(&LCD_RST_);
 
-    GPIO_Handler LCD_LED_ = {
+    GPIO_t LCD_LED_ = {
         .GPIOxPiny = "D12",
         .Pull = GPIO_PULLUP,
         .Mode = GPIO_MODE_OUTPUT_PP,

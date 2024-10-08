@@ -27,7 +27,7 @@ void SignalGenerator_Start(SignalGenerator_Handler *self, uint32_t *data,
     DAC_DMAStart(&self->DAC, data, length);
 }
 
-void SignalSampler_Init(SignalSampler_Handler *self) {
+void SignalSampler_Init(SignalSampler_t *self) {
     self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(self->Timer.TIMx);
     ADC_Init(&self->ADC);
 
@@ -46,7 +46,7 @@ void SignalSampler_Init(SignalSampler_Handler *self) {
     SignalSampler_Start(self, self->Data, self->Length);
 }
 
-void SignalSampler_Start(SignalSampler_Handler *self, uint32_t *data,
+void SignalSampler_Start(SignalSampler_t *self, uint32_t *data,
                          uint32_t length) {
     ADC_DMAStart(&self->ADC, data, length);
 }

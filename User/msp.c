@@ -4,10 +4,10 @@
 #include "Serial.h"
 #include "Signal.h"
 
-extern Serial_Handler Serial;
+extern Serial_t Serial;
 
 extern SignalGenerator_Handler Generator;
-extern SignalSampler_Handler Sampler;
+extern SignalSampler_t Sampler;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -18,7 +18,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     if (huart->Instance == Serial.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
 
-        GPIO_Handler RX = {
+        GPIO_t RX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial.USART),
@@ -26,7 +26,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         strcpy(RX.GPIOxPiny, Serial.RX);
         GPIO_Init(&RX);
 
-        GPIO_Handler TX = {
+        GPIO_t TX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial.USART),
@@ -42,7 +42,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     __HAL_RCC_FSMC_CLK_ENABLE();
 
-    GPIO_Handler FSMC_D = {
+    GPIO_t FSMC_D = {
         .GPIOxPiny = "D14 | D15 | D0 | D1 | E7 | E8 | E9 | E10 | E11 | E12 | "
                      "E13 | E14 | E15 | D8 | D9 | D10",
         .Mode = GPIO_MODE_AF_PP,
@@ -51,7 +51,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_D);
 
-    GPIO_Handler FSMC_NOE = {
+    GPIO_t FSMC_NOE = {
         .GPIOxPiny = "D4 ",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -59,7 +59,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_NOE);
 
-    GPIO_Handler FSMC_NWE = {
+    GPIO_t FSMC_NWE = {
         .GPIOxPiny = "D5",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -67,7 +67,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_NWE);
 
-    GPIO_Handler FSMC_NE1 = {
+    GPIO_t FSMC_NE1 = {
         .GPIOxPiny = "D7",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -75,7 +75,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_NE1);
 
-    GPIO_Handler FSMC_A18 = {
+    GPIO_t FSMC_A18 = {
         .GPIOxPiny = "D13",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -88,7 +88,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
     if (hdac->Instance == Generator.DAC.Handler.Instance) {
         __HAL_RCC_DAC_CLK_ENABLE();
 
-        GPIO_Handler gpio = {
+        GPIO_t gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };
@@ -108,7 +108,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
     if (hadc->Instance == Sampler.ADC.ADCx) {
         __HAL_RCC_ADCx_CLK_ENABLE(Sampler.ADC.ADCx);
 
-        GPIO_Handler gpio = {
+        GPIO_t gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };

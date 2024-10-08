@@ -1,6 +1,6 @@
 #include "Serial.h"
 
-extern Serial_Handler Serial;
+extern Serial_t Serial;
 
 void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&Serial.Handler); }
 

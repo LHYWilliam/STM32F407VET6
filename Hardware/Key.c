@@ -4,8 +4,8 @@
 #include "GPIO.h"
 #include "Key.h"
 
-void Key_Init(Key_Handler *self) {
-    GPIO_Handler gpio = {
+void Key_Init(Key_t *self) {
+    GPIO_t gpio = {
         .Mode = GPIO_MODE_INPUT,
         .Pull = GPIO_PULLDOWN,
     };
@@ -16,7 +16,7 @@ void Key_Init(Key_Handler *self) {
     self->GPIO_Pin = gpio.GPIO_Pin;
 }
 
-KeyState Key_Read(Key_Handler *self) {
+KeyState Key_Read(Key_t *self) {
     if (HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin)) {
         Delay_ms(10);
         while (HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin)) {

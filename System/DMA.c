@@ -1,6 +1,6 @@
 #include "DMA.h"
 
-void DMA_Init(DMA_Handler *self) {
+void DMA_Init(DMA_t *self) {
     if (self->Direction == DMA_MEMORY_TO_MEMORY) {
         __HAL_RCC_DMAx_CLK_ENABLE(self->DMAx);
     }

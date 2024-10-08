@@ -2,7 +2,7 @@
 
 #include "ADC.h"
 
-void ADC_Init(ADC_Handler *self) {
+void ADC_Init(ADC_t *self) {
     uint8_t NbrOfConversion = 0;
     char *temp = self->Channel;
     do {
@@ -41,10 +41,10 @@ void ADC_Init(ADC_Handler *self) {
              (rank = rank + 1));
 }
 
-void ADC_Start(ADC_Handler *self) { HAL_ADC_Start(&self->Handler); };
+void ADC_Start(ADC_t *self) { HAL_ADC_Start(&self->Handler); };
 
-void ADC_DMAStart(ADC_Handler *self, uint32_t *data, uint32_t length) {
+void ADC_DMAStart(ADC_t *self, uint32_t *data, uint32_t length) {
     HAL_ADC_Start_DMA(&self->Handler, data, length);
 };
 
-uint16_t ADC_Get(ADC_Handler *self) { return HAL_ADC_GetValue(&self->Handler); }
+uint16_t ADC_Get(ADC_t *self) { return HAL_ADC_GetValue(&self->Handler); }

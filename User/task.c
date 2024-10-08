@@ -9,11 +9,11 @@
 #include "Serial.h"
 #include "Signal.h"
 
-extern LED_Handler LED0;
-extern Key_Handler Key0;
-extern Serial_Handler Serial;
+extern LED_t LED0;
+extern Key_t Key0;
+extern Serial_t Serial;
 
-extern SignalSampler_Handler Sampler;
+extern SignalSampler_t Sampler;
 
 void vLEDTimerCallback(TimerHandle_t xTimer) { LED_Toggle(&LED0); }
 

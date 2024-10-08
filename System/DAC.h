@@ -32,12 +32,12 @@ typedef struct {
     char GPIOxPiny[32];
 
     DAC_HandleTypeDef Handler;
-} DAC_Handler;
+} DAC_t;
 
-void DAC_Init(DAC_Handler *self);
-void DAC_Start(DAC_Handler *self);
-void DAC_DMAStart(DAC_Handler *self, uint32_t *data, uint32_t length);
+void DAC_Init(DAC_t *self);
+void DAC_Start(DAC_t *self);
+void DAC_DMAStart(DAC_t *self, uint32_t *data, uint32_t length);
 
-void DAC_Set(DAC_Handler *self, uint8_t channel, uint16_t value);
+void DAC_Set(DAC_t *self, uint8_t channel, uint16_t value);
 
 #endif

@@ -14,8 +14,8 @@ typedef struct {
     uint32_t Trigger;
 
     TIM_HandleTypeDef Handler;
-} Timer_Handler;
+} Timer_t;
 
-void Timer_Init(Timer_Handler *self);
+void Timer_Init(Timer_t *self);
 
 #endif

@@ -5,18 +5,18 @@
 #include "OLED_Font.h"
 
 /*引脚配置*/
-void OLED_W_SCL(OLED_Handler *self, uint8_t x) {
+void OLED_W_SCL(OLED_t *self, uint8_t x) {
     HAL_GPIO_WritePin(self->SCL_GPIOx, self->SCL_GPIO_Pin,
                       x ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
-void OLED_W_SDA(OLED_Handler *oled, uint8_t x) {
+void OLED_W_SDA(OLED_t *oled, uint8_t x) {
     HAL_GPIO_WritePin(oled->SDA_GPIOx, oled->SDA_GPIO_Pin,
                       x ? GPIO_PIN_SET : GPIO_PIN_RESET);
 }
 
 /*引脚初始化*/
-void OLED_I2C_Init(OLED_Handler *self) {
-    GPIO_Handler SCL = {
+void OLED_I2C_Init(OLED_t *self) {
+    GPIO_t SCL = {
         .Mode = GPIO_MODE_OUTPUT_OD,
         .Pull = GPIO_PULLUP,
     };
@@ -25,7 +25,7 @@ void OLED_I2C_Init(OLED_Handler *self) {
     self->SCL_GPIOx = SCL.GPIOx;
     self->SCL_GPIO_Pin = SCL.GPIO_Pin;
 
-    GPIO_Handler SDA = {
+    GPIO_t SDA = {
         .Mode = GPIO_MODE_OUTPUT_OD,
         .Pull = GPIO_PULLUP,
     };
@@ -43,7 +43,7 @@ void OLED_I2C_Init(OLED_Handler *self) {
  * @param  无
  * @retval 无
  */
-void OLED_I2C_Start(OLED_Handler *self) {
+void OLED_I2C_Start(OLED_t *self) {
     OLED_W_SDA(self, 1);
     OLED_W_SCL(self, 1);
     OLED_W_SDA(self, 0);
@@ -55,7 +55,7 @@ void OLED_I2C_Start(OLED_Handler *self) {
  * @param  无
  * @retval 无
  */
-void OLED_I2C_Stop(OLED_Handler *self) {
+void OLED_I2C_Stop(OLED_t *self) {
     OLED_W_SDA(self, 0);
     OLED_W_SCL(self, 1);
     OLED_W_SDA(self, 1);
@@ -66,7 +66,7 @@ void OLED_I2C_Stop(OLED_Handler *self) {
  * @param  Byte 要发送的一个字节
  * @retval 无
  */
-void OLED_I2C_SendByte(OLED_Handler *self, uint8_t Byte) {
+void OLED_I2C_SendByte(OLED_t *self, uint8_t Byte) {
     uint8_t i;
     for (i = 0; i < 8; i++) {
         OLED_W_SDA(self, Byte & (0x80 >> i));
@@ -82,7 +82,7 @@ void OLED_I2C_SendByte(OLED_Handler *self, uint8_t Byte) {
  * @param  Command 要写入的命令
  * @retval 无
  */
-void OLED_WriteCommand(OLED_Handler *self, uint8_t Command) {
+void OLED_WriteCommand(OLED_t *self, uint8_t Command) {
     OLED_I2C_Start(self);
     OLED_I2C_SendByte(self, 0x78); // 从机地址
     OLED_I2C_SendByte(self, 0x00); // 写命令
@@ -95,7 +95,7 @@ void OLED_WriteCommand(OLED_Handler *self, uint8_t Command) {
  * @param  Data 要写入的数据
  * @retval 无
  */
-void OLED_WriteData(OLED_Handler *self, uint8_t Data) {
+void OLED_WriteData(OLED_t *self, uint8_t Data) {
     OLED_I2C_Start(self);
     OLED_I2C_SendByte(self, 0x78); // 从机地址
     OLED_I2C_SendByte(self, 0x40); // 写数据
@@ -109,7 +109,7 @@ void OLED_WriteData(OLED_Handler *self, uint8_t Data) {
  * @param  X 以左上角为原点，向右方向的坐标，范围：0~127
  * @retval 无
  */
-void OLED_SetCursor(OLED_Handler *self, uint8_t Y, uint8_t X) {
+void OLED_SetCursor(OLED_t *self, uint8_t Y, uint8_t X) {
     OLED_WriteCommand(self, 0xB0 | Y);                 // 设置Y位置
     OLED_WriteCommand(self, 0x10 | ((X & 0xF0) >> 4)); // 设置X位置高4位
     OLED_WriteCommand(self, 0x00 | (X & 0x0F));        // 设置X位置低4位
@@ -120,7 +120,7 @@ void OLED_SetCursor(OLED_Handler *self, uint8_t Y, uint8_t X) {
  * @param  无
  * @retval 无
  */
-void OLED_Clear(OLED_Handler *self) {
+void OLED_Clear(OLED_t *self) {
     uint8_t i, j;
     for (j = 0; j < 8; j++) {
         OLED_SetCursor(self, j, 0);
@@ -137,8 +137,7 @@ void OLED_Clear(OLED_Handler *self) {
  * @param  Char 要显示的一个字符，范围：ASCII可见字符
  * @retval 无
  */
-void OLED_ShowChar(OLED_Handler *self, uint8_t Line, uint8_t Column,
-                   char Char) {
+void OLED_ShowChar(OLED_t *self, uint8_t Line, uint8_t Column, char Char) {
     uint8_t i;
     OLED_SetCursor(self, (Line - 1) * 2,
                    (Column - 1) * 8); // 设置光标位置在上半部分
@@ -159,8 +158,7 @@ void OLED_ShowChar(OLED_Handler *self, uint8_t Line, uint8_t Column,
  * @param  String 要显示的字符串，范围：ASCII可见字符
  * @retval 无
  */
-void OLED_ShowString(OLED_Handler *self, uint8_t Line, uint8_t Column,
-                     char *String) {
+void OLED_ShowString(OLED_t *self, uint8_t Line, uint8_t Column, char *String) {
     uint8_t i;
     for (i = 0; String[i] != '\0'; i++) {
         OLED_ShowChar(self, Line, Column + i, String[i]);
@@ -187,8 +185,8 @@ uint32_t OLED_Pow(uint32_t X, uint32_t Y) {
  * @param  Length 要显示数字的长度，范围：1~10
  * @retval 无
  */
-void OLED_ShowNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
-                  uint32_t Number, uint8_t Length) {
+void OLED_ShowNum(OLED_t *self, uint8_t Line, uint8_t Column, uint32_t Number,
+                  uint8_t Length) {
     uint8_t i;
     for (i = 0; i < Length; i++) {
         OLED_ShowChar(self, Line, Column + i,
@@ -204,7 +202,7 @@ void OLED_ShowNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
  * @param  Length 要显示数字的长度，范围：1~10
  * @retval 无
  */
-void OLED_ShowSignedNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
+void OLED_ShowSignedNum(OLED_t *self, uint8_t Line, uint8_t Column,
                         int32_t Number, uint8_t Length) {
     uint8_t i;
     uint32_t Number1;
@@ -229,7 +227,7 @@ void OLED_ShowSignedNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
  * @param  Length 要显示数字的长度，范围：1~8
  * @retval 无
  */
-void OLED_ShowHexNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
+void OLED_ShowHexNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length) {
     uint8_t i, SingleNumber;
     for (i = 0; i < Length; i++) {
@@ -250,7 +248,7 @@ void OLED_ShowHexNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
  * @param  Length 要显示数字的长度，范围：1~16
  * @retval 无
  */
-void OLED_ShowBinNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
+void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length) {
     uint8_t i;
     for (i = 0; i < Length; i++) {
@@ -264,7 +262,7 @@ void OLED_ShowBinNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
  * @param  无
  * @retval 无
  */
-void OLED_Init(OLED_Handler *self) {
+void OLED_Init(OLED_t *self) {
     uint32_t i, j;
 
     for (i = 0; i < 1000; i++) // 上电延时

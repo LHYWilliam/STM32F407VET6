@@ -14,7 +14,7 @@
 #include <stdbool.h>
 
 #include "LCD.h"
-extern LCD_Handler LCD;
+extern LCD_t LCD;
 
 /*********************
  *      DEFINES

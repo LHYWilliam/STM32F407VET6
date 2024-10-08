@@ -12,40 +12,40 @@ uint32_t SCL_GPIO_Pin;
 GPIO_TypeDef *SDA_GPIOx;
 uint32_t SDA_GPIO_Pin;
 
-void U8G2_Init(U8G2 *u8g2) {
-    GPIO_Handler SCL = {
+void U8G2_Init(U8G2_t *self) {
+    GPIO_t SCL = {
         .Mode = GPIO_MODE_OUTPUT_OD,
         .Pull = GPIO_PULLUP,
     };
-    strcpy(SCL.GPIOxPiny, u8g2->SCL);
+    strcpy(SCL.GPIOxPiny, self->SCL);
     GPIO_Init(&SCL);
     SCL_GPIOx = SCL.GPIOx;
     SCL_GPIO_Pin = SCL.GPIO_Pin;
 
-    GPIO_Handler SDA = {
+    GPIO_t SDA = {
         .Mode = GPIO_MODE_OUTPUT_OD,
         .Pull = GPIO_PULLUP,
     };
-    strcpy(SDA.GPIOxPiny, u8g2->SDA);
+    strcpy(SDA.GPIOxPiny, self->SDA);
     GPIO_Init(&SDA);
     SDA_GPIOx = SDA.GPIOx;
     SDA_GPIO_Pin = SDA.GPIO_Pin;
 
     u8g2_Setup_ssd1306_i2c_128x64_noname_f(
-        &u8g2->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_stm32);
-    u8g2_InitDisplay(&u8g2->u8g2); // send init sequence to the display, display
+        &self->u8g2, U8G2_R0, u8x8_byte_sw_i2c, u8g2_gpio_and_delay_stm32);
+    u8g2_InitDisplay(&self->u8g2); // send init sequence to the display, display
                                    // is in sleep mode after this,
-    u8g2_SetPowerSave(&u8g2->u8g2, 0); // wake up display
+    u8g2_SetPowerSave(&self->u8g2, 0); // wake up display
 }
 
-void U8G2_Printf(U8G2 *u8g2, u8g2_uint_t x, u8g2_uint_t y, const char *format,
+void U8G2_Printf(U8G2_t *self, u8g2_uint_t x, u8g2_uint_t y, const char *format,
                  ...) {
     va_list arg;
     va_start(arg, format);
-    vsprintf((char *)u8g2->SendBuffer, format, arg);
+    vsprintf((char *)self->SendBuffer, format, arg);
     va_end(arg);
 
-    u8g2_DrawUTF8(&u8g2->u8g2, x, y, (char *)u8g2->SendBuffer);
+    u8g2_DrawUTF8(&self->u8g2, x, y, (char *)self->SendBuffer);
 }
 
 uint8_t u8g2_gpio_and_delay_stm32(U8X8_UNUSED u8x8_t *u8x8,

@@ -1,7 +1,7 @@
 #include "Timer.h"
 
-void Timer_Init(Timer_Handler *self) {
-    TIM_Handler tim = {
+void Timer_Init(Timer_t *self) {
+    TIM_t tim = {
         .TIM = self->TIMx,
         .Prescaler = self->ms ? (8400 - 1) : (self->Hz ? 1 - 1 : NULL),
         .Period =

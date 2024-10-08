@@ -16,8 +16,8 @@
 #include "LCD.h"
 #include "Touch.h"
 
-extern LCD_Handler LCD;
-extern Touch_Handler Touch;
+extern LCD_t LCD;
+extern Touch_t Touch;
 
 /*********************
  *      DEFINES

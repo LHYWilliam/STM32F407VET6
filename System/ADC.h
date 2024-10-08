@@ -57,12 +57,12 @@ typedef struct {
     uint8_t Continuous;
 
     ADC_HandleTypeDef Handler;
-} ADC_Handler;
+} ADC_t;
 
-void ADC_Init(ADC_Handler *self);
-void ADC_Start(ADC_Handler *self);
-void ADC_DMAStart(ADC_Handler *self, uint32_t *data, uint32_t length);
+void ADC_Init(ADC_t *self);
+void ADC_Start(ADC_t *self);
+void ADC_DMAStart(ADC_t *self, uint32_t *data, uint32_t length);
 
-uint16_t ADC_Get(ADC_Handler *self);
+uint16_t ADC_Get(ADC_t *self);
 
 #endif

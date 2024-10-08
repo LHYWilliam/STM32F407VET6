@@ -3,8 +3,8 @@
 #include "PWM.h"
 #include "TIM.h"
 
-void PWM_Init(PWM_Handler *self) {
-    TIM_Handler tim = {
+void PWM_Init(PWM_t *self) {
+    TIM_t tim = {
         .TIM = self->TIM,
         .Prescaler = self->Prescaler,
         .Period = self->Period,
@@ -27,6 +27,6 @@ void PWM_Init(PWM_Handler *self) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-void PWM_Set(PWM_Handler *self, uint8_t channel, uint32_t value) {
+void PWM_Set(PWM_t *self, uint8_t channel, uint32_t value) {
     __HAL_TIM_SetCompare(&self->Handler, TIM_Channel[channel], value);
 }

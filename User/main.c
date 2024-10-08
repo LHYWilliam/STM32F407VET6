@@ -14,23 +14,23 @@
 #include "Signal.h"
 #include "Touch.h"
 
-LED_Handler LED0 = {
+LED_t LED0 = {
     .GPIOxPiny = "A1",
 };
 
-LED_Handler LED1 = {
+LED_t LED1 = {
     .GPIOxPiny = "A2",
 };
 
-Key_Handler Key0 = {
+Key_t Key0 = {
     .GPIOxPiny = "C0",
 };
 
-Key_Handler Key1 = {
+Key_t Key1 = {
     .GPIOxPiny = "A0",
 };
 
-Serial_Handler Serial = {
+Serial_t Serial = {
     .USART = USART1,
     .TX = "A9",
     .RX = "A10",
@@ -39,7 +39,7 @@ Serial_Handler Serial = {
     .RxITSize = 1,
 };
 
-LCD_Handler LCD = {
+LCD_t LCD = {
     .Direction = LCD_Vertical,
     .DMA =
         {
@@ -49,7 +49,7 @@ LCD_Handler LCD = {
         },
 };
 
-Touch_Handler Touch = {
+Touch_t Touch = {
     .Direction = LCD_Vertical,
 };
 
@@ -82,7 +82,7 @@ SignalGenerator_Handler Generator = {
         },
 };
 
-SignalSampler_Handler Sampler = {
+SignalSampler_t Sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
     .ADC =

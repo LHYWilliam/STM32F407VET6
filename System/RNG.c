@@ -1,6 +1,6 @@
 #include "RNG.h"
 
-void RNG_Init(RNG_Handler *self) {
+void RNG_Init(RNG_t *self) {
     self->Handler = (RNG_HandleTypeDef){
         .Instance = RNG,
     };
@@ -10,6 +10,6 @@ void RNG_Init(RNG_Handler *self) {
         ;
 }
 
-uint32_t RNG_RandomInt(RNG_Handler *self, int min, int max) {
+uint32_t RNG_RandomInt(RNG_t *self, int min, int max) {
     return HAL_RNG_GetRandomNumber(&self->Handler) % (max - min + 1) + min;
 }

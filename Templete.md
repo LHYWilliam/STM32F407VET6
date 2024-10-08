@@ -1,7 +1,7 @@
 # LED0
 * main.c
 ```
-LED_Handler LED0 = {
+LED_t LED0 = {
     .GPIOxPiny = "A1",
 };
 
@@ -12,7 +12,7 @@ LED_Init(&LED0);
 # LED1
 * main.c
 ```
-LED_Handler LED1 = {
+LED_t LED1 = {
     .GPIOxPiny = "A2",
 };
 
@@ -23,7 +23,7 @@ LED_Init(&LED1);
 # Key0
 * main.c
 ```
-Key_Handler Key0 = {
+Key_t Key0 = {
     .GPIOxPiny = "C0",
 };
 
@@ -34,7 +34,7 @@ Key_Init(&Key0);
 # Key1
 * main.c
 ```
-Key_Handler Key1 = {
+Key_t Key1 = {
     .GPIOxPiny = "A0",
 };
 
@@ -45,7 +45,7 @@ Key_Init(&Key1);
 # Serial
 * main.c
 ```
-Serial_Handler Serial = {
+Serial_t Serial = {
     .USART = USART1,
     .TX = "A9",
     .RX = "A10",
@@ -63,7 +63,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     if (huart->Instance == Serial.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
 
-        GPIO_Handler RX = {
+        GPIO_t RX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial.USART),
@@ -71,7 +71,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
         strcpy(RX.GPIOxPiny, Serial.RX);
         GPIO_Init(&RX);
 
-        GPIO_Handler TX = {
+        GPIO_t TX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial.USART),
@@ -101,7 +101,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 # OLED
 * main.c
 ```
-OLED_Handler OLED = {
+OLED_t OLED = {
     .SCL = "xx",
     .SDA = "xx",
 };
@@ -113,7 +113,7 @@ OLED_Init(&OLED);
 # Timer
 * main.c
 ```
-Timer_Handler Timer = {
+Timer_t Timer = {
     .TIM = TIMx,
     .ms = x,
     .interrupt = ENABLE,
@@ -148,7 +148,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 # PWM
 * main.c
 ```
-PWM_Handler PWM = {
+PWM_t PWM = {
     .TIM = TIMx,
     .Channel = "x",
     .Prescaler = x - 1,
@@ -165,7 +165,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == PWM.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
 
-        GPIO_Handler gpio = {
+        GPIO_t gpio = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_NOPULL,
             .Alternate = GPIO_AFx_TIMy(PWM.TIM),
@@ -180,7 +180,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 # Encoder
 * main.c
 ```
-Encoder_Handler Encoder = {
+Encoder_t Encoder = {
     .TIM = TIMx,
     .Channel = "x | x",
     .GPIOxPiny = "xx | xx",
@@ -195,7 +195,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == Encoder.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
 
-        GPIO_Handler gpio = {
+        GPIO_t gpio = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_NOPULL,
             .Alternate = GPIO_AFx_TIMy(Encoder.TIM),
@@ -210,7 +210,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
 # DAC
 * main.c
 ```
-SignalGenerator_Handler Generator = {
+SignalGenerator_t Generator = {
     .Data = DAC_Data,
     .Length = DAC_DataLength,
     .DAC =
@@ -240,7 +240,7 @@ void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
     if (hdac->Instance == Generator.DAC.Handler.Instance) {
         __HAL_RCC_DAC_CLK_ENABLE();
 
-        GPIO_Handler gpio = {
+        GPIO_t gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };
@@ -268,7 +268,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
 # ADC
 * main.c
 ```
-SignalSampler_Handler Sampler = {
+SignalSampler_t Sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
     .ADC =
@@ -299,7 +299,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
     if (hadc->Instance == Sampler.ADC.ADCx) {
         __HAL_RCC_ADCx_CLK_ENABLE(Sampler.ADC.ADCx);
 
-        GPIO_Handler gpio = {
+        GPIO_t gpio = {
             .Mode = GPIO_MODE_ANALOG,
             .Pull = GPIO_NOPULL,
         };
@@ -326,7 +326,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
 # LCD
 * main.c
 ```
-LCD_Handler LCD = {
+LCD_t LCD = {
     .Direction = LCD_Vertical,
     .DMA =
         {
@@ -336,7 +336,7 @@ LCD_Handler LCD = {
         },
 };
 
-Touch_Handler Touch = {
+Touch_t Touch = {
     .Direction = LCD_Vertical,
 };
 
@@ -349,7 +349,7 @@ Touch_Init(&Touch);
 void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     __HAL_RCC_FSMC_CLK_ENABLE();
 
-    GPIO_Handler FSMC_D = {
+    GPIO_t FSMC_D = {
         .GPIOxPiny = "D14 | D15 | D0 | D1 | E7 | E8 | E9 | E10 | E11 | E12 | "
                      "E13 | E14 | E15 | D8 | D9 | D10",
         .Mode = GPIO_MODE_AF_PP,
@@ -358,7 +358,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_D);
 
-    GPIO_Handler FSMC_NOE = {
+    GPIO_t FSMC_NOE = {
         .GPIOxPiny = "D4 ",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -366,7 +366,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_NOE);
 
-    GPIO_Handler FSMC_NWE = {
+    GPIO_t FSMC_NWE = {
         .GPIOxPiny = "D5",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -374,7 +374,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_NWE);
 
-    GPIO_Handler FSMC_NE1 = {
+    GPIO_t FSMC_NE1 = {
         .GPIOxPiny = "D7",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -382,7 +382,7 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     };
     GPIO_Init(&FSMC_NE1);
 
-    GPIO_Handler FSMC_A18 = {
+    GPIO_t FSMC_A18 = {
         .GPIOxPiny = "D13",
         .Mode = GPIO_MODE_AF_PP,
         .Pull = GPIO_PULLUP,
@@ -410,7 +410,7 @@ xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
 ```
 void vLVGLTaskCode(void *pvParameters) {
     for (;;) {
-        lv_timer_handler();
+        lv_timer_t();
         
         vTaskDelay(pdMS_TO_TICKS(5));
     }

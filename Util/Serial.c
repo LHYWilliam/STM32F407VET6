@@ -4,7 +4,7 @@
 
 #include "Serial.h"
 
-void Serial_Init(Serial_Handler *self) {
+void Serial_Init(Serial_t *self) {
     self->Handler = (UART_HandleTypeDef){
         .Instance = self->USART,
         .Init =
@@ -23,15 +23,15 @@ void Serial_Init(Serial_Handler *self) {
     }
 }
 
-void Serial_RXITStart(Serial_Handler *self, uint8_t size) {
+void Serial_RXITStart(Serial_t *self, uint8_t size) {
     HAL_UART_Receive_IT(&self->Handler, self->RXBuffer, size);
 }
 
-void Serial_SendBytes(Serial_Handler *self, uint8_t *bytes, uint8_t length) {
+void Serial_SendBytes(Serial_t *self, uint8_t *bytes, uint8_t length) {
     HAL_UART_Transmit(&self->Handler, bytes, length, HAL_MAX_DELAY);
 }
 
-void Serial_Printf(Serial_Handler *self, char *format, ...) {
+void Serial_Printf(Serial_t *self, char *format, ...) {
     va_list arg;
     va_start(arg, format);
     vsprintf((char *)self->TXBuffer, format, arg);

@@ -10,10 +10,10 @@ typedef struct {
 
     GPIO_TypeDef *GPIOx;
     uint32_t GPIO_Pin;
-} Key_Handler;
+} Key_t;
 
-void Key_Init(Key_Handler *self);
+void Key_Init(Key_t *self);
 
-KeyState Key_Read(Key_Handler *self);
+KeyState Key_Read(Key_t *self);
 
 #endif

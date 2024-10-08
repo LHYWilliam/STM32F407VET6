@@ -61,8 +61,8 @@ typedef struct {
 
     TIM_HandleTypeDef *Handler;
     HAL_StatusTypeDef (*HAL_TIM_Init)(TIM_HandleTypeDef *htim);
-} TIM_Handler;
+} TIM_t;
 
-void TIM_Init(TIM_Handler *self);
+void TIM_Init(TIM_t *self);
 
 #endif

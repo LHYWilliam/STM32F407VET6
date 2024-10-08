@@ -11,10 +11,10 @@ typedef struct {
     char GPIOxPiny[32];
 
     TIM_HandleTypeDef Handler;
-} PWM_Handler;
+} PWM_t;
 
-void PWM_Init(PWM_Handler *self);
+void PWM_Init(PWM_t *self);
 
-void PWM_Set(PWM_Handler *self, uint8_t channel, uint32_t value);
+void PWM_Set(PWM_t *self, uint8_t channel, uint32_t value);
 
 #endif

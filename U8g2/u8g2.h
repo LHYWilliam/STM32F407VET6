@@ -2949,11 +2949,11 @@ typedef struct  {
   uint8_t SendBuffer[128];
 
   u8g2_t u8g2;
-} U8G2;
+} U8G2_t;
 
-void U8G2_Init(U8G2* u8g2);
+void U8G2_Init(U8G2_t* self);
 
-void U8G2_Printf(U8G2* u8g2, u8g2_uint_t x, u8g2_uint_t y, const char* format, ...);
+void U8G2_Printf(U8G2_t* self, u8g2_uint_t x, u8g2_uint_t y, const char* format, ...);
 uint8_t u8g2_gpio_and_delay_stm32(U8X8_UNUSED u8x8_t *u8x8,
                                   U8X8_UNUSED uint8_t msg,
                                   U8X8_UNUSED uint8_t arg_int,
