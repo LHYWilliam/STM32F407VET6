@@ -4,39 +4,39 @@
 
 #include "Serial.h"
 
-void Serial_Init(Serial_Handler *serial) {
-    serial->Handler = (UART_HandleTypeDef){
-        .Instance = serial->USART,
+void Serial_Init(Serial_Handler *self) {
+    self->Handler = (UART_HandleTypeDef){
+        .Instance = self->USART,
         .Init =
             {
-                .BaudRate = serial->Baudrate,
+                .BaudRate = self->Baudrate,
                 .WordLength = UART_WORDLENGTH_8B,
                 .Parity = UART_PARITY_NONE,
                 .StopBits = UART_STOPBITS_1,
                 .Mode = UART_MODE_TX_RX,
             },
     };
-    HAL_UART_Init(&serial->Handler);
+    HAL_UART_Init(&self->Handler);
 
-    if (serial->RxIT) {
-        Serial_RXITStart(serial, 1);
+    if (self->RxIT) {
+        Serial_RXITStart(self, 1);
     }
 }
 
-void Serial_RXITStart(Serial_Handler *serial, uint8_t size) {
-    HAL_UART_Receive_IT(&serial->Handler, serial->RXBuffer, size);
+void Serial_RXITStart(Serial_Handler *self, uint8_t size) {
+    HAL_UART_Receive_IT(&self->Handler, self->RXBuffer, size);
 }
 
-void Serial_SendBytes(Serial_Handler *serial, uint8_t *bytes, uint8_t length) {
-    HAL_UART_Transmit(&serial->Handler, bytes, length, HAL_MAX_DELAY);
+void Serial_SendBytes(Serial_Handler *self, uint8_t *bytes, uint8_t length) {
+    HAL_UART_Transmit(&self->Handler, bytes, length, HAL_MAX_DELAY);
 }
 
-void Serial_Printf(Serial_Handler *serial, char *format, ...) {
+void Serial_Printf(Serial_Handler *self, char *format, ...) {
     va_list arg;
     va_start(arg, format);
-    vsprintf((char *)serial->TXBuffer, format, arg);
+    vsprintf((char *)self->TXBuffer, format, arg);
     va_end(arg);
 
-    HAL_UART_Transmit(&serial->Handler, (uint8_t *)serial->TXBuffer,
-                      strlen((char *)serial->TXBuffer), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&self->Handler, (uint8_t *)self->TXBuffer,
+                      strlen((char *)self->TXBuffer), HAL_MAX_DELAY);
 }

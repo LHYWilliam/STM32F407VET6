@@ -3,12 +3,12 @@
 #include "PWM.h"
 #include "TIM.h"
 
-void PWM_Init(PWM_Handler *pwm) {
+void PWM_Init(PWM_Handler *self) {
     TIM_Handler tim = {
-        .TIM = pwm->TIM,
-        .Prescaler = pwm->Prescaler,
-        .Period = pwm->Period,
-        .Handler = &pwm->Handler,
+        .TIM = self->TIM,
+        .Prescaler = self->Prescaler,
+        .Period = self->Period,
+        .Handler = &self->Handler,
         .HAL_TIM_Init = HAL_TIM_PWM_Init,
     };
     TIM_Init(&tim);
@@ -19,7 +19,7 @@ void PWM_Init(PWM_Handler *pwm) {
         .OCPolarity = TIM_OCPOLARITY_HIGH,
     };
 
-    char *temp = pwm->Channel;
+    char *temp = self->Channel;
     do {
         uint8_t channel = TIM_CHANNEL_x(temp);
         HAL_TIM_PWM_ConfigChannel(tim.Handler, &OC, channel);
@@ -27,6 +27,6 @@ void PWM_Init(PWM_Handler *pwm) {
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-void PWM_Set(PWM_Handler *pwm, uint8_t channel, uint32_t value) {
-    __HAL_TIM_SetCompare(&pwm->Handler, TIM_Channel[channel], value);
+void PWM_Set(PWM_Handler *self, uint8_t channel, uint32_t value) {
+    __HAL_TIM_SetCompare(&self->Handler, TIM_Channel[channel], value);
 }

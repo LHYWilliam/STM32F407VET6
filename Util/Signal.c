@@ -2,53 +2,53 @@
 
 #include "Signal.h"
 
-void SignalGenerator_Init(SignalGenerator_Handler *generator) {
+void SignalGenerator_Init(SignalGenerator_Handler *self) {
 
-    generator->DAC.Trigger = DAC_TRIGGER_Tx_TRGO(generator->Timer.TIMx);
-    DAC_Init(&generator->DAC);
+    self->DAC.Trigger = DAC_TRIGGER_Tx_TRGO(self->Timer.TIMx);
+    DAC_Init(&self->DAC);
 
-    generator->DMA.PeriphInc = DISABLE;
-    generator->DMA.PeriphSize = 32;
-    generator->DMA.MemInc = ENABLE;
-    generator->DMA.MemSize = 32;
-    generator->DMA.Mode = DMA_CIRCULAR;
-    generator->DMA.Direction = DMA_MEMORY_TO_PERIPH;
-    DMA_Init(&generator->DMA);
+    self->DMA.PeriphInc = DISABLE;
+    self->DMA.PeriphSize = 32;
+    self->DMA.MemInc = ENABLE;
+    self->DMA.MemSize = 32;
+    self->DMA.Mode = DMA_CIRCULAR;
+    self->DMA.Direction = DMA_MEMORY_TO_PERIPH;
+    DMA_Init(&self->DMA);
 
-    generator->Timer.Hz *= generator->Length;
-    generator->Timer.Trigger = TIM_TRGO_UPDATE;
-    Timer_Init(&generator->Timer);
+    self->Timer.Hz *= self->Length;
+    self->Timer.Trigger = TIM_TRGO_UPDATE;
+    Timer_Init(&self->Timer);
 
-    SignalGenerator_Start(generator, generator->Data, generator->Length);
+    SignalGenerator_Start(self, self->Data, self->Length);
 }
 
-void SignalGenerator_Start(SignalGenerator_Handler *generator, uint32_t *data,
+void SignalGenerator_Start(SignalGenerator_Handler *self, uint32_t *data,
                            uint32_t length) {
-    DAC_DMAStart(&generator->DAC, data, length);
+    DAC_DMAStart(&self->DAC, data, length);
 }
 
-void SignalSampler_Init(SignalSampler_Handler *sampler) {
-    sampler->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(sampler->Timer.TIMx);
-    ADC_Init(&sampler->ADC);
+void SignalSampler_Init(SignalSampler_Handler *self) {
+    self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(self->Timer.TIMx);
+    ADC_Init(&self->ADC);
 
-    sampler->DMA.PeriphInc = DISABLE;
-    sampler->DMA.PeriphSize = 32;
-    sampler->DMA.MemInc = ENABLE;
-    sampler->DMA.MemSize = 32;
-    sampler->DMA.Mode = DMA_CIRCULAR;
-    sampler->DMA.Direction = DMA_PERIPH_TO_MEMORY;
+    self->DMA.PeriphInc = DISABLE;
+    self->DMA.PeriphSize = 32;
+    self->DMA.MemInc = ENABLE;
+    self->DMA.MemSize = 32;
+    self->DMA.Mode = DMA_CIRCULAR;
+    self->DMA.Direction = DMA_PERIPH_TO_MEMORY;
 
-    DMA_Init(&sampler->DMA);
+    DMA_Init(&self->DMA);
 
-    sampler->Timer.Trigger = TIM_TRGO_UPDATE;
-    Timer_Init(&sampler->Timer);
+    self->Timer.Trigger = TIM_TRGO_UPDATE;
+    Timer_Init(&self->Timer);
 
-    SignalSampler_Start(sampler, sampler->Data, sampler->Length);
+    SignalSampler_Start(self, self->Data, self->Length);
 }
 
-void SignalSampler_Start(SignalSampler_Handler *sampler, uint32_t *data,
+void SignalSampler_Start(SignalSampler_Handler *self, uint32_t *data,
                          uint32_t length) {
-    ADC_DMAStart(&sampler->ADC, data, length);
+    ADC_DMAStart(&self->ADC, data, length);
 }
 
 void Sin_Generate(uint32_t *data, uint32_t length) {

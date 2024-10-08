@@ -3,12 +3,9 @@
 #include "LCD.h"
 #include "Touch.h"
 
-void Touch_Init(Touch_Handler *touch) {
-    UNUSED(touch);
-    GT1151_Init();
-}
+void Touch_Init(Touch_Handler *self) { GT1151_Init(); }
 
-uint8_t Touch_Scan(Touch_Handler *touch, LCD_Handler *lcd) {
+uint8_t Touch_Scan(Touch_Handler *self, LCD_Handler *lcd) {
     static uint8_t t = 0;
     uint8_t mode = 0, resault = 0;
 
@@ -25,39 +22,39 @@ uint8_t Touch_Scan(Touch_Handler *touch, LCD_Handler *lcd) {
         if ((mode & 0XF) && ((mode & 0XF) < 6)) {
             temp = 0XFF << (mode & 0XF);
 
-            uint8_t tempSTA = touch->TouchFlag;
-            touch->TouchFlag = (~temp) | PRES_DOWN | CATH_PRES;
-            touch->X[4] = touch->X[0];
-            touch->Y[4] = touch->Y[0];
+            uint8_t tempSTA = self->TouchFlag;
+            self->TouchFlag = (~temp) | PRES_DOWN | CATH_PRES;
+            self->X[4] = self->X[0];
+            self->Y[4] = self->Y[0];
 
             for (uint8_t i = 0; i < 5; i++) {
-                if (touch->TouchFlag & (1 << i)) {
+                if (self->TouchFlag & (1 << i)) {
                     uint8_t buffer[4];
                     GT1151_ReadBytes(GT1151_TPX_TBL[i], buffer, 4);
 
-                    if (touch->Direction == LCD_Vertical) {
-                        touch->X[i] = ((uint16_t)buffer[1] << 8) + buffer[0];
-                        touch->Y[i] = ((uint16_t)buffer[3] << 8) + buffer[2];
-                    } else if (touch->Direction == LCD_Horizontal) {
-                        touch->X[i] = lcd->Width -
-                                      (((uint16_t)buffer[3] << 8) + buffer[2]);
-                        touch->Y[i] = ((uint16_t)buffer[1] << 8) + buffer[0];
+                    if (self->Direction == LCD_Vertical) {
+                        self->X[i] = ((uint16_t)buffer[1] << 8) + buffer[0];
+                        self->Y[i] = ((uint16_t)buffer[3] << 8) + buffer[2];
+                    } else if (self->Direction == LCD_Horizontal) {
+                        self->X[i] = lcd->Width -
+                                     (((uint16_t)buffer[3] << 8) + buffer[2]);
+                        self->Y[i] = ((uint16_t)buffer[1] << 8) + buffer[0];
                     }
                 }
             }
 
             resault = 1;
 
-            if (touch->X[0] > lcd->Width || touch->Y[0] > lcd->Height) {
+            if (self->X[0] > lcd->Width || self->Y[0] > lcd->Height) {
                 if ((mode & 0XF) > 1) {
-                    touch->X[0] = touch->X[1];
-                    touch->Y[0] = touch->Y[1];
+                    self->X[0] = self->X[1];
+                    self->Y[0] = self->Y[1];
                     t = 0;
                 } else {
-                    touch->X[0] = touch->X[4];
-                    touch->Y[0] = touch->Y[4];
+                    self->X[0] = self->X[4];
+                    self->Y[0] = self->Y[4];
                     mode = 0X80;
-                    touch->TouchFlag = tempSTA;
+                    self->TouchFlag = tempSTA;
                 }
             } else {
                 t = 0;
@@ -66,12 +63,12 @@ uint8_t Touch_Scan(Touch_Handler *touch, LCD_Handler *lcd) {
     }
 
     if ((mode & 0X8F) == 0X80) {
-        if (touch->TouchFlag & PRES_DOWN) {
-            touch->TouchFlag &= ~(1 << 7);
+        if (self->TouchFlag & PRES_DOWN) {
+            self->TouchFlag &= ~(1 << 7);
         } else {
-            touch->X[0] = 0xffff;
-            touch->Y[0] = 0xffff;
-            touch->TouchFlag &= 0XE0;
+            self->X[0] = 0xffff;
+            self->Y[0] = 0xffff;
+            self->TouchFlag &= 0XE0;
         }
     }
 
@@ -82,10 +79,10 @@ uint8_t Touch_Scan(Touch_Handler *touch, LCD_Handler *lcd) {
     return resault;
 }
 
-uint8_t Touch_ScanChannel(Touch_Handler *touch, LCD_Handler *lcd,
+uint8_t Touch_ScanChannel(Touch_Handler *self, LCD_Handler *lcd,
                           uint8_t channel) {
-    Touch_Scan(touch, lcd);
-    return touch->TouchFlag & (1 << channel);
+    Touch_Scan(self, lcd);
+    return self->TouchFlag & (1 << channel);
 }
 
 static void GT1151_Delay(void) { Delay_us(2); }

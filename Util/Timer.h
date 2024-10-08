@@ -16,6 +16,6 @@ typedef struct {
     TIM_HandleTypeDef Handler;
 } Timer_Handler;
 
-void Timer_Init(Timer_Handler *timer);
+void Timer_Init(Timer_Handler *self);
 
 #endif

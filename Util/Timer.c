@@ -1,25 +1,25 @@
 #include "Timer.h"
 
-void Timer_Init(Timer_Handler *timer) {
+void Timer_Init(Timer_Handler *self) {
     TIM_Handler tim = {
-        .TIM = timer->TIMx,
-        .Prescaler = timer->ms ? (8400 - 1) : (timer->Hz ? 1 - 1 : NULL),
-        .Period = timer->ms ? (timer->ms * 10 - 1)
-                            : (timer->Hz ? (uint32_t)(84000000. / timer->Hz - 1)
-                                         : NULL),
-        .Handler = &timer->Handler,
+        .TIM = self->TIMx,
+        .Prescaler = self->ms ? (8400 - 1) : (self->Hz ? 1 - 1 : NULL),
+        .Period =
+            self->ms ? (self->ms * 10 - 1)
+                     : (self->Hz ? (uint32_t)(84000000. / self->Hz - 1) : NULL),
+        .Handler = &self->Handler,
         .HAL_TIM_Init = HAL_TIM_Base_Init,
     };
     TIM_Init(&tim);
 
-    if (timer->Trigger) {
+    if (self->Trigger) {
         TIM_MasterConfigTypeDef trigger = {
-            .MasterOutputTrigger = timer->Trigger,
+            .MasterOutputTrigger = self->Trigger,
         };
-        HAL_TIMEx_MasterConfigSynchronization(&timer->Handler, &trigger);
+        HAL_TIMEx_MasterConfigSynchronization(&self->Handler, &trigger);
     }
 
-    if (timer->Interrupt) {
+    if (self->Interrupt) {
         __HAL_TIM_CLEAR_IT(tim.Handler, TIM_FLAG_UPDATE);
 
         HAL_TIM_Base_Start_IT(tim.Handler);

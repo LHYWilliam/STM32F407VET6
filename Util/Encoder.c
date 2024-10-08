@@ -3,9 +3,9 @@
 #include "Encoder.h"
 #include "TIM.h"
 
-void Encoder_Init(Encoder_Handler *encoder) {
-    encoder->Handler = (TIM_HandleTypeDef){
-        .Instance = encoder->TIM,
+void Encoder_Init(Encoder_Handler *self) {
+    self->Handler = (TIM_HandleTypeDef){
+        .Instance = self->TIM,
         .Init =
             {
                 .Prescaler = 1 - 1,
@@ -27,16 +27,16 @@ void Encoder_Init(Encoder_Handler *encoder) {
         .IC2Selection = TIM_ICSELECTION_DIRECTTI,
         .IC2Polarity = TIM_ENCODERINPUTPOLARITY_RISING,
     };
-    HAL_TIM_Encoder_Init(&encoder->Handler, &IC);
+    HAL_TIM_Encoder_Init(&self->Handler, &IC);
 
-    char *temp = encoder->Channel;
+    char *temp = self->Channel;
     do {
-        HAL_TIM_Encoder_Start(&encoder->Handler, TIM_CHANNEL_x(temp));
+        HAL_TIM_Encoder_Start(&self->Handler, TIM_CHANNEL_x(temp));
     } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
 }
 
-int16_t Encoder_Get(Encoder_Handler *encoder) {
-    int16_t count = (int16_t)__HAL_TIM_GetCounter(&encoder->Handler);
-    __HAL_TIM_SetCounter(&encoder->Handler, 0);
+int16_t Encoder_Get(Encoder_Handler *self) {
+    int16_t count = (int16_t)__HAL_TIM_GetCounter(&self->Handler);
+    __HAL_TIM_SetCounter(&self->Handler, 0);
     return count;
 }

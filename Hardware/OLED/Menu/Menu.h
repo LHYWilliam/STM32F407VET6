@@ -34,16 +34,16 @@ typedef struct {
     uint8_t Cursor;
 } ImageMenu;
 
-void TextMenu_Init(TextMenu *menu);
-void TextPage_Init(TextPage *page);
+void TextMenu_Init(TextMenu *self);
+void TextPage_Init(TextPage *self);
 void U8G2_ShowTextMenu(U8G2 *u8g2, TextMenu *menu);
-void TextMenu_CursorInc(TextMenu *menu);
-void TextMenu_CursorDec(TextMenu *menu);
-void TextMenu_EnterLowerPage(TextMenu *menu);
-void TextMenu_ReturnUpperPage(TextMenu *menu);
+void TextMenu_CursorInc(TextMenu *self);
+void TextMenu_CursorDec(TextMenu *self);
+void TextMenu_EnterLowerPage(TextMenu *self);
+void TextMenu_ReturnUpperPage(TextMenu *self);
 
 void U8G2_ShowImageMenu(U8G2 *u8g2, ImageMenu *menu, uint16_t delay);
-void ImageMenu_CursorInc(ImageMenu *menu);
-void ImageMenu_CursorDec(ImageMenu *menu);
+void ImageMenu_CursorInc(ImageMenu *self);
+void ImageMenu_CursorDec(ImageMenu *self);
 
 #endif

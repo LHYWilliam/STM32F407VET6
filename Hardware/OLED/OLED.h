@@ -13,18 +13,18 @@ typedef struct {
     uint32_t SDA_GPIO_Pin;
 } OLED_Handler;
 
-void OLED_Init(OLED_Handler *oled);
-void OLED_Clear(OLED_Handler *oled);
-void OLED_ShowChar(OLED_Handler *oled, uint8_t Line, uint8_t Column, char Char);
-void OLED_ShowString(OLED_Handler *oled, uint8_t Line, uint8_t Column,
+void OLED_Init(OLED_Handler *self);
+void OLED_Clear(OLED_Handler *self);
+void OLED_ShowChar(OLED_Handler *self, uint8_t Line, uint8_t Column, char Char);
+void OLED_ShowString(OLED_Handler *self, uint8_t Line, uint8_t Column,
                      char *String);
-void OLED_ShowNum(OLED_Handler *oled, uint8_t Line, uint8_t Column,
+void OLED_ShowNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
                   uint32_t Number, uint8_t Length);
-void OLED_ShowSignedNum(OLED_Handler *oled, uint8_t Line, uint8_t Column,
+void OLED_ShowSignedNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
                         int32_t Number, uint8_t Length);
-void OLED_ShowHexNum(OLED_Handler *oled, uint8_t Line, uint8_t Column,
+void OLED_ShowHexNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
-void OLED_ShowBinNum(OLED_Handler *oled, uint8_t Line, uint8_t Column,
+void OLED_ShowBinNum(OLED_Handler *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
 
 #endif

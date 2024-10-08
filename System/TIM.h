@@ -59,11 +59,10 @@ typedef struct {
     uint32_t Prescaler;
     uint32_t Period;
 
-    HAL_StatusTypeDef (*HAL_TIM_Init)(TIM_HandleTypeDef *htim);
-
     TIM_HandleTypeDef *Handler;
+    HAL_StatusTypeDef (*HAL_TIM_Init)(TIM_HandleTypeDef *htim);
 } TIM_Handler;
 
-void TIM_Init(TIM_Handler *tim);
+void TIM_Init(TIM_Handler *self);
 
 #endif

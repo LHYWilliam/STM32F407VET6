@@ -107,6 +107,9 @@ SignalSampler_Handler Sampler = {
 TimerHandle_t LEDTimer;
 void vLEDTimerCallback(TimerHandle_t xTimer);
 
+TaskHandle_t xKeyTaskHandle;
+void vKeyTaskCode(void *pvParameters);
+
 TaskHandle_t xLVGLTaskHandle;
 void vLVGLTaskCode(void *pvParameters);
 
@@ -122,12 +125,12 @@ int main() {
     Key_Init(&Key1);
     Serial_Init(&Serial);
 
-    // LCD_Init(&LCD);
-    // Touch_Init(&Touch);
+    LCD_Init(&LCD);
+    Touch_Init(&Touch);
 
-    // Sin_Generate(Generator.Data, Generator.Length);
-    // SignalGenerator_Init(&Generator);
-    // SignalSampler_Init(&Sampler);
+    Sin_Generate(Generator.Data, Generator.Length);
+    SignalGenerator_Init(&Generator);
+    SignalSampler_Init(&Sampler);
 
     // lv_init();
     // lv_port_disp_init();
@@ -135,6 +138,7 @@ int main() {
 
     LEDTimer = xTimerCreate("LEDTimer", pdMS_TO_TICKS(100), pdTRUE, 0,
                             vLEDTimerCallback);
+    xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
     // xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
 
     xTimerStart(LEDTimer, 0);

@@ -91,6 +91,6 @@ typedef struct {
     DMA_HandleTypeDef Handler;
 } DMA_Handler;
 
-void DMA_Init(DMA_Handler *dma);
+void DMA_Init(DMA_Handler *self);
 
 #endif

@@ -12,8 +12,8 @@ typedef struct {
     uint32_t GPIO_Pin;
 } Key_Handler;
 
-void Key_Init(Key_Handler *key);
+void Key_Init(Key_Handler *self);
 
-KeyState Key_Read(Key_Handler *key);
+KeyState Key_Read(Key_Handler *self);
 
 #endif

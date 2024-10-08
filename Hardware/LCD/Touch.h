@@ -59,9 +59,9 @@ typedef struct Touch {
     uint16_t Y[MAX_TOUCH];
 } Touch_Handler;
 
-void Touch_Init(Touch_Handler *touch);
-uint8_t Touch_Scan(Touch_Handler *touch, LCD_Handler *lcd);
-uint8_t Touch_ScanChannel(Touch_Handler *touch, LCD_Handler *lcd,
+void Touch_Init(Touch_Handler *self);
+uint8_t Touch_Scan(Touch_Handler *self, LCD_Handler *lcd);
+uint8_t Touch_ScanChannel(Touch_Handler *self, LCD_Handler *lcd,
                           uint8_t channel);
 
 uint8_t GT1151_Init(void);

@@ -1,11 +1,11 @@
 #include "Menu.h"
 
-void TextMenu_Init(TextMenu *menu) { TextPage_Init(menu->Page); }
+void TextMenu_Init(TextMenu *self) { TextPage_Init(self->Page); }
 
-void TextPage_Init(TextPage *page) {
-    for (uint8_t i = 0; i < page->NumOfLowerPages; i++) {
-        page->LowerPages[i].UpperPage = page;
-        TextPage_Init(&page->LowerPages[i]);
+void TextPage_Init(TextPage *self) {
+    for (uint8_t i = 0; i < self->NumOfLowerPages; i++) {
+        self->LowerPages[i].UpperPage = self;
+        TextPage_Init(&self->LowerPages[i]);
     }
 }
 
@@ -23,33 +23,33 @@ void U8G2_ShowTextMenu(U8G2 *u8g2, TextMenu *menu) {
     }
 }
 
-void TextMenu_CursorInc(TextMenu *menu) {
-    if (menu->Cursor == menu->Page->NumOfLowerPages - 1) {
-        menu->Cursor = 0;
+void TextMenu_CursorInc(TextMenu *self) {
+    if (self->Cursor == self->Page->NumOfLowerPages - 1) {
+        self->Cursor = 0;
     } else {
-        menu->Cursor++;
+        self->Cursor++;
     }
 }
 
-void TextMenu_CursorDec(TextMenu *menu) {
-    if (menu->Cursor == 0) {
-        menu->Cursor = menu->Page->NumOfLowerPages - 1;
+void TextMenu_CursorDec(TextMenu *self) {
+    if (self->Cursor == 0) {
+        self->Cursor = self->Page->NumOfLowerPages - 1;
     } else {
-        menu->Cursor--;
+        self->Cursor--;
     }
 }
 
-void TextMenu_EnterLowerPage(TextMenu *menu) {
-    if (menu->Page->NumOfLowerPages) {
-        menu->Page = &menu->Page->LowerPages[menu->Cursor];
-        menu->Cursor = 0;
+void TextMenu_EnterLowerPage(TextMenu *self) {
+    if (self->Page->NumOfLowerPages) {
+        self->Page = &self->Page->LowerPages[self->Cursor];
+        self->Cursor = 0;
     }
 }
 
-void TextMenu_ReturnUpperPage(TextMenu *menu) {
-    if (menu->Page->UpperPage) {
-        menu->Page = menu->Page->UpperPage;
-        menu->Cursor = 0;
+void TextMenu_ReturnUpperPage(TextMenu *self) {
+    if (self->Page->UpperPage) {
+        self->Page = self->Page->UpperPage;
+        self->Cursor = 0;
     }
 }
 
@@ -67,18 +67,18 @@ void U8G2_ShowImageMenu(U8G2 *u8g2, ImageMenu *menu, uint16_t delay) {
             .Image);
 }
 
-void ImageMenu_CursorInc(ImageMenu *menu) {
-    if (menu->Cursor == menu->NumOfPages - 1) {
-        menu->Cursor = menu->Cursor == 0;
+void ImageMenu_CursorInc(ImageMenu *self) {
+    if (self->Cursor == self->NumOfPages - 1) {
+        self->Cursor = self->Cursor == 0;
     } else {
-        menu->Cursor++;
+        self->Cursor++;
     }
 }
 
-void ImageMenu_CursorDec(ImageMenu *menu) {
-    if (menu->Cursor == 0) {
-        menu->Cursor = menu->NumOfPages - 1;
+void ImageMenu_CursorDec(ImageMenu *self) {
+    if (self->Cursor == 0) {
+        self->Cursor = self->NumOfPages - 1;
     } else {
-        menu->Cursor--;
+        self->Cursor--;
     }
 }

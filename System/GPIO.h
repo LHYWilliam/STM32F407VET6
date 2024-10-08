@@ -80,6 +80,6 @@ typedef struct {
     uint32_t GPIO_Pin;
 } GPIO_Handler;
 
-void GPIO_Init(GPIO_Handler *gpio);
+void GPIO_Init(GPIO_Handler *self);
 
 #endif

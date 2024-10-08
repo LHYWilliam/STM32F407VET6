@@ -13,8 +13,8 @@ typedef struct {
     TIM_HandleTypeDef Handler;
 } PWM_Handler;
 
-void PWM_Init(PWM_Handler *pwm);
+void PWM_Init(PWM_Handler *self);
 
-void PWM_Set(PWM_Handler *pwm, uint8_t channel, uint32_t value);
+void PWM_Set(PWM_Handler *self, uint8_t channel, uint32_t value);
 
 #endif

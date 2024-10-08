@@ -11,8 +11,8 @@ typedef struct {
     TIM_HandleTypeDef Handler;
 } Encoder_Handler;
 
-void Encoder_Init(Encoder_Handler *encoder);
+void Encoder_Init(Encoder_Handler *self);
 
-int16_t Encoder_Get(Encoder_Handler *encoder);
+int16_t Encoder_Get(Encoder_Handler *self);
 
 #endif

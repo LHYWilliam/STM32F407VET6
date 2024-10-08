@@ -34,10 +34,10 @@ typedef struct {
     DAC_HandleTypeDef Handler;
 } DAC_Handler;
 
-void DAC_Init(DAC_Handler *dac);
-void DAC_Start(DAC_Handler *dac);
-void DAC_DMAStart(DAC_Handler *dac, uint32_t *data, uint32_t length);
+void DAC_Init(DAC_Handler *self);
+void DAC_Start(DAC_Handler *self);
+void DAC_DMAStart(DAC_Handler *self, uint32_t *data, uint32_t length);
 
-void DAC_Set(DAC_Handler *dac, uint8_t channel, uint16_t value);
+void DAC_Set(DAC_Handler *self, uint8_t channel, uint16_t value);
 
 #endif

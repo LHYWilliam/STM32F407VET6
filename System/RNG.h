@@ -7,8 +7,8 @@ typedef struct {
     RNG_HandleTypeDef Handler;
 } RNG_Handler;
 
-void RNG_Init(RNG_Handler *rng);
+void RNG_Init(RNG_Handler *self);
 
-uint32_t RNG_RandomInt(RNG_Handler *rng, int min, int max);
+uint32_t RNG_RandomInt(RNG_Handler *self, int min, int max);
 
 #endif
