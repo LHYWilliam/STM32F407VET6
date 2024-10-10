@@ -13,6 +13,7 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
+        - Hardware/OLED/Menu
         - System
         - U8g2
         - LVGL
@@ -63,10 +64,10 @@ project:
     - group: User
       files:
         - file: User/main.c
-        - file: User/interrupt.c
-        - file: User/msp.c
-        - file: User/sysclock.c
         - file: User/task.c
+        - file: User/msp.c
+        - file: User/interrupt.c
+        - file: User/sysclock.c
     - group: Hardware
       files:
         - file: Hardware/LCD/LCD.c

@@ -13,7 +13,7 @@ typedef struct {
     DAC_t DAC;
     DMA_t DMA;
     Timer_t Timer;
-} SignalGenerator_Handler;
+} SignalGenerator_t;
 
 typedef struct {
     uint32_t *Data;
@@ -24,8 +24,8 @@ typedef struct {
     Timer_t Timer;
 } SignalSampler_t;
 
-void SignalGenerator_Init(SignalGenerator_Handler *self);
-void SignalGenerator_Start(SignalGenerator_Handler *self, uint32_t *data,
+void SignalGenerator_Init(SignalGenerator_t *self);
+void SignalGenerator_Start(SignalGenerator_t *self, uint32_t *data,
                            uint32_t length);
 
 void SignalSampler_Init(SignalSampler_t *self);

@@ -6,7 +6,7 @@
 
 extern Serial_t Serial;
 
-extern SignalGenerator_Handler Generator;
+extern SignalGenerator_t Generator;
 extern SignalSampler_t Sampler;
 
 void HAL_MspInit(void) {

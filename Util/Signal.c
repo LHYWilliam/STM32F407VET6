@@ -2,7 +2,7 @@
 
 #include "Signal.h"
 
-void SignalGenerator_Init(SignalGenerator_Handler *self) {
+void SignalGenerator_Init(SignalGenerator_t *self) {
 
     self->DAC.Trigger = DAC_TRIGGER_Tx_TRGO(self->Timer.TIMx);
     DAC_Init(&self->DAC);
@@ -22,7 +22,7 @@ void SignalGenerator_Init(SignalGenerator_Handler *self) {
     SignalGenerator_Start(self, self->Data, self->Length);
 }
 
-void SignalGenerator_Start(SignalGenerator_Handler *self, uint32_t *data,
+void SignalGenerator_Start(SignalGenerator_t *self, uint32_t *data,
                            uint32_t length) {
     DAC_DMAStart(&self->DAC, data, length);
 }

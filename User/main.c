@@ -61,7 +61,7 @@ Touch_t Touch = {
 uint32_t DAC_Data[DAC_DataLength];
 uint32_t ADC_Data[ADC_DataLength];
 
-SignalGenerator_Handler Generator = {
+SignalGenerator_t Generator = {
     .Data = DAC_Data,
     .Length = DAC_DataLength,
     .DAC =

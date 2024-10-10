@@ -7,5 +7,8 @@
                 "run": "Flash Device"
             }
         }
+    ],
+    "clangd.arguments": [
+        "--compile-commands-dir=c:\\code\\STM32F407VET6\\out\\STM32F407VET6\\STM32F407VET6"
     ]
 }

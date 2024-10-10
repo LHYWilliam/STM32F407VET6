@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\System;.\U8g2;.\LVGL;.\Util</IncludePath>
+              <IncludePath>.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\OLED\Menu;.\System;.\U8g2;.\LVGL;.\Util</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
