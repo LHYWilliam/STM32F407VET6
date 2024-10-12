@@ -36,43 +36,25 @@ void Key_Update(Key_t *self, uint32_t ms) {
     self->State = Key_GetState(self);
 
     switch (self->State) {
-
     case KeyState_Down:
-        switch (self->LastState) {
-
-        case KeyState_Up:
-            break;
-
-        case KeyState_Down:
-            if (self->StateDuration > 200) {
-                self->Event = KeyEvent_LongPress;
-            }
-            break;
+        if (self->LastState == KeyState_Down && self->StateDuration > 200) {
+            self->Event = KeyEvent_LongPress;
         }
         break;
 
     case KeyState_Up:
+        if (self->LastState == KeyState_Up && self->StateDuration > 100) {
+            self->Event = KeyEvent_None;
 
-        switch (self->LastState) {
+        } else if (self->LastState == KeyState_Down &&
+                   self->StateDuration > 20 && self->StateDuration <= 200) {
+            if (self->LastEvent == KeyEvent_Click) {
+                self->Event = KeyEvent_DoubleClick;
 
-        case KeyState_Up:
-            if (self->StateDuration > 100) {
-                self->Event = KeyEvent_None;
+            } else {
+                self->Event = KeyEvent_Click;
             }
-            break;
-
-        case KeyState_Down:
-            if ((self->StateDuration > 20 && self->StateDuration <= 200)) {
-                if (self->LastEvent != KeyEvent_Click) {
-                    self->Event = KeyEvent_Click;
-
-                } else {
-                    self->Event = KeyEvent_DoubleClick;
-                }
-            }
-            break;
         }
-
         break;
     }
 
