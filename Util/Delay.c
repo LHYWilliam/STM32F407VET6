@@ -1,14 +1,13 @@
 #include "Delay.h"
 
-uint32_t now, last, reload, total, goal;
-
 void Delay_us(uint32_t us) {
+    uint32_t now, last, reload, total, goal;
     total = 0;
     goal = us * 168;
     last = SysTick->VAL;
     reload = SysTick->LOAD;
 
-    while (1) {
+    for(;;) {
         now = SysTick->VAL;
         if (now != last) {
             total += now < last ? last - now : reload - now + last;
@@ -19,7 +18,7 @@ void Delay_us(uint32_t us) {
 
             last = now;
         }
-    };
+    }
 }
 
 void Delay_ms(uint32_t ms) {

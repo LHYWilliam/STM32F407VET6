@@ -3,7 +3,6 @@
 
 #include "lvgl.h"
 
-#include "ADC.h"
 #include "Key.h"
 #include "LED.h"
 #include "Serial.h"
@@ -15,24 +14,32 @@ extern Serial_t Serial;
 
 extern SignalSampler_t Sampler;
 
-void vLEDTimerCallback(TimerHandle_t xTimer) { LED_Toggle(&LED0); }
+void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LED0); }
+
+void vKeyTimerCallback(TimerHandle_t pxTimer) {
+    KeyEvent event = Key0.Event;
+    Key_Update(&Key0, 10);
+    if (event != Key0.Event) {
+        Serial_Printf(&Serial, "%s\r\n", KeyEventString[Key0.Event]);
+    }
+}
 
 void vKeyTaskCode(void *pvParameters) {
     for (;;) {
-        if (Key_Read(&Key0) == KeyDown) {
-            for (uint32_t i = 0; i < Sampler.Length; i++) {
-                Serial_Printf(&Serial, "%d\r\n", Sampler.Data[i]);
-            }
-        }
+        // if (Key_Read(&Key0) == KeyDown) {
+        //     for (uint32_t i = 0; i < Sampler.Length; i++) {
+        //         Serial_Printf(&Serial, "%d\r\n", Sampler.Data[i]);
+        //     }
+        // }
 
-        vTaskDelay(pdMS_TO_TICKS(100));
+        // vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 
 void vLVGLTaskCode(void *pvParameters) {
 
     for (;;) {
-        lv_timer_handler();
+        // lv_timer_handler();
 
         vTaskDelay(pdMS_TO_TICKS(5));
     }
