@@ -19,17 +19,17 @@ void Key_Init(Key_t *self) {
     self->GPIO_Pin = gpio.GPIO_Pin;
 }
 
-KeyState Key_Read(Key_t *self) {
+KeyEvent Key_Read(Key_t *self) {
     if (HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin)) {
         Delay_ms(10);
         while (HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin)) {
         }
 
         Delay_ms(10);
-        return KeyState_Down;
+        return KeyEvent_Click;
     }
 
-    return KeyState_Up;
+    return KeyEvent_None;
 }
 
 void Key_Update(Key_t *self, uint32_t ms) {

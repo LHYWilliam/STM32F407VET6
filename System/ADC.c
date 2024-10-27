@@ -1,6 +1,7 @@
 #include <string.h>
 
 #include "ADC.h"
+#include "stm32f4xx.h"
 
 void ADC_Init(ADC_t *self) {
     uint8_t NbrOfConversion = 0;
@@ -15,13 +16,16 @@ void ADC_Init(ADC_t *self) {
             {
                 .ScanConvMode = NbrOfConversion > 1 ? ENABLE : DISABLE,
                 .ContinuousConvMode = self->Continuous,
-                .DMAContinuousRequests = ENABLE,
-                .EOCSelection = ADC_EOC_SINGLE_CONV,
+                .DMAContinuousRequests = self->Trigger ? ENABLE : DISABLE,
+                .EOCSelection = self->Trigger ? ADC_EOC_SINGLE_CONV : DISABLE,
 
                 .ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4,
 
-                .ExternalTrigConv = self->Trigger,
-                .ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_RISING,
+                .ExternalTrigConv =
+                    self->Trigger ? self->Trigger : ADC_SOFTWARE_START,
+                .ExternalTrigConvEdge = self->Trigger
+                                            ? ADC_EXTERNALTRIGCONVEDGE_RISING
+                                            : ADC_EXTERNALTRIGCONVEDGE_NONE,
 
                 .NbrOfConversion = NbrOfConversion,
             },
@@ -47,4 +51,4 @@ void ADC_DMAStart(ADC_t *self, uint32_t *data, uint32_t length) {
     HAL_ADC_Start_DMA(&self->Handler, data, length);
 };
 
-uint16_t ADC_Get(ADC_t *self) { return HAL_ADC_GetValue(&self->Handler); }
+uint32_t ADC_Get(ADC_t *self) { return HAL_ADC_GetValue(&self->Handler); }

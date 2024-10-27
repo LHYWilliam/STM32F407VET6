@@ -63,6 +63,6 @@ void ADC_Init(ADC_t *self);
 void ADC_Start(ADC_t *self);
 void ADC_DMAStart(ADC_t *self, uint32_t *data, uint32_t length);
 
-uint16_t ADC_Get(ADC_t *self);
+uint32_t ADC_Get(ADC_t *self);
 
 #endif

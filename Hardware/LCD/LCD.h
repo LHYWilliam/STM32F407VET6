@@ -32,9 +32,6 @@
 #define LCD_RST    PDout(11)
 
 typedef enum {
-    LCD_Vertical = 0,
-    LCD_Horizontal = 1,
-
     L2R_U2D = 0,
     L2R_D2U = 1,
     R2L_U2D = 2,
@@ -43,9 +40,15 @@ typedef enum {
     U2D_R2L = 5,
     D2U_L2R = 6,
     D2U_R2L = 7,
-} LCD_Direction;
+} LCD_ScanDirection;
 
-#define SCAN_DIR L2R_U2D
+#define Vertical_ScanDirection   L2R_U2D
+#define Horizontal_ScanDirection U2D_R2L
+
+typedef enum {
+    LCD_Vertical = 0,
+    LCD_Horizontal = 1,
+} LCD_Direction;
 
 #define LCD_BASE                                                               \
     ((uint32_t)(0x60000000 + (0x4000000 * (1 - 1))) | (((1 << 18) * 2) - 2))
@@ -58,6 +61,7 @@ typedef struct {
 
 typedef struct {
     LCD_Direction Direction;
+    uint8_t ScanDirection;
 
     DMA_t DMA;
 
@@ -71,6 +75,8 @@ typedef struct {
     uint16_t SetXCMD;
     uint16_t SetYCMD;
     uint16_t GRAMCMD;
+
+    uint8_t Buffer[128];
 } LCD_t;
 
 void LCD_Init(LCD_t *self);
@@ -80,8 +86,8 @@ void LCD_DisplayOff(void);
 void LCD_SetCursor(LCD_t *self, uint16_t x, uint16_t y);
 void LCD_SetWindow(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                    uint16_t height);
-void LCD_SetScanDirection(LCD_t *self, LCD_Direction direction);
-void LCD_SetDisplayDirection(LCD_t *self, LCD_Direction direction);
+void LCD_SetScanDirection(LCD_t *self);
+void LCD_SetDisplayDirection(LCD_t *self);
 void LCD_SetPointColor(LCD_t *self, uint16_t color);
 void LCD_SetBackColor(LCD_t *self, uint16_t color);
 
@@ -108,5 +114,7 @@ void LCD_ShowxNum(LCD_t *self, uint16_t x, uint16_t y, uint32_t num,
                   uint8_t length, uint8_t size, uint8_t mode);
 void LCD_ShowString(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                     uint16_t height, uint8_t size, char *p);
+void LCD_Printf(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
+                uint16_t height, uint8_t size, char *format, ...);
 
 #endif

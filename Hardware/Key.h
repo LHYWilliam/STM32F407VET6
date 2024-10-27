@@ -42,7 +42,7 @@ typedef struct {
 
 void Key_Init(Key_t *self);
 
-KeyState Key_Read(Key_t *self);
+KeyEvent Key_Read(Key_t *self);
 KeyState Key_GetState(Key_t *self);
 void Key_Update(Key_t *self, uint32_t ms);
 

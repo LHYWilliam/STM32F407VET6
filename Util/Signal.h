@@ -25,12 +25,9 @@ typedef struct {
 } SignalSampler_t;
 
 void SignalGenerator_Init(SignalGenerator_t *self);
-void SignalGenerator_Start(SignalGenerator_t *self, uint32_t *data,
-                           uint32_t length);
 
 void SignalSampler_Init(SignalSampler_t *self);
-void SignalSampler_Start(SignalSampler_t *self, uint32_t *data,
-                         uint32_t length);
+uint32_t SignalSampler_Get(SignalSampler_t *self);
 
 void Sin_Generate(uint32_t *data, uint32_t length);
 

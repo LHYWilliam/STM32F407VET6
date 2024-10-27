@@ -1,6 +1,9 @@
-#include "LCD.h"
+#include <stdarg.h>
+#include <stdio.h>
+
 #include "Delay.h"
 #include "GPIO.h"
+#include "LCD.h"
 #include "LCD_Font.h"
 
 #define LCD_WriteREG(Reg)  LCD1->LCD_REG = (Reg);
@@ -42,63 +45,27 @@ void LCD_SetWindow(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t width,
     LCD_WriteDATA(y2 & 0XFF);
 }
 
-void LCD_SetDisplayDirection(LCD_t *self, LCD_Direction direction) {
-    self->Direction = direction;
-
-    if (direction == LCD_Vertical) {
+void LCD_SetDisplayDirection(LCD_t *self) {
+    if (self->Direction == LCD_Vertical) {
         self->Width = 320;
         self->Height = 480;
         self->GRAMCMD = 0X2C;
         self->SetXCMD = 0X2A;
         self->SetYCMD = 0X2B;
-    } else if (direction == LCD_Horizontal) {
+        self->ScanDirection = Vertical_ScanDirection;
+    } else if (self->Direction == LCD_Horizontal) {
         self->Width = 480;
         self->Height = 320;
         self->GRAMCMD = 0X2C;
         self->SetXCMD = 0X2A;
         self->SetYCMD = 0X2B;
+        self->ScanDirection = Horizontal_ScanDirection;
     }
 }
 
-void LCD_SetScanDirection(LCD_t *self, LCD_Direction direction) {
-    if (self->Direction == LCD_Horizontal) {
-        switch (direction) {
-        case L2R_U2D:
-            direction = D2U_L2R;
-            break;
-
-        case L2R_D2U:
-            direction = D2U_R2L;
-            break;
-
-        case R2L_U2D:
-            direction = U2D_L2R;
-            break;
-
-        case R2L_D2U:
-            direction = U2D_R2L;
-            break;
-
-        case U2D_L2R:
-            direction = L2R_D2U;
-            break;
-
-        case U2D_R2L:
-            direction = L2R_U2D;
-            break;
-
-        case D2U_L2R:
-            direction = R2L_D2U;
-            break;
-
-        case D2U_R2L:
-            direction = R2L_U2D;
-            break;
-        }
-    }
-
+void LCD_SetScanDirection(LCD_t *self) {
     uint16_t regval = 0;
-    switch (direction) {
+    switch (self->ScanDirection) {
     case L2R_U2D:
         regval |= (0 << 7) | (0 << 6) | (0 << 5);
         break;
@@ -158,7 +125,7 @@ void LCD_SetPointColor(LCD_t *self, uint16_t color) {
 void LCD_SetBackColor(LCD_t *self, uint16_t color) { self->BackColor = color; }
 
 void LCD_Clear(LCD_t *self, uint16_t color) {
-    LCD_SetCursor(self, 0x00, 0x0000);
+    LCD_SetWindow(self, 0, 0, self->Width, self->Height);
 
     LCD_WriteGRAM(self);
     uint32_t totalPoint = self->Width * self->Height;
@@ -439,6 +406,16 @@ void LCD_ShowString(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
         x += size / 2;
         string++;
     }
+}
+
+void LCD_Printf(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
+                uint16_t height, uint8_t size, char *format, ...) {
+    va_list arg;
+    va_start(arg, format);
+    vsprintf((char *)self->Buffer, format, arg);
+    va_end(arg);
+
+    LCD_ShowString(self, x, y, width, height, size, (char *)self->Buffer);
 }
 
 void LCD_Init(LCD_t *self) {
@@ -1206,12 +1183,11 @@ void LCD_Init(LCD_t *self) {
 
     FSMC_Bank1E->BWTR[0] |= 2 << 8;
 
-    LCD_SetPointColor(self, BLACK);
-    LCD_SetBackColor(self, WHITE);
-    LCD_SetDisplayDirection(self, self->Direction);
-    LCD_SetScanDirection(self, SCAN_DIR);
-    LCD_SetWindow(self, 0, 0, self->Width, self->Height);
+    LCD_SetDisplayDirection(self);
+    LCD_SetScanDirection(self);
     LCD_Clear(self, WHITE);
+    LCD_SetBackColor(self, WHITE);
+    LCD_SetPointColor(self, BLACK);
 
     LCD_LED = 1;
 }
