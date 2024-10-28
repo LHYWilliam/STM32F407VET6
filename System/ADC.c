@@ -1,7 +1,6 @@
 #include <string.h>
 
 #include "ADC.h"
-#include "stm32f4xx.h"
 
 void ADC_Init(ADC_t *self) {
     uint8_t NbrOfConversion = 0;

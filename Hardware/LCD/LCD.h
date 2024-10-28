@@ -61,7 +61,7 @@ typedef struct {
 
 typedef struct {
     LCD_Direction Direction;
-    uint8_t ScanDirection;
+    LCD_ScanDirection ScanDirection;
 
     DMA_t DMA;
 
