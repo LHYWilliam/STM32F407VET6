@@ -1,9 +1,8 @@
 #ifndef TOUCH_H
 #define TOUCH_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
-#include "Delay.h"
 #include "LCD.h"
 #include "sys.h"
 

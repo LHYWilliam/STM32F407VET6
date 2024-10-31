@@ -1,7 +1,7 @@
 #ifndef PWM_H
 #define PWM_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 typedef struct {
     TIM_TypeDef *TIM;

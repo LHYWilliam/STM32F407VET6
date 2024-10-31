@@ -1,7 +1,7 @@
 #ifndef LED_H
 #define LED_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 typedef struct {
     char GPIOxPiny[4];

@@ -1,7 +1,7 @@
 #ifndef TIM_H
 #define TIM_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 #define __HAL_RCC_TIMx_CLK_ENABLE(x)                                           \
     do {                                                                       \

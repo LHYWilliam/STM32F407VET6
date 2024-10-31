@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "Delay.h"
 #include "LCD.h"
 #include "Touch.h"
 

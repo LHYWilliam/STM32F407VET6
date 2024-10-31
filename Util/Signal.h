@@ -1,10 +1,12 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 #include "ADC.h"
 #include "DAC.h"
+#include "DMA.h"
+#include "Timer.h"
 
 typedef struct {
     uint32_t *Data;

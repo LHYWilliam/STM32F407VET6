@@ -1,7 +1,7 @@
 #ifndef OLED_H
 #define OLED_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 typedef struct {
     char SCL[4];

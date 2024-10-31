@@ -1,7 +1,7 @@
 #include "u8g2.h"
 
-#include "stdio.h"
 #include <stdarg.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "Delay.h"

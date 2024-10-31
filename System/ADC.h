@@ -1,10 +1,7 @@
 #ifndef ADC_H
 #define ADC_H
 
-#include "stm32f4xx_hal.h"
-
-#include "DMA.h"
-#include "Timer.h"
+#include CMSIS_device_header
 
 #undef ADC
 

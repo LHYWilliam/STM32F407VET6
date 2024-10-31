@@ -1,7 +1,7 @@
 #ifndef __LCD_H
 #define __LCD_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 #include "DMA.h"
 #include "sys.h"

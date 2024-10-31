@@ -1,7 +1,7 @@
 #ifndef MENU_H
 #define MENU_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 #include <u8g2.h>
 

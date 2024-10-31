@@ -1,7 +1,7 @@
 #ifndef GPIO_H
 #define GPIO_H
 
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 #define HAL_RCC_GPIOx_CLK_ENABLE(x)                                            \
     do {                                                                       \
