@@ -5,6 +5,10 @@
 
 #include "TIM.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     TIM_TypeDef *TIMx;
     uint32_t ms;
@@ -17,5 +21,9 @@ typedef struct {
 } Timer_t;
 
 void Timer_Init(Timer_t *self);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

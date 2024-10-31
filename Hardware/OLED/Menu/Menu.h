@@ -3,6 +3,10 @@
 
 #include CMSIS_device_header
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <u8g2.h>
 
 #define TEXT_COUNT_OF_PAGE 4
@@ -45,5 +49,9 @@ void TextMenu_ReturnUpperPage(TextMenu_t *self);
 void U8G2_ShowImageMenu(U8G2_t *u8g2, ImageMenu_t *menu, uint16_t delay);
 void ImageMenu_CursorInc(ImageMenu_t *self);
 void ImageMenu_CursorDec(ImageMenu_t *self);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

@@ -3,6 +3,10 @@
 
 #include CMSIS_device_header
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define HAL_RCC_GPIOx_CLK_ENABLE(x)                                            \
     do {                                                                       \
         if ((x) == GPIOA) {                                                    \
@@ -81,5 +85,9 @@ typedef struct {
 } GPIO_t;
 
 void GPIO_Init(GPIO_t *self);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
