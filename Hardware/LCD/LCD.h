@@ -100,6 +100,7 @@ void LCD_Fill(LCD_t *self, uint16_t sx, uint16_t sy, uint16_t ex, uint16_t ey,
               uint16_t color);
 
 void LCD_DrawPoint(LCD_t *self, uint16_t x, uint16_t y, uint16_t color);
+uint16_t LCD_ReadPoint(LCD_t *self, uint16_t x, uint16_t y);
 void LCD_DrawLine(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t x2,
                   uint16_t y2);
 void LCD_DrawRectangle(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t x2,
@@ -107,8 +108,6 @@ void LCD_DrawRectangle(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t x2,
 void LCD_DrawCircle(LCD_t *self, uint16_t x0, uint16_t y0, uint8_t r);
 void LCD_ShowImage(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                    uint16_t height, const uint8_t *image);
-
-uint16_t LCD_ReadPoint(LCD_t *self, uint16_t x, uint16_t y);
 
 void LCD_ShowChar(LCD_t *self, uint16_t x, uint16_t y, uint8_t num,
                   uint8_t size, uint8_t mode);

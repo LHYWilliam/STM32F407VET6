@@ -151,6 +151,32 @@ void LCD_DrawPoint(LCD_t *self, uint16_t x, uint16_t y, uint16_t color) {
     LCD_WriteDATA(color);
 }
 
+uint16_t LCD_ReadPoint(LCD_t *self, uint16_t x, uint16_t y) {
+    uint16_t r = 0, g = 0, b = 0;
+    if (x >= self->Width || y >= self->Height)
+        return 0;
+    LCD_SetCursor(self, x, y);
+
+    LCD_WriteREG(0X2E);
+
+    r = LCD_ReadDATA();
+
+    uint8_t i = 2;
+    while (i--)
+        ;
+    r = LCD_ReadDATA();
+
+    i = 2;
+    while (i--)
+        ;
+    b = LCD_ReadDATA();
+    g = r & 0XFF;
+
+    g <<= 8;
+
+    return (((r >> 11) << 11) | ((g >> 10) << 5) | (b >> 11));
+}
+
 void LCD_DrawLine(LCD_t *self, uint16_t x1, uint16_t y1, uint16_t x2,
                   uint16_t y2) {
     int32_t xerr = 0, yerr = 0, delta_x = x2 - x1, delta_y = y2 - y1, distance;
@@ -257,33 +283,6 @@ void LCD_ShowImage(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
             LCD_WriteDATA((image[2 * i + 1] << 8) | image[2 * i]);
         }
     }
-}
-
-static void opt_delay(uint8_t i) {
-    while (i--)
-        ;
-}
-
-uint16_t LCD_ReadPoint(LCD_t *self, uint16_t x, uint16_t y) {
-    uint16_t r = 0, g = 0, b = 0;
-    if (x >= self->Width || y >= self->Height)
-        return 0;
-    LCD_SetCursor(self, x, y);
-
-    LCD_WriteREG(0X2E);
-
-    r = LCD_ReadDATA();
-
-    opt_delay(2);
-    r = LCD_ReadDATA();
-
-    opt_delay(2);
-    b = LCD_ReadDATA();
-    g = r & 0XFF;
-
-    g <<= 8;
-
-    return (((r >> 11) << 11) | ((g >> 10) << 5) | (b >> 11));
 }
 
 void LCD_ShowChar(LCD_t *self, uint16_t x, uint16_t y, uint8_t num,

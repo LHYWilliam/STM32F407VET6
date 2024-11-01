@@ -210,7 +210,7 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
 # DAC
 * main.c
 ```
-SignalGenerator_t Generator = {
+Generator_t Generator = {
     .Data = DAC_Data,
     .Length = DAC_DataLength,
     .DAC =
@@ -231,7 +231,7 @@ SignalGenerator_t Generator = {
         },
 };
 
-SignalGenerator_Init(&Generator);
+Generator_Init(&Generator);
 ```
 
 * msp.c
@@ -268,7 +268,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
 # ADC
 * main.c
 ```
-SignalSampler_t Sampler = {
+Sampler_t Sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
     .ADC =
@@ -290,7 +290,7 @@ SignalSampler_t Sampler = {
         },
 };
 
-SignalSampler_Init(&Sampler);
+Sampler_Init(&Sampler);
 ```
 
 * msp.c

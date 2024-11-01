@@ -1,4 +1,4 @@
-#include "stm32f4xx_hal.h"
+#include CMSIS_device_header
 
 void SystemClock_Config(void) {
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};

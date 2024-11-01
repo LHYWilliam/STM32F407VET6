@@ -19,21 +19,22 @@ typedef struct {
     DAC_t DAC;
     DMA_t DMA;
     Timer_t Timer;
-} SignalGenerator_t;
+} Generator_t;
 
 typedef struct {
     uint32_t *Data;
+    uint32_t Index;
     uint32_t Length;
 
     ADC_t ADC;
     DMA_t DMA;
     Timer_t Timer;
-} SignalSampler_t;
+} Sampler_t;
 
-void SignalGenerator_Init(SignalGenerator_t *self);
+void Generator_Init(Generator_t *self);
 
-void SignalSampler_Init(SignalSampler_t *self);
-uint32_t SignalSampler_Get(SignalSampler_t *self);
+void Sampler_Init(Sampler_t *self);
+void Sampler_Get(Sampler_t *self);
 
 void Sin_Generate(uint32_t *data, uint32_t length);
 

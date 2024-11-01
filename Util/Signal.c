@@ -4,7 +4,7 @@
 
 #include "Signal.h"
 
-void SignalGenerator_Init(SignalGenerator_t *self) {
+void Generator_Init(Generator_t *self) {
 
     if (self->Timer.TIMx) {
         self->DAC.Trigger = DAC_TRIGGER_Tx_TRGO(self->Timer.TIMx);
@@ -33,7 +33,7 @@ void SignalGenerator_Init(SignalGenerator_t *self) {
     }
 }
 
-void SignalSampler_Init(SignalSampler_t *self) {
+void Sampler_Init(Sampler_t *self) {
     if (self->Timer.TIMx) {
         self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(self->Timer.TIMx);
     }
@@ -62,8 +62,9 @@ void SignalSampler_Init(SignalSampler_t *self) {
     }
 }
 
-uint32_t SignalSampler_Get(SignalSampler_t *self) {
-    return ADC_Get(&self->ADC);
+void Sampler_Get(Sampler_t *self) {
+    self->Data[self->Index] = ADC_Get(&self->ADC);
+    self->Index = (self->Index + 1) % self->Length;
 }
 
 void Sin_Generate(uint32_t *data, uint32_t length) {
