@@ -37,9 +37,9 @@ uint8_t Touch_Scan(Touch_t *self, LCD_t *lcd) {
                         self->X[i] = ((uint16_t)buffer[1] << 8) + buffer[0];
                         self->Y[i] = ((uint16_t)buffer[3] << 8) + buffer[2];
                     } else if (self->Direction == LCD_Horizontal) {
-                        self->X[i] = lcd->Width -
-                                     (((uint16_t)buffer[3] << 8) + buffer[2]);
-                        self->Y[i] = ((uint16_t)buffer[1] << 8) + buffer[0];
+                        self->X[i] = (((uint16_t)buffer[3] << 8) + buffer[2]);
+                        self->Y[i] = lcd->Height -
+                                     (((uint16_t)buffer[1] << 8) + buffer[0]);
                     }
                 }
             }

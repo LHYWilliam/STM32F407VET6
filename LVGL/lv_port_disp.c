@@ -19,8 +19,8 @@ extern LCD_t LCD;
 /*********************
  *      DEFINES
  *********************/
-#define MY_DISP_HOR_RES 320
-#define MY_DISP_VER_RES 480
+#define MY_DISP_HOR_RES 480
+#define MY_DISP_VER_RES 320
 
 #ifndef MY_DISP_HOR_RES
 #warning Please define or replace the macro MY_DISP_HOR_RES with the actual screen width, default value 320 is used for now.
@@ -95,11 +95,11 @@ void lv_port_disp_init(void) {
 
     /* Example for 1) */
     static lv_disp_draw_buf_t draw_buf_dsc_1;
-    static lv_color_t buf_1[MY_DISP_HOR_RES * 64]; /*A buffer for 64
+    static lv_color_t buf_1[MY_DISP_HOR_RES * 42]; /*A buffer for 64
       rows*/
     lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL,
                           MY_DISP_HOR_RES *
-                              64); /*Initialize the display buffer*/
+                              42); /*Initialize the display buffer*/
 
     /* Example for 2) */
     //    static lv_disp_draw_buf_t draw_buf_dsc_2;

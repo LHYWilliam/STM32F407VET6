@@ -144,3 +144,7 @@ out
 *.cbuild.yml
 *.cbuild-idx.yml
 *.cbuild-set.yml
+
+# GUI-Guider
+LVGL/custom
+LVGL/generated

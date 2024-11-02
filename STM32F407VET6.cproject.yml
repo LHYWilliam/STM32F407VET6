@@ -10,14 +10,17 @@ project:
       processor:
         fpu: sp
       add-path:
+        - Util
+        - System
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
         - Hardware/OLED/Menu
-        - System
         - U8g2
         - LVGL
-        - Util
+        - LVGL/custom
+        - LVGL/generated
+        - LVGL/generated/guider_customer_fonts
       debug: "on"
       misc:
         - C:
@@ -168,6 +171,20 @@ project:
         - file: LVGL/lv_port_disp.h
         - file: LVGL/lv_port_indev.c
         - file: LVGL/lv_port_indev.h
+        - file: LVGL/generated/events_init.c
+        - file: LVGL/generated/events_init.h
+        - file: LVGL/generated/gui_guider.c
+        - file: LVGL/generated/gui_guider.h
+        - file: LVGL/generated/setup_scr_MainScreen.c
+        - file: LVGL/generated/setup_scr_SignalScreen.c
+        - file: LVGL/generated/widgets_init.c
+        - file: LVGL/generated/widgets_init.h
+        - file: LVGL/generated/guider_customer_fonts/guider_customer_fonts.h
+        - file: LVGL/generated/guider_fonts/lv_font_montserratMedium_12.c
+        - file: LVGL/generated/guider_fonts/lv_font_montserratMedium_16.c
+        - file: LVGL/custom/custom.c
+        - file: LVGL/custom/custom.h
+        - file: LVGL/custom/lv_conf_ext.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:DSP&Source
@@ -216,4 +233,5 @@ project:
     - component: Keil::Device:STM32Cube HAL:WWDG
     - component: Keil::Device:Startup
     - component: LVGL::LVGL&LVGL:lvgl:Essential
+    - component: LVGL::LVGL&LVGL:lvgl:Extra Themes
     - component: LVGL::LVGL&LVGL:lvgl:Porting

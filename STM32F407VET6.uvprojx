@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\OLED\Menu;.\System;.\U8g2;.\LVGL;.\Util</IncludePath>
+              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\OLED\Menu;.\U8g2;.\LVGL;.\LVGL\custom;.\LVGL\generated;.\LVGL\generated\guider_customer_fonts</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -884,6 +884,76 @@
               <FileType>5</FileType>
               <FilePath>.\LVGL\lv_port_indev.h</FilePath>
             </File>
+            <File>
+              <FileName>events_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\events_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>events_init.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LVGL\generated\events_init.h</FilePath>
+            </File>
+            <File>
+              <FileName>gui_guider.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\gui_guider.c</FilePath>
+            </File>
+            <File>
+              <FileName>gui_guider.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LVGL\generated\gui_guider.h</FilePath>
+            </File>
+            <File>
+              <FileName>setup_scr_MainScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\setup_scr_MainScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>setup_scr_SignalScreen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\setup_scr_SignalScreen.c</FilePath>
+            </File>
+            <File>
+              <FileName>widgets_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\widgets_init.c</FilePath>
+            </File>
+            <File>
+              <FileName>widgets_init.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LVGL\generated\widgets_init.h</FilePath>
+            </File>
+            <File>
+              <FileName>guider_customer_fonts.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LVGL\generated\guider_customer_fonts\guider_customer_fonts.h</FilePath>
+            </File>
+            <File>
+              <FileName>lv_font_montserratMedium_12.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\guider_fonts\lv_font_montserratMedium_12.c</FilePath>
+            </File>
+            <File>
+              <FileName>lv_font_montserratMedium_16.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\generated\guider_fonts\lv_font_montserratMedium_16.c</FilePath>
+            </File>
+            <File>
+              <FileName>custom.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LVGL\custom\custom.c</FilePath>
+            </File>
+            <File>
+              <FileName>custom.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LVGL\custom\custom.h</FilePath>
+            </File>
+            <File>
+              <FileName>lv_conf_ext.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\LVGL\custom\lv_conf_ext.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1201,6 +1271,12 @@
         </targetInfos>
       </component>
       <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Essential" Cvendor="LVGL" Cversion="8.4.0">
+        <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
+        <targetInfos>
+          <targetInfo name="STM32F407VET6"/>
+        </targetInfos>
+      </component>
+      <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Extra Themes" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential">
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
         <targetInfos>
           <targetInfo name="STM32F407VET6"/>
