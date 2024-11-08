@@ -77,7 +77,8 @@ void vLVGLTaskCode(void *pvParameters) {
                      LCD.Height / 4.);
             }
 
-            lv_line_set_points(guider_ui.SignalScreen_line, line_points, 128);
+            lv_line_set_points(guider_ui.SignalScreen_line, line_points,
+                               Sampler.Length);
 
             float temp = Sampler.Data[Sampler.Index > 0 ? Sampler.Index - 1
                                                         : Sampler.Length - 1] *

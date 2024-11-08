@@ -7,7 +7,7 @@ void GPIO_Init(GPIO_t *self) {
         .Mode = self->Mode,
         .Pull = self->Pull,
         .Alternate = self->Alternate,
-        .Speed = GPIO_SPEED_FREQ_HIGH,
+        .Speed = GPIO_SPEED_FREQ_VERY_HIGH,
     };
 
     uint8_t count = 0;

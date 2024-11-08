@@ -8,7 +8,7 @@
 // extern Serial_t Serial;
 
 // extern PWM_t PWM;
-// extern Generator_t Generator;
+extern Generator_t Generator;
 extern Sampler_t Sampler;
 
 void HAL_MspInit(void) {
@@ -86,25 +86,25 @@ void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     GPIO_Init(&FSMC_A18);
 }
 
-// void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
-//     if (hdac->Instance == Generator.DAC.Handler.Instance) {
-//         __HAL_RCC_DAC_CLK_ENABLE();
+void HAL_DAC_MspInit(DAC_HandleTypeDef *hdac) {
+    if (hdac->Instance == Generator.DAC.Handler.Instance) {
+        __HAL_RCC_DAC_CLK_ENABLE();
 
-//         GPIO_t gpio = {
-//             .Mode = GPIO_MODE_ANALOG,
-//             .Pull = GPIO_NOPULL,
-//         };
-//         strcpy(gpio.GPIOxPiny, Generator.DAC.GPIOxPiny);
-//         GPIO_Init(&gpio);
+        GPIO_t gpio = {
+            .Mode = GPIO_MODE_ANALOG,
+            .Pull = GPIO_NOPULL,
+        };
+        strcpy(gpio.GPIOxPiny, Generator.DAC.GPIOxPiny);
+        GPIO_Init(&gpio);
 
-//         if (Generator.DMA.DMAx) {
-//             __HAL_RCC_DMAx_CLK_ENABLE(Generator.DMA.DMAx);
+        if (Generator.DMA.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(Generator.DMA.DMAx);
 
-//             __HAL_LINKDMA(&Generator.DAC.Handler, DMA_Handle1,
-//                           Generator.DMA.Handler);
-//         }
-//     }
-// }
+            __HAL_LINKDMA(&Generator.DAC.Handler, DMA_Handle1,
+                          Generator.DMA.Handler);
+        }
+    }
+}
 
 void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
     if (hadc->Instance == Sampler.ADC.ADCx) {
@@ -127,11 +127,10 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    // if (htim->Instance == Generator.Timer.TIMx) {
-    //     __HAL_RCC_TIMx_CLK_ENABLE(Generator.Timer.TIMx);
+    if (htim->Instance == Generator.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(Generator.Timer.TIMx);
 
-    // } else
-    if (htim->Instance == Sampler.Timer.TIMx) {
+    } else if (htim->Instance == Sampler.Timer.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(Sampler.Timer.TIMx);
     }
 }

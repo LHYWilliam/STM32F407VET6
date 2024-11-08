@@ -58,33 +58,33 @@ Touch_t Touch = {
 // };
 
 #define DAC_DataLength 32
-#define DAC_Frequency  1000
-#define ADC_DataLength 128
-#define ADC_Frequency  DAC_Frequency * 32
+#define DAC_Frequency  1
+#define ADC_DataLength 32
+#define ADC_Frequency  DAC_Frequency * ADC_DataLength
 
-// uint32_t DAC_Data[DAC_DataLength];
+uint32_t DAC_Data[DAC_DataLength];
 uint32_t ADC_Data[ADC_DataLength];
 
-// Generator_t Generator = {
-//     .Data = DAC_Data,
-//     .Length = DAC_DataLength,
-//     .DAC =
-//         {
-//             .Channel = "1",
-//             .GPIOxPiny = "A4",
-//         },
-//     .DMA =
-//         {
-//             .DMAx = DMA1,
-//             .Channel = 7,
-//             .Stream = 5,
-//         },
-//     .Timer =
-//         {
-//             .TIMx = TIM2,
-//             .Hz = DAC_Frequency,
-//         },
-// };
+Generator_t Generator = {
+    .Data = DAC_Data,
+    .Length = DAC_DataLength,
+    .DAC =
+        {
+            .Channel = "1",
+            .GPIOxPiny = "A4",
+        },
+    .DMA =
+        {
+            .DMAx = DMA1,
+            .Channel = 7,
+            .Stream = 5,
+        },
+    .Timer =
+        {
+            .TIMx = TIM2,
+            .Hz = DAC_Frequency,
+        },
+};
 
 Sampler_t Sampler = {
     .Data = ADC_Data,
@@ -104,7 +104,7 @@ Sampler_t Sampler = {
     .Timer =
         {
             .TIMx = TIM3,
-            .ms = 100,
+            .Hz = ADC_Frequency,
         },
 };
 
@@ -136,8 +136,8 @@ int main() {
     Touch_Init(&Touch);
 
     // PWM_Init(&PWM);
-    // Sin_Generate(Generator.Data, Generator.Length);
-    // Generator_Init(&Generator);
+    Sin_Generate(Generator.Data, Generator.Length);
+    Generator_Init(&Generator);
     Sampler_Init(&Sampler);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,

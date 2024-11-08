@@ -3,10 +3,10 @@
 void Timer_Init(Timer_t *self) {
     TIM_t tim = {
         .TIM = self->TIMx,
-        .Prescaler = self->ms ? (8400 - 1) : (self->Hz ? 1 - 1 : NULL),
-        .Period =
-            self->ms ? (self->ms * 10 - 1)
-                     : (self->Hz ? (uint32_t)(84000000. / self->Hz - 1) : NULL),
+        .Prescaler = self->ms ? (8400 - 1) : (self->Hz ? 84 - 1 : NULL),
+        .Period = self->ms
+                      ? (self->ms * 10 - 1)
+                      : (self->Hz ? (uint32_t)(1000000. / self->Hz - 1) : NULL),
         .Handler = &self->Handler,
         .HAL_TIM_Init = HAL_TIM_Base_Init,
     };
