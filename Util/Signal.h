@@ -35,6 +35,7 @@ void Generator_Init(Generator_t *self);
 
 void Sampler_Init(Sampler_t *self);
 void Sampler_Get(Sampler_t *self);
+void Sampler_UpdateIndex(Sampler_t *self);
 
 void Sin_Generate(uint32_t *data, uint32_t length);
 

@@ -55,6 +55,9 @@ void Sampler_Init(Sampler_t *self) {
 
         Timer_Init(&self->Timer);
     }
+
+    self->Index = self->Length - 1;
+
     if (self->DMA.DMAx) {
         ADC_DMAStart(&self->ADC, self->Data, self->Length);
     } else {
@@ -64,7 +67,12 @@ void Sampler_Init(Sampler_t *self) {
 
 void Sampler_Get(Sampler_t *self) {
     self->Data[self->Index] = ADC_Get(&self->ADC);
-    self->Index = (self->Index + 1) % self->Length;
+}
+
+void Sampler_UpdateIndex(Sampler_t *self) {
+    self->Index =
+        self->Length - DMAx_Streamy(self->DMA.DMAx, self->DMA.Stream)->NDTR;
+    self->Index = self->Index > 0 ? self->Index - 1 : self->Length - 1;
 }
 
 void Sin_Generate(uint32_t *data, uint32_t length) {

@@ -51,38 +51,28 @@ void vLVGLTaskCode(void *pvParameters) {
     setup_ui(&guider_ui);
     events_init(&guider_ui);
 
+    static lv_point_t line_points[128] = {};
+
     for (;;) {
         if (lv_scr_act() == guider_ui.SignalScreen) {
-            Sampler.Index =
-                Sampler.Length -
-                DMAx_Streamy(Sampler.DMA.DMAx, Sampler.DMA.Stream)->NDTR;
-            static lv_point_t line_points[128] = {};
+            Sampler_UpdateIndex(&Sampler);
 
-            for (uint32_t i = Sampler.Index; i < Sampler.Length; i++) {
-                line_points[i - Sampler.Index].x =
-                    (float)(i - Sampler.Index) * LCD.Width / Sampler.Length;
-                line_points[i - Sampler.Index].y =
-                    LCD.Height -
-                    ((float)Sampler.Data[i] * LCD.Height / 2. / 4095. +
-                     LCD.Height / 4.);
-            }
+            uint32_t Index = Sampler.Index;
+            for (uint32_t i = 0; i < Sampler.Length; i++) {
+                Index = (Index + 1) % Sampler.Length;
 
-            for (uint32_t i = 0; i < Sampler.Index; i++) {
-                line_points[i + Sampler.Length - Sampler.Index].x =
-                    (float)(i + Sampler.Length - Sampler.Index) * LCD.Width /
-                    Sampler.Length;
-                line_points[i + Sampler.Length - Sampler.Index].y =
-                    LCD.Height -
-                    ((float)Sampler.Data[i] * LCD.Height / 2. / 4095. +
-                     LCD.Height / 4.);
+                line_points[i].x =
+                    (float)i * (LCD.Width - 1) / (Sampler.Length - 1);
+                line_points[i].y =
+                    (LCD.Height - 1) - ((float)Sampler.Data[Index] *
+                                            (LCD.Height - 1) / 2. / 4095. +
+                                        (LCD.Height - 1) / 4.);
             }
 
             lv_line_set_points(guider_ui.SignalScreen_line, line_points,
                                Sampler.Length);
 
-            float temp = Sampler.Data[Sampler.Index > 0 ? Sampler.Index - 1
-                                                        : Sampler.Length - 1] *
-                         3.3 / 4095.;
+            float temp = Sampler.Data[Sampler.Index] * 3.3 / 4095.;
             lv_label_set_text_fmt(guider_ui.SignalScreen_ADC_label,
                                   "ADC: %d.%d V ", (uint16_t)temp,
                                   (uint16_t)(temp * 1000) % 1000);
