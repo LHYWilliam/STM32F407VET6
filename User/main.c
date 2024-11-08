@@ -2,15 +2,11 @@
 #include "task.h"
 #include "timers.h"
 
-#include "lvgl.h"
-
-#include "lv_port_disp.h"
-#include "lv_port_indev.h"
-
 #include "Key.h"
 #include "LCD.h"
 #include "LED.h"
-#include "Serial.h"
+// #include "PWM.h"
+// #include "Serial.h"
 #include "Signal.h"
 #include "Touch.h"
 
@@ -30,59 +26,67 @@ Key_t Key1 = {
     .GPIOxPiny = "A0",
 };
 
-Serial_t Serial = {
-    .USART = USART1,
-    .TX = "A9",
-    .RX = "A10",
-    .Baudrate = 115200,
-    .RxIT = ENABLE,
-    .RxITSize = 1,
-};
+// Serial_t Serial = {
+//     .USART = USART1,
+//     .TX = "A9",
+//     .RX = "A10",
+//     .Baudrate = 115200,
+//     .RxIT = ENABLE,
+//     .RxITSize = 1,
+// };
 
 LCD_t LCD = {
-    .Direction = LCD_Vertical,
+    .Direction = LCD_Horizontal,
     .DMA =
         {
             .DMAx = DMA2,
-            .Stream = 0,
-            .Channel = 0,
+            .Stream = 1,
+            .Channel = 1,
         },
 };
 
 Touch_t Touch = {
-    .Direction = LCD_Vertical,
+    .Direction = LCD_Horizontal,
 };
+
+// PWM_t PWM = {
+//     .TIM = TIM3,
+//     .Channel = "1 | 2",
+//     .Prescaler = 84 - 1,
+//     .Period = 100 - 1,
+//     .GPIOxPiny = "A6 | A7",
+// };
 
 #define DAC_DataLength 32
 #define DAC_Frequency  1000
-#define ADC_DataLength 32
+#define ADC_DataLength 128
 #define ADC_Frequency  DAC_Frequency * 32
 
-uint32_t DAC_Data[DAC_DataLength];
+// uint32_t DAC_Data[DAC_DataLength];
 uint32_t ADC_Data[ADC_DataLength];
 
-SignalGenerator_t Generator = {
-    .Data = DAC_Data,
-    .Length = DAC_DataLength,
-    .DAC =
-        {
-            .Channel = "1",
-            .GPIOxPiny = "A4",
-        },
-    .DMA =
-        {
-            .DMAx = DMA1,
-            .Channel = 7,
-            .Stream = 5,
-        },
-    .Timer =
-        {
-            .TIMx = TIM2,
-            .Hz = DAC_Frequency,
-        },
-};
+// Generator_t Generator = {
+//     .Data = DAC_Data,
+//     .Length = DAC_DataLength,
+//     .DAC =
+//         {
+//             .Channel = "1",
+//             .GPIOxPiny = "A4",
+//         },
+//     .DMA =
+//         {
+//             .DMAx = DMA1,
+//             .Channel = 7,
+//             .Stream = 5,
+//         },
+//     .Timer =
+//         {
+//             .TIMx = TIM2,
+//             .Hz = DAC_Frequency,
+//         },
+// };
 
-SignalSampler_t Sampler = {
+Sampler_t Sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
     .ADC =
@@ -100,18 +104,18 @@ SignalSampler_t Sampler = {
     .Timer =
         {
             .TIMx = TIM3,
-            .Hz = ADC_Frequency,
+            .ms = 100,
         },
 };
 
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
-TimerHandle_t xKeyTimer;
-void vKeyTimerCallback(TimerHandle_t pxTimerr);
+// TimerHandle_t xKeyTimer;
+// void vKeyTimerCallback(TimerHandle_t pxTimer);
 
-TaskHandle_t xKeyTaskHandle;
-void vKeyTaskCode(void *pvParameters);
+// TaskHandle_t xKeyTaskHandle;
+// void vKeyTaskCode(void *pvParameters);
 
 TaskHandle_t xLVGLTaskHandle;
 void vLVGLTaskCode(void *pvParameters);
@@ -126,28 +130,26 @@ int main() {
     LED_Init(&LED1);
     Key_Init(&Key0);
     Key_Init(&Key1);
-    Serial_Init(&Serial);
+    // Serial_Init(&Serial);
 
-    // LCD_Init(&LCD);
-    // Touch_Init(&Touch);
+    LCD_Init(&LCD);
+    Touch_Init(&Touch);
 
+    // PWM_Init(&PWM);
     // Sin_Generate(Generator.Data, Generator.Length);
-    // SignalGenerator_Init(&Generator);
-    // SignalSampler_Init(&Sampler);
-
-    // lv_init();
-    // lv_port_disp_init();
-    // lv_port_indev_init();
+    // Generator_Init(&Generator);
+    Sampler_Init(&Sampler);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);
-    xKeyTimer = xTimerCreate("xKeyTimer", pdMS_TO_TICKS(10), pdTRUE, (void *)1,
-                             vKeyTimerCallback);
-    xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
-    // xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
+    // xKeyTimer = xTimerCreate("xKeyTimer", pdMS_TO_TICKS(10), pdTRUE, (void
+    // *)1,
+    //                          vKeyTimerCallback);
+    // xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
+    xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
 
     xTimerStart(xLEDTimer, 0);
-    xTimerStart(xKeyTimer, 0);
+    // xTimerStart(xKeyTimer, 0);
     vTaskStartScheduler();
 
     for (;;) {
