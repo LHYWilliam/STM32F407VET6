@@ -1,13 +1,13 @@
 #include <string.h>
 
 #include "GPIO.h"
-// #include "PWM.h"
-// #include "Serial.h"
+#include "PWM.h"
+#include "Serial.h"
 #include "Signal.h"
 
-// extern Serial_t Serial;
+extern Serial_t Serial;
 
-// extern PWM_t PWM;
+extern PWM_t PWM;
 extern Generator_t Generator;
 extern Sampler_t Sampler;
 
@@ -16,30 +16,30 @@ void HAL_MspInit(void) {
     __HAL_RCC_PWR_CLK_ENABLE();
 }
 
-// void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-//     if (huart->Instance == Serial.USART) {
-//         __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
+void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
+    if (huart->Instance == Serial.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
 
-//         GPIO_t RX = {
-//             .Mode = GPIO_MODE_AF_PP,
-//             .Pull = GPIO_PULLUP,
-//             .Alternate = GPIO_AF7_USARTx(Serial.USART),
-//         };
-//         strcpy(RX.GPIOxPiny, Serial.RX);
-//         GPIO_Init(&RX);
+        GPIO_t RX = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Pull = GPIO_PULLUP,
+            .Alternate = GPIO_AF7_USARTx(Serial.USART),
+        };
+        strcpy(RX.GPIOxPiny, Serial.RX);
+        GPIO_Init(&RX);
 
-//         GPIO_t TX = {
-//             .Mode = GPIO_MODE_AF_PP,
-//             .Pull = GPIO_PULLUP,
-//             .Alternate = GPIO_AF7_USARTx(Serial.USART),
-//         };
-//         strcpy(TX.GPIOxPiny, Serial.TX);
-//         GPIO_Init(&TX);
+        GPIO_t TX = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Pull = GPIO_PULLUP,
+            .Alternate = GPIO_AF7_USARTx(Serial.USART),
+        };
+        strcpy(TX.GPIOxPiny, Serial.TX);
+        GPIO_Init(&TX);
 
-//         HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial.USART));
-//         HAL_NVIC_SetPriority(USARTx_IRQn(Serial.USART), 8, 0);
-//     }
-// }
+        HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial.USART));
+        HAL_NVIC_SetPriority(USARTx_IRQn(Serial.USART), 8, 0);
+    }
+}
 
 void HAL_SRAM_MspInit(SRAM_HandleTypeDef *hsram) {
     __HAL_RCC_FSMC_CLK_ENABLE();
@@ -135,16 +135,16 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
     }
 }
 
-// void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
-//     if (htim->Instance == PWM.TIM) {
-//         __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == PWM.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
 
-//         GPIO_t gpio = {
-//             .Mode = GPIO_MODE_AF_PP,
-//             .Pull = GPIO_NOPULL,
-//             .Alternate = GPIO_AFx_TIMy(PWM.TIM),
-//         };
-//         strcpy(gpio.GPIOxPiny, PWM.GPIOxPiny);
-//         GPIO_Init(&gpio);
-//     }
-// }
+        GPIO_t gpio = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Pull = GPIO_NOPULL,
+            .Alternate = GPIO_AFx_TIMy(PWM.TIM),
+        };
+        strcpy(gpio.GPIOxPiny, PWM.GPIOxPiny);
+        GPIO_Init(&gpio);
+    }
+}

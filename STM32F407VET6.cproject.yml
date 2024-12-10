@@ -15,8 +15,6 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
-        - Hardware/OLED/Menu
-        - U8g2
         - LVGL
         - LVGL/custom
         - LVGL/generated

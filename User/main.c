@@ -5,8 +5,8 @@
 #include "Key.h"
 #include "LCD.h"
 #include "LED.h"
-// #include "PWM.h"
-// #include "Serial.h"
+#include "PWM.h"
+#include "Serial.h"
 #include "Signal.h"
 #include "Touch.h"
 
@@ -26,14 +26,14 @@ Key_t Key1 = {
     .GPIOxPiny = "A0",
 };
 
-// Serial_t Serial = {
-//     .USART = USART1,
-//     .TX = "A9",
-//     .RX = "A10",
-//     .Baudrate = 115200,
-//     .RxIT = ENABLE,
-//     .RxITSize = 1,
-// };
+Serial_t Serial = {
+    .USART = USART1,
+    .TX = "A9",
+    .RX = "A10",
+    .Baudrate = 115200,
+    .RxIT = ENABLE,
+    .RxITSize = 1,
+};
 
 LCD_t LCD = {
     .Direction = LCD_Horizontal,
@@ -49,18 +49,18 @@ Touch_t Touch = {
     .Direction = LCD_Horizontal,
 };
 
-// PWM_t PWM = {
-//     .TIM = TIM3,
-//     .Channel = "1 | 2",
-//     .Prescaler = 84 - 1,
-//     .Period = 100 - 1,
-//     .GPIOxPiny = "A6 | A7",
-// };
+PWM_t PWM = {
+    .TIM = TIM3,
+    .Channel = "1",
+    .Prescaler = 8400 - 1,
+    .Period = 10000 * 2 - 1,
+    .GPIOxPiny = "A6",
+};
 
 #define DAC_DataLength 32
-#define DAC_Frequency  1
+#define DAC_Frequency  100
 #define ADC_DataLength 32
-#define ADC_Frequency  DAC_Frequency * ADC_DataLength
+#define ADC_Frequency  DAC_Frequency *ADC_DataLength
 
 uint32_t DAC_Data[DAC_DataLength];
 uint32_t ADC_Data[ADC_DataLength];
