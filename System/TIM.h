@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define __HAL_RCC_TIMx_CLK_ENABLE(x)                                           \
     do {                                                                       \
         if ((x) == TIM1) {                                                     \
@@ -68,9 +64,5 @@ typedef struct {
 } TIM_t;
 
 void TIM_Init(TIM_t *self);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

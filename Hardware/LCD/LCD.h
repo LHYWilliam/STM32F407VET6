@@ -6,10 +6,6 @@
 #include "DMA.h"
 #include "sys.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define WHITE      0xFFFF
 #define BLACK      0x0000
 #define BLUE       0x001F
@@ -119,9 +115,5 @@ void LCD_ShowString(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                     uint16_t height, uint8_t size, char *p);
 void LCD_Printf(LCD_t *self, uint16_t x, uint16_t y, uint16_t width,
                 uint16_t height, uint8_t size, char *format, ...);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

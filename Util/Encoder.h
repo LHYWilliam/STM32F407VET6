@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
     TIM_TypeDef *TIM;
     char Channel[32];
@@ -18,9 +14,5 @@ typedef struct {
 void Encoder_Init(Encoder_t *self);
 
 int16_t Encoder_Get(Encoder_t *self);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

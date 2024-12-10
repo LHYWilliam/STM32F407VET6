@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #include "ADC.h"
 #include "DAC.h"
 #include "DMA.h"
@@ -38,9 +34,5 @@ void Sampler_Get(Sampler_t *self);
 void Sampler_UpdateIndex(Sampler_t *self);
 
 void Sin_Generate(uint32_t *data, uint32_t length);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

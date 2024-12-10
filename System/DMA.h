@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define __HAL_RCC_DMAx_CLK_ENABLE(x)                                           \
     do {                                                                       \
         if ((x) == DMA1) {                                                     \
@@ -96,9 +92,5 @@ typedef struct {
 } DMA_t;
 
 void DMA_Init(DMA_t *self);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define SYSTEM_SUPPORT_OS 1
 
 typedef int32_t s32;
@@ -102,9 +98,5 @@ typedef __I uint8_t vuc8;
 
 #define PKout(n)               BIT_ADDR(GPIOK_ODR_Addr, n)
 #define PKin(n)                BIT_ADDR(GPIOK_IDR_Addr, n)
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

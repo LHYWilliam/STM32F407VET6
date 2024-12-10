@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define __HAL_RCC_USARTx_CLK_ENABLE(x)                                         \
     do {                                                                       \
         if ((x) == USART1) {                                                   \
@@ -55,9 +51,5 @@ void Serial_RXITStart(Serial_t *self, uint8_t size);
 
 void Serial_SendBytes(Serial_t *self, uint8_t *bytes, uint8_t length);
 void Serial_Printf(Serial_t *self, char *format, ...);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

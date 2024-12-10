@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
     char SCL[4];
     char SDA[4];
@@ -29,9 +25,5 @@ void OLED_ShowHexNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
 void OLED_ShowBinNum(OLED_t *self, uint8_t Line, uint8_t Column,
                      uint32_t Number, uint8_t Length);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

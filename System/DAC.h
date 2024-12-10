@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #undef DAC
 
 #define DAC_TRIGGER_Tx_TRGO(x)                                                 \
@@ -40,9 +36,5 @@ void DAC_Start(DAC_t *self);
 void DAC_DMAStart(DAC_t *self, uint32_t *data, uint32_t length);
 
 void DAC_Set(DAC_t *self, uint8_t channel, uint16_t value);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

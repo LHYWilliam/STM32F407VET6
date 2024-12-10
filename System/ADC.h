@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #undef ADC
 
 #define ADC_EXTERNALTRIGCONV_Tx_TRGO(x)                                        \
@@ -65,9 +61,5 @@ void ADC_Start(ADC_t *self);
 void ADC_DMAStart(ADC_t *self, uint32_t *data, uint32_t length);
 
 uint32_t ADC_Get(ADC_t *self);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

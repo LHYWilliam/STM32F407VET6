@@ -6,10 +6,6 @@
 #include "LCD.h"
 #include "sys.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #define GT1151_CMD_WR    0X28
 #define GT1151_CMD_RD    0X29
 #define GT1151_CTRL_REG  0X8040
@@ -78,9 +74,5 @@ uint8_t GT1151_IIC_ReadByte(unsigned char ack);
 void GT1151_IIC_Ack(void);
 void GT1151_IIC_NAck(void);
 uint8_t GT1151_IIC_WaitAck(void);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

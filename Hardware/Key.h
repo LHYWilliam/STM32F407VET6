@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef enum {
     KeyState_Up,
     KeyState_Down,
@@ -49,9 +45,5 @@ void Key_Init(Key_t *self);
 KeyEvent Key_Read(Key_t *self);
 KeyState Key_GetState(Key_t *self);
 void Key_Update(Key_t *self, uint32_t ms);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
     TIM_TypeDef *TIM;
     char Channel[32];
@@ -20,9 +16,5 @@ typedef struct {
 void PWM_Init(PWM_t *self);
 
 void PWM_Set(PWM_t *self, uint8_t channel, uint32_t value);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif

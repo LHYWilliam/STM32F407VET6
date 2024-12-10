@@ -3,10 +3,6 @@
 
 #include CMSIS_device_header
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 typedef struct {
     char GPIOxPiny[4];
 
@@ -19,9 +15,5 @@ void LED_Init(LED_t *self);
 void LED_On(LED_t *self);
 void LED_Off(LED_t *self);
 void LED_Toggle(LED_t *self);
-
-#ifdef __cplusplus
-}
-#endif
 
 #endif
