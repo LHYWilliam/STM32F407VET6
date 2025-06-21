@@ -117,9 +117,6 @@ void vLEDTimerCallback(TimerHandle_t pxTimer);
 // TaskHandle_t xKeyTaskHandle;
 // void vKeyTaskCode(void *pvParameters);
 
-TaskHandle_t xLVGLTaskHandle;
-void vLVGLTaskCode(void *pvParameters);
-
 void SystemClock_Config(void);
 
 int main() {
@@ -132,13 +129,13 @@ int main() {
     Key_Init(&Key1);
     // Serial_Init(&Serial);
 
-    LCD_Init(&LCD);
-    Touch_Init(&Touch);
+    // LCD_Init(&LCD);
+    // Touch_Init(&Touch);
 
     // PWM_Init(&PWM);
-    Sin_Generate(Generator.Data, Generator.Length);
-    Generator_Init(&Generator);
-    Sampler_Init(&Sampler);
+    // Sin_Generate(Generator.Data, Generator.Length);
+    // Generator_Init(&Generator);
+    // Sampler_Init(&Sampler);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
                              vLEDTimerCallback);
@@ -146,7 +143,7 @@ int main() {
     // *)1,
     //                          vKeyTimerCallback);
     // xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
-    xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
+    // xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
 
     xTimerStart(xLEDTimer, 0);
     // xTimerStart(xKeyTimer, 0);

@@ -1,6 +1,7 @@
 #ifndef TIMER_H
 #define TIMER_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #include "TIM.h"

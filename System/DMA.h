@@ -1,6 +1,7 @@
 #ifndef DMA_H
 #define DMA_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #define __HAL_RCC_DMAx_CLK_ENABLE(x)                                           \

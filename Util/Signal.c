@@ -1,7 +1,5 @@
 #include <stdint.h>
 
-#include "arm_math.h"
-
 #include "Signal.h"
 
 void Generator_Init(Generator_t *self) {

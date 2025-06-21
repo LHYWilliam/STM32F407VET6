@@ -1,6 +1,7 @@
 #ifndef OLED_H
 #define OLED_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 typedef struct {

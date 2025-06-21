@@ -1,6 +1,7 @@
 #ifndef ADC_H
 #define ADC_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #undef ADC

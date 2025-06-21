@@ -1,6 +1,7 @@
 #ifndef DAC_H
 #define DAC_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #undef DAC

@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\OLED\Menu;.\U8g2;.\LVGL;.\LVGL\custom;.\LVGL\generated;.\LVGL\generated\guider_customer_fonts</IncludePath>
+              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -590,16 +590,6 @@
               <FilePath>.\Util\Serial.h</FilePath>
             </File>
             <File>
-              <FileName>Signal.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Util\Signal.c</FilePath>
-            </File>
-            <File>
-              <FileName>Signal.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Util\Signal.h</FilePath>
-            </File>
-            <File>
               <FileName>Timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Util\Timer.c</FilePath>
@@ -612,108 +602,10 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>LVGL</GroupName>
-          <Files>
-            <File>
-              <FileName>lv_port_disp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\lv_port_disp.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_port_disp.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\lv_port_disp.h</FilePath>
-            </File>
-            <File>
-              <FileName>lv_port_indev.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\lv_port_indev.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_port_indev.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\lv_port_indev.h</FilePath>
-            </File>
-            <File>
-              <FileName>events_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\events_init.c</FilePath>
-            </File>
-            <File>
-              <FileName>events_init.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\generated\events_init.h</FilePath>
-            </File>
-            <File>
-              <FileName>gui_guider.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\gui_guider.c</FilePath>
-            </File>
-            <File>
-              <FileName>gui_guider.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\generated\gui_guider.h</FilePath>
-            </File>
-            <File>
-              <FileName>setup_scr_MainScreen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\setup_scr_MainScreen.c</FilePath>
-            </File>
-            <File>
-              <FileName>setup_scr_SignalScreen.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\setup_scr_SignalScreen.c</FilePath>
-            </File>
-            <File>
-              <FileName>widgets_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\widgets_init.c</FilePath>
-            </File>
-            <File>
-              <FileName>widgets_init.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\generated\widgets_init.h</FilePath>
-            </File>
-            <File>
-              <FileName>guider_customer_fonts.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\generated\guider_customer_fonts\guider_customer_fonts.h</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_montserratMedium_12.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\guider_fonts\lv_font_montserratMedium_12.c</FilePath>
-            </File>
-            <File>
-              <FileName>lv_font_montserratMedium_16.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\generated\guider_fonts\lv_font_montserratMedium_16.c</FilePath>
-            </File>
-            <File>
-              <FileName>custom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\LVGL\custom\custom.c</FilePath>
-            </File>
-            <File>
-              <FileName>custom.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\custom\custom.h</FilePath>
-            </File>
-            <File>
-              <FileName>lv_conf_ext.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\LVGL\custom\lv_conf_ext.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
           <GroupName>::Device</GroupName>
-        </Group>
-        <Group>
-          <GroupName>::LVGL</GroupName>
         </Group>
         <Group>
           <GroupName>::RTOS</GroupName>
@@ -746,12 +638,6 @@
     <components>
       <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="6.1.0" condition="ARMv6_7_8-M Device">
         <package name="CMSIS" schemaVersion="1.7.36" url="https://www.keil.com/pack/" vendor="ARM" version="6.1.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
-      </component>
-      <component Cclass="CMSIS" Cgroup="DSP" Cvariant="Source" Cvendor="ARM" Cversion="1.16.2" condition="CMSISCORE">
-        <package name="CMSIS-DSP" schemaVersion="1.7.27" url="https://www.keil.com/pack/" vendor="ARM" version="1.16.2"/>
         <targetInfos>
           <targetInfo name="STM32F407VET6"/>
         </targetInfos>
@@ -1020,24 +906,6 @@
           <targetInfo name="STM32F407VET6"/>
         </targetInfos>
       </component>
-      <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Essential" Cvendor="LVGL" Cversion="8.4.0">
-        <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
-      </component>
-      <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Extra Themes" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential">
-        <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
-      </component>
-      <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential">
-        <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
-      </component>
     </components>
     <files>
       <file attr="config" category="header" name="CMSIS\Driver\Config\RTE_Device.h" version="2.4.5">
@@ -1073,68 +941,52 @@
         </targetInfos>
       </file>
       <file attr="config" category="sourceC" name="lv_cmsis_pack.c" version="1.0.0">
-        <instance index="0">RTE\LVGL\lv_cmsis_pack.c</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_cmsis_pack.c</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Essential" Cvendor="LVGL" Cversion="8.4.0"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="preIncludeGlobal" name="lv_conf_cmsis.h" version="1.0.5">
-        <instance index="0">RTE\LVGL\lv_conf_cmsis.h</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_conf_cmsis.h</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Essential" Cvendor="LVGL" Cversion="8.4.0"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="sourceC" name="examples\porting\lv_port_disp_template.c" version="1.0.1">
-        <instance index="0">RTE\LVGL\lv_port_disp_template.c</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_port_disp_template.c</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="header" name="examples\porting\lv_port_disp_template.h" version="1.0.1">
-        <instance index="0">RTE\LVGL\lv_port_disp_template.h</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_port_disp_template.h</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="sourceC" name="examples\porting\lv_port_fs_template.c" version="1.0.0">
-        <instance index="0">RTE\LVGL\lv_port_fs_template.c</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_port_fs_template.c</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="header" name="examples\porting\lv_port_fs_template.h" version="1.0.0">
-        <instance index="0">RTE\LVGL\lv_port_fs_template.h</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_port_fs_template.h</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="sourceC" name="examples\porting\lv_port_indev_template.c" version="1.0.0">
-        <instance index="0">RTE\LVGL\lv_port_indev_template.c</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_port_indev_template.c</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="header" name="examples\porting\lv_port_indev_template.h" version="1.0.0">
-        <instance index="0">RTE\LVGL\lv_port_indev_template.h</instance>
+        <instance index="0" removed="1">RTE\LVGL\lv_port_indev_template.h</instance>
         <component Cbundle="LVGL" Cclass="LVGL" Cgroup="lvgl" Csub="Porting" Cvendor="LVGL" Cversion="8.4.0" condition="LVGL-Essential"/>
         <package name="lvgl" schemaVersion="1.4" url="https://raw.githubusercontent.com/lvgl/lvgl/master/env_support/cmsis-pack/" vendor="LVGL" version="8.4.0"/>
-        <targetInfos>
-          <targetInfo name="STM32F407VET6"/>
-        </targetInfos>
+        <targetInfos/>
       </file>
       <file attr="config" category="header" name="CMSIS\RTOS2\FreeRTOS\Config\FreeRTOSConfig.h" version="10.6.0">
         <instance index="0">RTE\RTOS\FreeRTOSConfig.h</instance>

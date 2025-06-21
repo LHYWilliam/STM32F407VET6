@@ -1,6 +1,7 @@
 #ifndef LED_H
 #define LED_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 typedef struct {

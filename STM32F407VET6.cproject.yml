@@ -1,10 +1,10 @@
 project:
   packs:
-    - pack: Keil::STM32F4xx_DFP
-    - pack: ARM::CMSIS
-    - pack: ARM::CMSIS-DSP
-    - pack: ARM::CMSIS-FreeRTOS
-    - pack: LVGL::lvgl
+    - pack: ARM::CMSIS@^6.1.0
+    - pack: ARM::CMSIS-FreeRTOS@^11.1.0
+    - pack: Keil::STM32F4xx_DFP@^2.17.1
+    - pack: ARM::CMSIS-NN@^4.0.0
+    - pack: ARM::CMSIS-DSP@^1.10.1
   setups:
     - setup: Options for STM32F407VET6
       processor:
@@ -15,10 +15,6 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
-        - LVGL
-        - LVGL/custom
-        - LVGL/generated
-        - LVGL/generated/guider_customer_fonts
       debug: "on"
       misc:
         - C:
@@ -44,6 +40,7 @@ project:
           CPP:
             - -xc++
             - -std=c++11
+            - -fno-exceptions
           ASM:
             - -masm=auto
           Link:
@@ -108,33 +105,10 @@ project:
         - file: Util/PWM.h
         - file: Util/Serial.c
         - file: Util/Serial.h
-        - file: Util/Signal.c
-        - file: Util/Signal.h
         - file: Util/Timer.c
         - file: Util/Timer.h
-    - group: LVGL
-      files:
-        - file: LVGL/lv_port_disp.c
-        - file: LVGL/lv_port_disp.h
-        - file: LVGL/lv_port_indev.c
-        - file: LVGL/lv_port_indev.h
-        - file: LVGL/generated/events_init.c
-        - file: LVGL/generated/events_init.h
-        - file: LVGL/generated/gui_guider.c
-        - file: LVGL/generated/gui_guider.h
-        - file: LVGL/generated/setup_scr_MainScreen.c
-        - file: LVGL/generated/setup_scr_SignalScreen.c
-        - file: LVGL/generated/widgets_init.c
-        - file: LVGL/generated/widgets_init.h
-        - file: LVGL/generated/guider_customer_fonts/guider_customer_fonts.h
-        - file: LVGL/generated/guider_fonts/lv_font_montserratMedium_12.c
-        - file: LVGL/generated/guider_fonts/lv_font_montserratMedium_16.c
-        - file: LVGL/custom/custom.c
-        - file: LVGL/custom/custom.h
-        - file: LVGL/custom/lv_conf_ext.h
   components:
     - component: ARM::CMSIS:CORE
-    - component: ARM::CMSIS:DSP&Source
     - component: ARM::CMSIS:OS Tick:SysTick
     - component: ARM::CMSIS:RTOS2:FreeRTOS&Cortex-M
     - component: ARM::RTOS&FreeRTOS:Config&CMSIS RTOS2
@@ -179,6 +153,3 @@ project:
     - component: Keil::Device:STM32Cube HAL:USART
     - component: Keil::Device:STM32Cube HAL:WWDG
     - component: Keil::Device:Startup
-    - component: LVGL::LVGL&LVGL:lvgl:Essential
-    - component: LVGL::LVGL&LVGL:lvgl:Extra Themes
-    - component: LVGL::LVGL&LVGL:lvgl:Porting

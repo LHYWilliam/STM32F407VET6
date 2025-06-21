@@ -1,6 +1,7 @@
 #ifndef TIM_H
 #define TIM_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #define __HAL_RCC_TIMx_CLK_ENABLE(x)                                           \

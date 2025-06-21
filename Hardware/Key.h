@@ -1,6 +1,7 @@
 #ifndef KEY_H
 #define KEY_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 typedef enum {

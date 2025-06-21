@@ -1,6 +1,7 @@
 #ifndef _SYS_H
 #define _SYS_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #define SYSTEM_SUPPORT_OS 1

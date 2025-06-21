@@ -1,6 +1,7 @@
 #ifndef SIGNAL_H
 #define SIGNAL_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #include "ADC.h"

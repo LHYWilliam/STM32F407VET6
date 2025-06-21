@@ -1,6 +1,7 @@
 #ifndef __LCD_H
 #define __LCD_H
 
+#include "RTE_Components.h"
 #include CMSIS_device_header
 
 #include "DMA.h"
