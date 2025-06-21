@@ -4,7 +4,9 @@
 
 #include "Key.h"
 #include "LED.h"
+#include "PWM.h"
 #include "Serial.h"
+#include "Timer.h"
 
 LED_t LED0 = {
     .GPIOxPiny = A1,
@@ -31,6 +33,21 @@ Serial_t Serial = {
     .Priority = 8,
 };
 
+Timer_t Timer = {
+    .TIMx = TIM2,
+    .ms = 500,
+    .Interrupt = ENABLE,
+    .Priority = 8,
+};
+
+PWM_t PWM = {
+    .TIM = TIM9,
+    .Channel = {2},
+    .GPIOxPiny = {A3},
+    .Prescaler = 8400 - 1,
+    .Period = 10000 - 1,
+};
+
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
@@ -47,6 +64,8 @@ int main() {
     LED_Init(&LED1);
     Key_Init(&Key0);
     Serial_Init(&Serial);
+    Timer_Init(&Timer);
+    // PWM_Init(&PWM);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);

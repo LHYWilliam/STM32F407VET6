@@ -46,14 +46,11 @@
                    : NULL)
 
 #define TIM_CHANNEL_x(x)                                                       \
-    ((x[0]) == '1'   ? TIM_CHANNEL_1                                           \
-     : (x[0]) == '2' ? TIM_CHANNEL_2                                           \
-     : (x[0]) == '3' ? TIM_CHANNEL_3                                           \
-     : (x[0]) == '4' ? TIM_CHANNEL_4                                           \
+    ((x) == 1   ? TIM_CHANNEL_1                                           \
+     : (x) == 2 ? TIM_CHANNEL_2                                           \
+     : (x) == 3 ? TIM_CHANNEL_3                                           \
+     : (x) == 4 ? TIM_CHANNEL_4                                           \
                      : NULL)
-
-static uint8_t TIM_Channel[] = {NULL, TIM_CHANNEL_1, TIM_CHANNEL_2,
-                                TIM_CHANNEL_3, TIM_CHANNEL_4};
 
 typedef struct {
     TIM_TypeDef *TIM;
@@ -64,6 +61,6 @@ typedef struct {
     HAL_StatusTypeDef (*HAL_TIM_Init)(TIM_HandleTypeDef *htim);
 } TIM_t;
 
-void TIM_Init(TIM_t *self);
+void TIM_Init(TIM_t *Self);
 
 #endif

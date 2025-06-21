@@ -12,11 +12,13 @@ typedef struct {
     uint32_t Hz;
 
     uint8_t Interrupt;
+    uint8_t Priority;
+
     uint32_t Trigger;
 
     TIM_HandleTypeDef Handler;
 } Timer_t;
 
-void Timer_Init(Timer_t *self);
+void Timer_Init(Timer_t *Self);
 
 #endif

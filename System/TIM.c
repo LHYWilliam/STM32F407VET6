@@ -1,20 +1,20 @@
 #include "TIM.h"
 
-void TIM_Init(TIM_t *self) {
-    *(self->Handler) = (TIM_HandleTypeDef){
-        .Instance = self->TIM,
+void TIM_Init(TIM_t *Self) {
+    *(Self->Handler) = (TIM_HandleTypeDef){
+        .Instance = Self->TIM,
         .Init =
             {
-                .Prescaler = self->Prescaler,
-                .Period = self->Period,
+                .Prescaler = Self->Prescaler,
+                .Period = Self->Period,
                 .CounterMode = TIM_COUNTERMODE_UP,
                 .ClockDivision = TIM_CLOCKDIVISION_DIV1,
             },
     };
-    self->HAL_TIM_Init(self->Handler);
+    Self->HAL_TIM_Init(Self->Handler);
 
-    TIM_ClockConfigTypeDef clock = {
+    TIM_ClockConfigTypeDef Clock = {
         .ClockSource = TIM_CLOCKSOURCE_INTERNAL,
     };
-    HAL_TIM_ConfigClockSource(self->Handler, &clock);
+    HAL_TIM_ConfigClockSource(Self->Handler, &Clock);
 }

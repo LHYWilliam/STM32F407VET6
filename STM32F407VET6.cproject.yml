@@ -69,12 +69,22 @@ project:
       files:
         - file: System/GPIO.c
         - file: System/GPIO.h
+        - file: System/TIM.c
+        - file: System/TIM.h
+        - file: System/PWM.c
+        - file: System/PWM.h
     - group: Hardware
       files:
         - file: Hardware/LED.c
         - file: Hardware/LED.h
         - file: Hardware/Key.c
         - file: Hardware/Key.h
+        - file: Hardware/Serial.c
+        - file: Hardware/Serial.h
+    - group: Util
+      files:
+        - file: Util/Timer.c
+        - file: Util/Timer.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick
