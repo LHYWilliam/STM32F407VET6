@@ -1,30 +1,18 @@
-#include <string.h>
-
-#include "GPIO.h"
 #include "LED.h"
 
-void LED_Init(LED_t *self) {
-    GPIO_t gpio = {
+void LED_Init(LED_t *Self) {
+    GPIO_t GPIO = {
         .Mode = GPIO_MODE_OUTPUT_PP,
         .Pull = GPIO_PULLUP,
     };
-    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init(&gpio);
 
-    self->GPIOx = gpio.GPIOx;
-    self->GPIO_Pin = gpio.GPIO_Pin;
+    Self->ODR = GPIO_InitPin(&GPIO, Self->GPIOxPiny);
 
-    LED_Off(self);
+    LED_Off(Self);
 }
 
-void LED_On(LED_t *self) {
-    HAL_GPIO_WritePin(self->GPIOx, self->GPIO_Pin, GPIO_PIN_RESET);
-}
+void LED_On(LED_t *Self) { GPIO_Write(Self->ODR, !Self->Mode); }
 
-void LED_Off(LED_t *self) {
-    HAL_GPIO_WritePin(self->GPIOx, self->GPIO_Pin, GPIO_PIN_SET);
-}
+void LED_Off(LED_t *Self) { GPIO_Write(Self->ODR, Self->Mode); }
 
-void LED_Toggle(LED_t *self) {
-    HAL_GPIO_TogglePin(self->GPIOx, self->GPIO_Pin);
-}
+void LED_Toggle(LED_t *Self) { GPIO_Toggle(Self->ODR); }

@@ -69,6 +69,10 @@ project:
       files:
         - file: System/GPIO.c
         - file: System/GPIO.h
+    - group: Hardware
+      files:
+        - file: Hardware/LED.c
+        - file: Hardware/LED.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

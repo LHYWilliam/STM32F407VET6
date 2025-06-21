@@ -7,10 +7,16 @@
 // #include "sys.h"
 
 #include "GPIO.h"
+#include "LED.h"
 
-GPIO_t LED = {
-    .Mode = GPIO_MODE_OUTPUT_PP,
-    .Pull = GPIO_PULLUP,
+LED_t LED0 = {
+    .GPIOxPiny = A1,
+    .Mode = LEDMode_PullUp,
+};
+
+LED_t LED1 = {
+    .GPIOxPiny = A2,
+    .Mode = LEDMode_PullUp,
 };
 
 GPIO_t Key = {
@@ -18,13 +24,7 @@ GPIO_t Key = {
     .Pull = GPIO_PULLDOWN,
 };
 
-uint32_t LED0_ODR;
-uint32_t LED1_ODR;
 uint32_t Key_IDR;
-
-// LED_t LED = {
-//     .GPIOxPiny = "A1",
-// };
 
 // Key_t Key = {
 //     .GPIOxPiny = "C0",
@@ -42,8 +42,8 @@ int main() {
     HAL_Init();
     SystemClock_Config();
 
-    LED0_ODR = GPIO_InitPin(&LED, A1);
-    LED1_ODR = GPIO_InitPin(&LED, A2);
+    LED_Init(&LED0);
+    LED_Init(&LED1);
     Key_IDR = GPIO_InitPin(&Key, C0);
 
     // LED_Init(&LED);

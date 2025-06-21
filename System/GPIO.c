@@ -1,22 +1,23 @@
-#include <string.h>
-
 #include "GPIO.h"
 
 uint32_t GPIO_IDR(const GPIOxPiny_t Pin);
 uint32_t GPIO_ODR(const GPIOxPiny_t Pin);
 
 uint32_t GPIO_InitPin(GPIO_t *Self, const GPIOxPiny_t Pin) {
+    GPIO_TypeDef *_GPIO = GPIOx(Pin);
+    uint32_t _Pin = GPIO_Pinx(Pin);
+
     GPIO_InitTypeDef GPIO = {
-        .Pin = GPIO_Pinx(Pin),
+        .Pin = _Pin,
         .Mode = Self->Mode,
         .Pull = Self->Pull,
         .Speed = GPIO_SPEED_FREQ_VERY_HIGH,
         .Alternate = Self->Alternate,
     };
 
-    HAL_RCC_GPIOx_CLK_ENABLE(GPIOx(Pin));
+    HAL_RCC_GPIOx_CLK_ENABLE(_GPIO);
 
-    HAL_GPIO_Init(GPIOx(Pin), &GPIO);
+    HAL_GPIO_Init(_GPIO, &GPIO);
 
     if (Self->Mode == GPIO_MODE_ANALOG || Self->Mode == GPIO_MODE_INPUT ||
         Self->Mode == GPIO_MODE_IT_RISING ||
