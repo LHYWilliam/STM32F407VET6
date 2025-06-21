@@ -4,6 +4,120 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#define BITBAND(addr, bitnum)                                                  \
+    ((addr & 0xF0000000) + 0x2000000 + ((addr & 0xFFFFF) << 5) + (bitnum << 2))
+#define MEM_ADDR(addr)         *((volatile unsigned long *)(addr))
+#define BIT_ADDR(addr, bitnum) MEM_ADDR(BITBAND(addr, bitnum))
+
+#define GPIOA_ODR              (GPIOA_BASE + 20)
+#define GPIOB_ODR              (GPIOB_BASE + 20)
+#define GPIOC_ODR              (GPIOC_BASE + 20)
+#define GPIOD_ODR              (GPIOD_BASE + 20)
+#define GPIOE_ODR              (GPIOE_BASE + 20)
+
+#define GPIOA_IDR              (GPIOA_BASE + 16)
+#define GPIOB_IDR              (GPIOB_BASE + 16)
+#define GPIOC_IDR              (GPIOC_BASE + 16)
+#define GPIOD_IDR              (GPIOD_BASE + 16)
+#define GPIOE_IDR              (GPIOE_BASE + 16)
+
+#define PAout(n)               BIT_ADDR(GPIOA_ODR, n)
+#define PBout(n)               BIT_ADDR(GPIOB_ODR, n)
+#define PCout(n)               BIT_ADDR(GPIOC_ODR, n)
+#define PDout(n)               BIT_ADDR(GPIOD_ODR, n)
+#define PEout(n)               BIT_ADDR(GPIOE_ODR, n)
+
+#define PAin(n)                BIT_ADDR(GPIOA_IDR, n)
+#define PBin(n)                BIT_ADDR(GPIOB_IDR, n)
+#define PCin(n)                BIT_ADDR(GPIOC_IDR, n)
+#define PDin(n)                BIT_ADDR(GPIOD_IDR, n)
+#define PEin(n)                BIT_ADDR(GPIOE_IDR, n)
+
+#define A0                     "A0"
+#define A1                     "A1"
+#define A2                     "A2"
+#define A3                     "A3"
+#define A4                     "A4"
+#define A5                     "A5"
+#define A6                     "A6"
+#define A7                     "A7"
+#define A8                     "A8"
+#define A9                     "A9"
+#define A10                    "A10"
+#define A11                    "A11"
+#define A12                    "A12"
+#define A13                    "A13"
+#define A14                    "A14"
+#define A15                    "A15"
+
+#define B0                     "B0"
+#define B1                     "B1"
+#define B2                     "B2"
+#define B3                     "B3"
+#define B4                     "B4"
+#define B5                     "B5"
+#define B6                     "B6"
+#define B7                     "B7"
+#define B8                     "B8"
+#define B9                     "B9"
+#define B10                    "B10"
+#define B11                    "B11"
+#define B12                    "B12"
+#define B13                    "B13"
+#define B14                    "B14"
+#define B15                    "B15"
+
+#define C0                     "C0"
+#define C1                     "C1"
+#define C2                     "C2"
+#define C3                     "C3"
+#define C4                     "C4"
+#define C5                     "C5"
+#define C6                     "C6"
+#define C7                     "C7"
+#define C8                     "C8"
+#define C9                     "C9"
+#define C10                    "C10"
+#define C11                    "C11"
+#define C12                    "C12"
+#define C13                    "C13"
+#define C14                    "C14"
+#define C15                    "C15"
+
+#define D0                     "D0"
+#define D1                     "D1"
+#define D2                     "D2"
+#define D3                     "D3"
+#define D4                     "D4"
+#define D5                     "D5"
+#define D6                     "D6"
+#define D7                     "D7"
+#define D8                     "D8"
+#define D9                     "D9"
+#define D10                    "D10"
+#define D11                    "D11"
+#define D12                    "D12"
+#define D13                    "D13"
+#define D14                    "D14"
+#define D15                    "D15"
+
+#define E0                     "E0"
+#define E1                     "E1"
+#define E2                     "E2"
+#define E3                     "E3"
+#define E4                     "E4"
+#define E5                     "E5"
+#define E6                     "E6"
+#define E7                     "E7"
+#define E8                     "E8"
+#define E9                     "E9"
+#define E10                    "E10"
+#define E11                    "E11"
+#define E12                    "E12"
+#define E13                    "E13"
+#define E14                    "E14"
+#define E15                    "E15"
+
 #define HAL_RCC_GPIOx_CLK_ENABLE(x)                                            \
     do {                                                                       \
         if ((x) == GPIOA) {                                                    \
@@ -39,24 +153,25 @@
      : (x[0]) == 'I' ? GPIOI                                                   \
                      : NULL)
 
-#define GPIO_Pinx(x)                                                           \
-    ((x[1]) == '0'   ? GPIO_PIN_0                                              \
-     : (x[2]) == '5' ? GPIO_PIN_15                                             \
-     : (x[2]) == '4' ? GPIO_PIN_14                                             \
-     : (x[2]) == '3' ? GPIO_PIN_13                                             \
-     : (x[2]) == '2' ? GPIO_PIN_12                                             \
-     : (x[2]) == '1' ? GPIO_PIN_11                                             \
-     : (x[2]) == '0' ? GPIO_PIN_10                                             \
-     : (x[1]) == '9' ? GPIO_PIN_9                                              \
-     : (x[1]) == '8' ? GPIO_PIN_8                                              \
-     : (x[1]) == '7' ? GPIO_PIN_7                                              \
-     : (x[1]) == '6' ? GPIO_PIN_6                                              \
-     : (x[1]) == '5' ? GPIO_PIN_5                                              \
-     : (x[1]) == '4' ? GPIO_PIN_4                                              \
-     : (x[1]) == '3' ? GPIO_PIN_3                                              \
-     : (x[1]) == '2' ? GPIO_PIN_2                                              \
-     : (x[1]) == '1' ? GPIO_PIN_1                                              \
-                     : NULL)
+#define GPIO_Pin(x)  (x[2] ? 10 + x[2] - '0' : x[1] - '0')
+#define GPIO_Pinx(x) GPIO_PIN_0 << GPIO_Pin(x)
+
+#define GPIO_Input(CR, x)                                                      \
+    do {                                                                       \
+        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
+        MEM_ADDR((CR)) |= ((uint32_t)0b1000 << ((x) % 8 * 4));                 \
+    } while (0)
+
+#define GPIO_Output(CR, x)                                                     \
+    do {                                                                       \
+        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
+        MEM_ADDR((CR)) |= ((uint32_t)0b0011 << ((x) % 8 * 4));                 \
+    } while (0)
+
+#define GPIO_Write(x, val) MEM_ADDR((x)) = ((val) ? 1 : 0)
+#define GPIO_Toggle(x)     MEM_ADDR((x)) = !MEM_ADDR((x))
+#define GPIO_ReadInput(x)  MEM_ADDR((x))
+#define GPIO_ReadOutput(x) MEM_ADDR((x))
 
 #define GPIO_AFx_TIMy(x)                                                       \
     ((x) == TIM1    ? GPIO_AF1_TIM1                                            \
@@ -70,17 +185,14 @@
      : (x) == TIM11 ? GPIO_AF3_TIM11                                           \
                     : NULL)
 
-typedef struct {
-    char GPIOxPiny[129];
+typedef char GPIOxPiny_t[4];
 
+typedef struct {
     uint32_t Mode;
     uint32_t Pull;
     uint32_t Alternate;
-
-    GPIO_TypeDef *GPIOx;
-    uint32_t GPIO_Pin;
 } GPIO_t;
 
-void GPIO_Init(GPIO_t *self);
+uint32_t GPIO_InitPin(GPIO_t *Self, const GPIOxPiny_t Pin);
 
 #endif

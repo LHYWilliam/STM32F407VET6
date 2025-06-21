@@ -2,21 +2,36 @@
 #include "task.h"
 #include "timers.h"
 
-#include "Key.h"
-#include "LED.h"
-#include "sys.h"
+// #include "Key.h"
+// #include "LED.h"
+// #include "sys.h"
 
-LED_t LED = {
-    .GPIOxPiny = "A1",
+#include "GPIO.h"
+
+GPIO_t LED = {
+    .Mode = GPIO_MODE_OUTPUT_PP,
+    .Pull = GPIO_PULLUP,
 };
 
-Key_t Key = {
-    .GPIOxPiny = "C0",
+GPIO_t Key = {
+    .Mode = GPIO_MODE_INPUT,
+    .Pull = GPIO_PULLDOWN,
 };
 
-// TimerHandle_t xLEDTimer;
-// void vLEDTimerCallback(TimerHandle_t pxTimer);
+uint32_t LED0_ODR;
+uint32_t LED1_ODR;
+uint32_t Key_IDR;
 
+// LED_t LED = {
+//     .GPIOxPiny = "A1",
+// };
+
+// Key_t Key = {
+//     .GPIOxPiny = "C0",
+// };
+
+TimerHandle_t xLEDTimer;
+void vLEDTimerCallback(TimerHandle_t pxTimer);
 
 TaskHandle_t xMainTaskHandle;
 void vMainTaskCode(void *pvParameters);
@@ -27,15 +42,18 @@ int main() {
     HAL_Init();
     SystemClock_Config();
 
-    LED_Init(&LED);
-    Key_Init(&Key);
+    LED0_ODR = GPIO_InitPin(&LED, A1);
+    LED1_ODR = GPIO_InitPin(&LED, A2);
+    Key_IDR = GPIO_InitPin(&Key, C0);
 
-    // xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void
-    // *)0,
-    //                          vLEDTimerCallback);
+    // LED_Init(&LED);
+    // Key_Init(&Key);
+
+    xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
+                             vLEDTimerCallback);
     xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
 
-    // xTimerStart(xLEDTimer, 0);
+    xTimerStart(xLEDTimer, 0);
 
     vTaskStartScheduler();
 }
