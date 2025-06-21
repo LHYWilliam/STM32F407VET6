@@ -404,11 +404,6 @@
               <FileType>1</FileType>
               <FilePath>.\User\interrupt.c</FilePath>
             </File>
-            <File>
-              <FileName>sysclock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\User\sysclock.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

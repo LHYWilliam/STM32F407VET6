@@ -3,119 +3,23 @@
 #include "timers.h"
 
 #include "Key.h"
-#include "LCD.h"
 #include "LED.h"
-#include "PWM.h"
-#include "Serial.h"
-#include "Signal.h"
-#include "Touch.h"
+#include "sys.h"
 
-LED_t LED0 = {
+LED_t LED = {
     .GPIOxPiny = "A1",
 };
 
-LED_t LED1 = {
-    .GPIOxPiny = "A2",
-};
-
-Key_t Key0 = {
+Key_t Key = {
     .GPIOxPiny = "C0",
 };
 
-Key_t Key1 = {
-    .GPIOxPiny = "A0",
-};
+// TimerHandle_t xLEDTimer;
+// void vLEDTimerCallback(TimerHandle_t pxTimer);
 
-Serial_t Serial = {
-    .USART = USART1,
-    .TX = "A9",
-    .RX = "A10",
-    .Baudrate = 115200,
-    .RxIT = ENABLE,
-    .RxITSize = 1,
-};
 
-LCD_t LCD = {
-    .Direction = LCD_Horizontal,
-    .DMA =
-        {
-            .DMAx = DMA2,
-            .Stream = 1,
-            .Channel = 1,
-        },
-};
-
-Touch_t Touch = {
-    .Direction = LCD_Horizontal,
-};
-
-PWM_t PWM = {
-    .TIM = TIM3,
-    .Channel = "1",
-    .Prescaler = 8400 - 1,
-    .Period = 10000 * 2 - 1,
-    .GPIOxPiny = "A6",
-};
-
-#define DAC_DataLength 32
-#define DAC_Frequency  100
-#define ADC_DataLength 32
-#define ADC_Frequency  DAC_Frequency *ADC_DataLength
-
-uint32_t DAC_Data[DAC_DataLength];
-uint32_t ADC_Data[ADC_DataLength];
-
-Generator_t Generator = {
-    .Data = DAC_Data,
-    .Length = DAC_DataLength,
-    .DAC =
-        {
-            .Channel = "1",
-            .GPIOxPiny = "A4",
-        },
-    .DMA =
-        {
-            .DMAx = DMA1,
-            .Channel = 7,
-            .Stream = 5,
-        },
-    .Timer =
-        {
-            .TIMx = TIM2,
-            .Hz = DAC_Frequency,
-        },
-};
-
-Sampler_t Sampler = {
-    .Data = ADC_Data,
-    .Length = ADC_DataLength,
-    .ADC =
-        {
-            .ADCx = ADC1,
-            .Channel = "5",
-            .GPIOxPiny = "A5",
-        },
-    .DMA =
-        {
-            .DMAx = DMA2,
-            .Channel = 0,
-            .Stream = 0,
-        },
-    .Timer =
-        {
-            .TIMx = TIM3,
-            .Hz = ADC_Frequency,
-        },
-};
-
-TimerHandle_t xLEDTimer;
-void vLEDTimerCallback(TimerHandle_t pxTimer);
-
-// TimerHandle_t xKeyTimer;
-// void vKeyTimerCallback(TimerHandle_t pxTimer);
-
-// TaskHandle_t xKeyTaskHandle;
-// void vKeyTaskCode(void *pvParameters);
+TaskHandle_t xMainTaskHandle;
+void vMainTaskCode(void *pvParameters);
 
 void SystemClock_Config(void);
 
@@ -123,32 +27,54 @@ int main() {
     HAL_Init();
     SystemClock_Config();
 
-    LED_Init(&LED0);
-    LED_Init(&LED1);
-    Key_Init(&Key0);
-    Key_Init(&Key1);
-    // Serial_Init(&Serial);
+    LED_Init(&LED);
+    Key_Init(&Key);
 
-    // LCD_Init(&LCD);
-    // Touch_Init(&Touch);
+    // xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void
+    // *)0,
+    //                          vLEDTimerCallback);
+    xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
 
-    // PWM_Init(&PWM);
-    // Sin_Generate(Generator.Data, Generator.Length);
-    // Generator_Init(&Generator);
-    // Sampler_Init(&Sampler);
+    // xTimerStart(xLEDTimer, 0);
 
-    xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(100), pdTRUE, (void *)0,
-                             vLEDTimerCallback);
-    // xKeyTimer = xTimerCreate("xKeyTimer", pdMS_TO_TICKS(10), pdTRUE, (void
-    // *)1,
-    //                          vKeyTimerCallback);
-    // xTaskCreate(vKeyTaskCode, "vKeyTask", 128, NULL, 1, &xKeyTaskHandle);
-    // xTaskCreate(vLVGLTaskCode, "vLVGLTask", 1024, NULL, 1, &xLVGLTaskHandle);
-
-    xTimerStart(xLEDTimer, 0);
-    // xTimerStart(xKeyTimer, 0);
     vTaskStartScheduler();
+}
 
-    for (;;) {
-    }
+void SystemClock_Config(void) {
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+
+    /** Configure the main internal regulator output voltage
+     */
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    /** Initializes the RCC Oscillators according to the specified parameters
+     * in the RCC_OscInitTypeDef structure.
+     */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = 25;
+    RCC_OscInitStruct.PLL.PLLN = 336;
+    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
+    RCC_OscInitStruct.PLL.PLLQ = 7;
+    while (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+        ;
+
+    /** Initializes the CPU, AHB and APB buses clocks
+     */
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
+                                  RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+
+    while (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+        ;
+    /** Enables the Clock Security System
+     */
+    HAL_RCC_EnableCSS();
 }

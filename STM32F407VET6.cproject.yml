@@ -65,7 +65,6 @@ project:
         - file: User/task.c
         - file: User/msp.c
         - file: User/interrupt.c
-        - file: User/sysclock.c
     - group: Hardware
       files:
         - file: Hardware/LCD/LCD.c
