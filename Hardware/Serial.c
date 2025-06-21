@@ -4,39 +4,42 @@
 
 #include "Serial.h"
 
-void Serial_Init(Serial_t *self) {
-    self->Handler = (UART_HandleTypeDef){
-        .Instance = self->USART,
+void Serial_Init(Serial_t *Self) {
+    Self->Handler = (UART_HandleTypeDef){
+        .Instance = Self->USART,
         .Init =
             {
-                .BaudRate = self->Baudrate,
+                .BaudRate = Self->Baudrate,
                 .WordLength = UART_WORDLENGTH_8B,
                 .Parity = UART_PARITY_NONE,
                 .StopBits = UART_STOPBITS_1,
-                .Mode = UART_MODE_TX_RX,
+                .Mode = *Self->RX && *Self->TX ? UART_MODE_TX_RX
+                                               : (*Self->RX   ? UART_MODE_RX
+                                                  : *Self->TX ? UART_MODE_TX
+                                                              : 0),
             },
     };
-    HAL_UART_Init(&self->Handler);
+    HAL_UART_Init(&Self->Handler);
 
-    if (self->RxIT) {
-        Serial_RXITStart(self, 1);
+    if (Self->RxIT) {
+        Serial_RXITStart(Self, Self->RxITSize);
     }
 }
 
-void Serial_RXITStart(Serial_t *self, uint8_t size) {
-    HAL_UART_Receive_IT(&self->Handler, self->RXBuffer, size);
+void Serial_RXITStart(Serial_t *Self, uint8_t Size) {
+    HAL_UART_Receive_IT(&Self->Handler, Self->RXBuffer, Size);
 }
 
-void Serial_SendBytes(Serial_t *self, uint8_t *bytes, uint8_t length) {
-    HAL_UART_Transmit(&self->Handler, bytes, length, HAL_MAX_DELAY);
+void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length) {
+    HAL_UART_Transmit(&Self->Handler, Bytes, Length, HAL_MAX_DELAY);
 }
 
-void Serial_Printf(Serial_t *self, char *format, ...) {
+void Serial_Printf(Serial_t *Self, char *Format, ...) {
     va_list arg;
-    va_start(arg, format);
-    vsprintf((char *)self->TXBuffer, format, arg);
+    va_start(arg, Format);
+    vsprintf((char *)Self->TXBuffer, Format, arg);
     va_end(arg);
 
-    HAL_UART_Transmit(&self->Handler, (uint8_t *)self->TXBuffer,
-                      strlen((char *)self->TXBuffer), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&Self->Handler, Self->TXBuffer,
+                      strlen((char *)Self->TXBuffer), HAL_MAX_DELAY);
 }

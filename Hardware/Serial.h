@@ -4,6 +4,8 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "GPIO.h"
+
 #define __HAL_RCC_USARTx_CLK_ENABLE(x)                                         \
     do {                                                                       \
         if ((x) == USART1) {                                                   \
@@ -32,14 +34,14 @@
 
 typedef struct {
     USART_TypeDef *USART;
-
-    char RX[4];
-    char TX[4];
+    GPIOxPiny_t RX;
+    GPIOxPiny_t TX;
 
     uint32_t Baudrate;
 
     uint8_t RxIT;
     uint8_t RxITSize;
+    uint8_t Priority;
 
     uint8_t TXBuffer[TXBUFFER_SIZE];
     uint8_t RXBuffer[RXBUFFER_SIZE];
@@ -47,10 +49,9 @@ typedef struct {
     UART_HandleTypeDef Handler;
 } Serial_t;
 
-void Serial_Init(Serial_t *self);
-void Serial_RXITStart(Serial_t *self, uint8_t size);
-
-void Serial_SendBytes(Serial_t *self, uint8_t *bytes, uint8_t length);
-void Serial_Printf(Serial_t *self, char *format, ...);
+void Serial_Init(Serial_t *Self);
+void Serial_RXITStart(Serial_t *Self, uint8_t size);
+void Serial_SendBytes(Serial_t *Self, uint8_t *bytes, uint8_t length);
+void Serial_Printf(Serial_t *Self, char *format, ...);
 
 #endif

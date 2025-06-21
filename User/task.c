@@ -3,10 +3,12 @@
 
 #include "Key.h"
 #include "LED.h"
+#include "Serial.h"
 
 extern LED_t LED0;
 extern LED_t LED1;
 extern Key_t Key0;
+extern Serial_t Serial;
 
 void vMainTaskCode(void *pvParameters) {
     for (;;) {
@@ -20,6 +22,10 @@ void vMainTaskCode(void *pvParameters) {
     }
 }
 
-void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LED0); }
+void vLEDTimerCallback(TimerHandle_t pxTimer) {
+    Serial_Printf(&Serial, "LED toggle at %d ms\r\n",
+                  xTaskGetTickCount() * portTICK_PERIOD_MS);
+    LED_Toggle(&LED0);
+}
 
 void vApplicationTickHook() { HAL_IncTick(); }

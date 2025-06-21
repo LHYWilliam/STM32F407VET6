@@ -2,8 +2,9 @@
 #include "task.h"
 #include "timers.h"
 
-#include "LED.h"
 #include "Key.h"
+#include "LED.h"
+#include "Serial.h"
 
 LED_t LED0 = {
     .GPIOxPiny = A1,
@@ -18,6 +19,16 @@ LED_t LED1 = {
 Key_t Key0 = {
     .GPIOxPiny = C0,
     .Mode = KeyMode_PullDown,
+};
+
+Serial_t Serial = {
+    .USART = USART1,
+    .RX = A10,
+    .TX = A9,
+    .Baudrate = 115200,
+    .RxIT = ENABLE,
+    .RxITSize = 1,
+    .Priority = 8,
 };
 
 TimerHandle_t xLEDTimer;
@@ -35,6 +46,7 @@ int main() {
     LED_Init(&LED0);
     LED_Init(&LED1);
     Key_Init(&Key0);
+    Serial_Init(&Serial);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);
