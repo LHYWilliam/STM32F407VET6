@@ -3,7 +3,7 @@
 void LED_Init(LED_t *Self) {
     GPIO_t GPIO = {
         .Mode = GPIO_MODE_OUTPUT_PP,
-        .Pull = GPIO_PULLUP,
+        .Pull = Self->Mode == LEDMode_PullDown ? GPIO_PULLDOWN : GPIO_PULLUP,
     };
 
     Self->ODR = GPIO_InitPin(&GPIO, Self->GPIOxPiny);

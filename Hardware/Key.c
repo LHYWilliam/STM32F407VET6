@@ -1,79 +1,76 @@
-#include <string.h>
-
-#include "Delay.h"
-#include "GPIO.h"
 #include "Key.h"
 
-void Key_Init(Key_t *self) {
-    GPIO_t gpio = {
+void Key_Init(Key_t *Self) {
+    GPIO_t GPIO = {
         .Mode = GPIO_MODE_INPUT,
-        .Pull = GPIO_PULLDOWN,
+        .Pull = Self->Mode == KeyMode_PullDown ? GPIO_PULLDOWN : GPIO_PULLUP,
     };
-    strcpy(gpio.GPIOxPiny, self->GPIOxPiny);
-    GPIO_Init(&gpio);
 
-    self->LastState = KeyState_Up;
-    self->LastEvent = KeyEvent_None;
+    Self->IDR = GPIO_InitPin(&GPIO, Self->GPIOxPiny);
 
-    self->GPIOx = gpio.GPIOx;
-    self->GPIO_Pin = gpio.GPIO_Pin;
+    // Self->LastState = KeyState_Up;
+    // Self->LastEvent = KeyEvent_None;
 }
 
-KeyEvent Key_Read(Key_t *self) {
-    if (HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin)) {
-        Delay_ms(10);
-        while (HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin)) {
-        }
-
-        Delay_ms(10);
-        return KeyEvent_Click;
-    }
-
-    return KeyEvent_None;
+uint8_t Key_IsPressing(Key_t *Self) {
+    return GPIO_ReadInput(Self->IDR) != Self->Mode;
 }
 
-void Key_Update(Key_t *self, uint32_t ms) {
-    self->State = Key_GetState(self);
+// KeyEvent Key_Read(Key_t *Self) {
+//     if (GPIO_ReadInput(Self->IDR)) {
+//         Delay_ms(10);
+//         while (GPIO_ReadInput(Self->IDR)) {
+//         }
 
-    switch (self->State) {
-    case KeyState_Down:
-        if (self->LastState == KeyState_Down && self->StateDuration > 200) {
-            self->Event = KeyEvent_LongPress;
-        }
-        break;
+//         Delay_ms(10);
+//         return KeyEvent_Click;
+//     }
 
-    case KeyState_Up:
-        if (self->LastState == KeyState_Up && self->StateDuration > 100) {
-            self->Event = KeyEvent_None;
+//     return KeyEvent_None;
+// }
 
-        } else if (self->LastState == KeyState_Down &&
-                   self->StateDuration > 20 && self->StateDuration <= 200) {
-            if (self->LastEvent == KeyEvent_Click) {
-                self->Event = KeyEvent_DoubleClick;
+// void Key_Update(Key_t *self, uint32_t ms) {
+//     self->State = Key_GetState(self);
 
-            } else {
-                self->Event = KeyEvent_Click;
-            }
-        }
-        break;
-    }
+//     switch (self->State) {
+//     case KeyState_Down:
+//         if (self->LastState == KeyState_Down && self->StateDuration > 200) {
+//             self->Event = KeyEvent_LongPress;
+//         }
+//         break;
 
-    if (self->LastState == self->State) {
-        self->StateDuration += ms;
-    } else {
-        self->StateDuration = 0;
-        self->LastState = self->State;
-    }
+//     case KeyState_Up:
+//         if (self->LastState == KeyState_Up && self->StateDuration > 100) {
+//             self->Event = KeyEvent_None;
 
-    if (self->LastEvent == self->Event) {
-        self->EventDuration += ms;
-    } else {
-        self->EventDuration = 0;
-        self->LastEvent = self->Event;
-    }
-}
+//         } else if (self->LastState == KeyState_Down &&
+//                    self->StateDuration > 20 && self->StateDuration <= 200) {
+//             if (self->LastEvent == KeyEvent_Click) {
+//                 self->Event = KeyEvent_DoubleClick;
 
-KeyState Key_GetState(Key_t *self) {
-    return HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin) ? KeyState_Down
-                                                         : KeyState_Up;
-}
+//             } else {
+//                 self->Event = KeyEvent_Click;
+//             }
+//         }
+//         break;
+//     }
+
+//     if (self->LastState == self->State) {
+//         self->StateDuration += ms;
+//     } else {
+//         self->StateDuration = 0;
+//         self->LastState = self->State;
+//     }
+
+//     if (self->LastEvent == self->Event) {
+//         self->EventDuration += ms;
+//     } else {
+//         self->EventDuration = 0;
+//         self->LastEvent = self->Event;
+//     }
+// }
+
+// KeyState Key_GetState(Key_t *self) {
+//     return HAL_GPIO_ReadPin(self->GPIOx, self->GPIO_Pin) ? KeyState_Down
+//                                                          : KeyState_Up;
+// }

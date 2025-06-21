@@ -73,6 +73,8 @@ project:
       files:
         - file: Hardware/LED.c
         - file: Hardware/LED.h
+        - file: Hardware/Key.c
+        - file: Hardware/Key.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

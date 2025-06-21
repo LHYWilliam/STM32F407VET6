@@ -2,12 +2,8 @@
 #include "task.h"
 #include "timers.h"
 
-// #include "Key.h"
-// #include "LED.h"
-// #include "sys.h"
-
-#include "GPIO.h"
 #include "LED.h"
+#include "Key.h"
 
 LED_t LED0 = {
     .GPIOxPiny = A1,
@@ -19,16 +15,10 @@ LED_t LED1 = {
     .Mode = LEDMode_PullUp,
 };
 
-GPIO_t Key = {
-    .Mode = GPIO_MODE_INPUT,
-    .Pull = GPIO_PULLDOWN,
+Key_t Key0 = {
+    .GPIOxPiny = C0,
+    .Mode = KeyMode_PullDown,
 };
-
-uint32_t Key_IDR;
-
-// Key_t Key = {
-//     .GPIOxPiny = "C0",
-// };
 
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
@@ -44,10 +34,7 @@ int main() {
 
     LED_Init(&LED0);
     LED_Init(&LED1);
-    Key_IDR = GPIO_InitPin(&Key, C0);
-
-    // LED_Init(&LED);
-    // Key_Init(&Key);
+    Key_Init(&Key0);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);
