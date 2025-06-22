@@ -2,7 +2,8 @@
 * main.c
 ```
 LED_t LED0 = {
-    .GPIOxPiny = "A1",
+    .GPIOxPiny = A1,
+    .Mode = LEDMode_PullUp,
 };
 
 LED_Init(&LED0);
@@ -13,7 +14,8 @@ LED_Init(&LED0);
 * main.c
 ```
 LED_t LED1 = {
-    .GPIOxPiny = "A2",
+    .GPIOxPiny = A2,
+    .Mode = LEDMode_PullUp,
 };
 
 LED_Init(&LED1);
@@ -24,7 +26,8 @@ LED_Init(&LED1);
 * main.c
 ```
 Key_t Key0 = {
-    .GPIOxPiny = "C0",
+    .GPIOxPiny = C0,
+    .Mode = KeyMode_PullDown,
 };
 
 Key_Init(&Key0);
@@ -35,7 +38,8 @@ Key_Init(&Key0);
 * main.c
 ```
 Key_t Key1 = {
-    .GPIOxPiny = "A0",
+    .GPIOxPiny = A0,
+    .Mode = KeyMode_PullDown,
 };
 
 Key_Init(&Key1);
@@ -47,11 +51,12 @@ Key_Init(&Key1);
 ```
 Serial_t Serial = {
     .USART = USART1,
-    .TX = "A9",
-    .RX = "A10",
+    .RX = A10,
+    .TX = A9,
     .Baudrate = 115200,
     .RxIT = ENABLE,
     .RxITSize = 1,
+    .Priority = 8,
 };
 
 Serial_Init(&Serial);
@@ -63,24 +68,22 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     if (huart->Instance == Serial.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
 
-        GPIO_t RX = {
+        GPIO_t RTX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial.USART),
         };
-        strcpy(RX.GPIOxPiny, Serial.RX);
-        GPIO_Init(&RX);
+        if (*Serial.RX) {
+            GPIO_InitPin(&RTX, Serial.RX);
+        }
+        if (*Serial.TX) {
+            GPIO_InitPin(&RTX, Serial.TX);
+        }
 
-        GPIO_t TX = {
-            .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_PULLUP,
-            .Alternate = GPIO_AF7_USARTx(Serial.USART),
-        };
-        strcpy(TX.GPIOxPiny, Serial.TX);
-        GPIO_Init(&TX);
-
-        HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial.USART));
-        HAL_NVIC_SetPriority(USARTx_IRQn(Serial.USART), 4, 0);
+        if (Serial.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(Serial.USART), Serial.Priority, 0);
+        }
     }
 }
 ```
@@ -91,9 +94,10 @@ void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&Serial.Handler); }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == Serial.USART) {
-    }
+        Serial_SendBytes(&Serial, Serial.RXBuffer, Serial.RxITSize);
 
-    Serial_RXITStart(&Serial, 1);
+        Serial_RXITStart(&Serial, 1);
+    }
 }
 ```
 
@@ -114,9 +118,10 @@ OLED_Init(&OLED);
 * main.c
 ```
 Timer_t Timer = {
-    .TIM = TIMx,
-    .ms = x,
-    .interrupt = ENABLE,
+    .TIMx = TIM3,
+    .ms = 500,
+    .Interrupt = ENABLE,
+    .Priority = 8,
 };
 
 Timer_Init(&Timer);
@@ -125,18 +130,20 @@ Timer_Init(&Timer);
 * msp.c
 ```
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == Timer.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(Timer.TIM);
+    if (htim->Instance == Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(Timer.TIMx);
 
-        HAL_NVIC_SetPriority(TIMx_IRQN(Timer.TIM), x, 0);
-        HAL_NVIC_EnableIRQ(TIMx_IRQN(Timer.TIM));
+        if (Timer.Interrupt) {
+            HAL_NVIC_SetPriority(TIMx_IRQN(Timer.TIMx), Timer.Priority, 0);
+            HAL_NVIC_EnableIRQ(TIMx_IRQN(Timer.TIMx));
+        }
     }
 }
 ```
 
 * interrupt.c
 ```
-void TIMx_IRQHandler(void) { HAL_TIM_IRQHandler(&Timer.Handler); }
+void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&Timer.Handler); }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim == &Timer.Handler) {
@@ -145,33 +152,36 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 ```
 
 
-# PWM
+# Servo
 * main.c
 ```
-PWM_t PWM = {
-    .TIM = TIMx,
-    .Channel = "x",
-    .Prescaler = x - 1,
-    .Period = x - 1,
-    .GPIOxPiny = "xx",
+Servo_t Servo = {
+    .PWM =
+        {
+            .TIM = TIM2,
+            .Channel = {2, 3},
+            .GPIOxPiny = {A1, A2},
+        },
 };
 
-PWM_Init(&PWM);
+Servo_Init(&Servo);
 ```
 
 * msp.c
 ```
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == PWM.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
+    if (htim->Instance == Servo.PWM.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(Servo.PWM.TIM);
 
-        GPIO_t gpio = {
+        GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_NOPULL,
-            .Alternate = GPIO_AFx_TIMy(PWM.TIM),
+            .Alternate = GPIO_AFx_TIMy(Servo.PWM.TIM),
         };
-        strcpy(gpio.GPIOxPiny, PWM.GPIOxPiny);
-        GPIO_Init(&gpio);
+
+        for (uint8_t i = 0; Servo.PWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, Servo.PWM.GPIOxPiny[i]);
+        }
     }
 }
 ```
@@ -181,9 +191,9 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 * main.c
 ```
 Encoder_t Encoder = {
-    .TIM = TIMx,
-    .Channel = "x | x",
-    .GPIOxPiny = "xx | xx",
+    .TIM = TIM3,
+    .Channel = {1, 2},
+    .GPIOxPiny = {A6, A7},
 };
 
 Encoder_Init(&Encoder);
@@ -195,13 +205,13 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == Encoder.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
 
-        GPIO_t gpio = {
+        GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_NOPULL,
             .Alternate = GPIO_AFx_TIMy(Encoder.TIM),
         };
-        strcpy(gpio.GPIOxPiny, Encoder.GPIOxPiny);
-        GPIO_Init(&gpio);
+        GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[0]);
+        GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[1]);
     }
 }
 ```

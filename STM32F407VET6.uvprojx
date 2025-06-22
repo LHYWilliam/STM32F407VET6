@@ -439,6 +439,26 @@
               <FileType>5</FileType>
               <FilePath>.\System\PWM.h</FilePath>
             </File>
+            <File>
+              <FileName>ADC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\System\ADC.c</FilePath>
+            </File>
+            <File>
+              <FileName>ADC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\System\ADC.h</FilePath>
+            </File>
+            <File>
+              <FileName>DMA.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\System\DMA.c</FilePath>
+            </File>
+            <File>
+              <FileName>DMA.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\System\DMA.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -518,6 +538,16 @@
               <FileName>Delay.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Util\Delay.h</FilePath>
+            </File>
+            <File>
+              <FileName>Sampler.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\Sampler.c</FilePath>
+            </File>
+            <File>
+              <FileName>Sampler.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\Sampler.h</FilePath>
             </File>
           </Files>
         </Group>

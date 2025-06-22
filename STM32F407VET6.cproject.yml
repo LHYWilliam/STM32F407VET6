@@ -73,6 +73,10 @@ project:
         - file: System/TIM.h
         - file: System/PWM.c
         - file: System/PWM.h
+        - file: System/ADC.c
+        - file: System/ADC.h
+        - file: System/DMA.c
+        - file: System/DMA.h
     - group: Hardware
       files:
         - file: Hardware/LED.c
@@ -91,6 +95,8 @@ project:
         - file: Util/Timer.h
         - file: Util/Delay.c
         - file: Util/Delay.h
+        - file: Util/Sampler.c
+        - file: Util/Sampler.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick
