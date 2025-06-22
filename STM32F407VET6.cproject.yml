@@ -87,6 +87,8 @@ project:
       files:
         - file: Util/Timer.c
         - file: Util/Timer.h
+        - file: Util/Delay.c
+        - file: Util/Delay.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

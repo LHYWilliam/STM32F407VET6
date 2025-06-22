@@ -499,6 +499,16 @@
               <FileType>5</FileType>
               <FilePath>.\Util\Timer.h</FilePath>
             </File>
+            <File>
+              <FileName>Delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\Delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>Delay.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\Delay.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

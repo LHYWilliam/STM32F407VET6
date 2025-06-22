@@ -7,7 +7,7 @@ void Delay_us(uint32_t us) {
     last = SysTick->VAL;
     reload = SysTick->LOAD;
 
-    for(;;) {
+    for (;;) {
         now = SysTick->VAL;
         if (now != last) {
             total += now < last ? last - now : reload - now + last;
