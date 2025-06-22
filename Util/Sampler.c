@@ -1,81 +1,43 @@
-#include <stdint.h>
+#include "Sampler.h"
 
-#include "Signal.h"
-
-void Generator_Init(Generator_t *self) {
-
-    if (self->Timer.TIMx) {
-        self->DAC.Trigger = DAC_TRIGGER_Tx_TRGO(self->Timer.TIMx);
+void Sampler_Init(Sampler_t *Self) {
+    if (Self->Timer.TIMx) {
+        Self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(Self->Timer.TIMx);
     }
-    DAC_Init(&self->DAC);
+    ADC_Init(&Self->ADC);
 
-    if (self->DMA.DMAx) {
-        self->DMA.PeriphInc = DISABLE;
-        self->DMA.PeriphSize = 32;
-        self->DMA.MemInc = ENABLE;
-        self->DMA.MemSize = 32;
-        self->DMA.Mode = DMA_CIRCULAR;
-        self->DMA.Direction = DMA_MEMORY_TO_PERIPH;
-        DMA_Init(&self->DMA);
+    if (Self->DMA.DMAx) {
+        Self->DMA.PeriphInc = DISABLE;
+        Self->DMA.PeriphSize = 32;
+        Self->DMA.MemInc = ENABLE;
+        Self->DMA.MemSize = 32;
+        Self->DMA.Mode = DMA_CIRCULAR;
+        Self->DMA.Direction = DMA_PERIPH_TO_MEMORY;
+
+        DMA_Init(&Self->DMA);
     }
 
-    if (self->Timer.TIMx) {
-        self->Timer.Hz *= self->Length;
-        self->Timer.Trigger = TIM_TRGO_UPDATE;
-        Timer_Init(&self->Timer);
+    if (Self->Timer.TIMx) {
+        Self->Timer.Trigger = TIM_TRGO_UPDATE;
+
+        Timer_Init(&Self->Timer);
     }
-    if (self->DMA.DMAx) {
-        DAC_DMAStart(&self->DAC, self->Data, self->Length);
+
+    Self->Index = Self->Length - 1;
+
+    if (Self->DMA.DMAx) {
+        ADC_DMAStart(&Self->ADC, Self->Data, Self->Length);
     } else {
-        DAC_Start(&self->DAC);
+        ADC_Start(&Self->ADC);
     }
 }
 
-void Sampler_Init(Sampler_t *self) {
-    if (self->Timer.TIMx) {
-        self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(self->Timer.TIMx);
-    }
-    ADC_Init(&self->ADC);
-
-    if (self->DMA.DMAx) {
-        self->DMA.PeriphInc = DISABLE;
-        self->DMA.PeriphSize = 32;
-        self->DMA.MemInc = ENABLE;
-        self->DMA.MemSize = 32;
-        self->DMA.Mode = DMA_CIRCULAR;
-        self->DMA.Direction = DMA_PERIPH_TO_MEMORY;
-
-        DMA_Init(&self->DMA);
-    }
-
-    if (self->Timer.TIMx) {
-        self->Timer.Trigger = TIM_TRGO_UPDATE;
-
-        Timer_Init(&self->Timer);
-    }
-
-    self->Index = self->Length - 1;
-
-    if (self->DMA.DMAx) {
-        ADC_DMAStart(&self->ADC, self->Data, self->Length);
-    } else {
-        ADC_Start(&self->ADC);
-    }
+void Sampler_GetValue(Sampler_t *Self) {
+    Self->Data[Self->Index] = ADC_GetValue(&Self->ADC);
 }
 
-void Sampler_Get(Sampler_t *self) {
-    self->Data[self->Index] = ADC_Get(&self->ADC);
-}
-
-void Sampler_UpdateIndex(Sampler_t *self) {
-    self->Index =
-        self->Length - DMAx_Streamy(self->DMA.DMAx, self->DMA.Stream)->NDTR;
-    self->Index = self->Index > 0 ? self->Index - 1 : self->Length - 1;
-}
-
-void Sin_Generate(uint32_t *data, uint32_t length) {
-    for (uint32_t i = 0; i < length; i++) {
-        data[i] = (uint32_t)((arm_sin_f32(2.f * PI * i / length) + 1.f) *
-                             (4095. / 2.f));
-    }
+void Sampler_UpdateIndex(Sampler_t *Self) {
+    Self->Index =
+        Self->Length - DMAx_Streamy(Self->DMA.DMAx, Self->DMA.Stream)->NDTR;
+    Self->Index = Self->Index > 0 ? Self->Index - 1 : Self->Length - 1;
 }

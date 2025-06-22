@@ -6,10 +6,10 @@
 #include "Key.h"
 #include "LED.h"
 #include "PWM.h"
+#include "Sampler.h"
 #include "Serial.h"
 #include "Servo.h"
 #include "Timer.h"
-
 
 LED_t LED0 = {
     .GPIOxPiny = A1,
@@ -66,6 +66,31 @@ Encoder_t Encoder = {
     .GPIOxPiny = {A6, A7},
 };
 
+#define ADC_DataLength 1
+uint32_t ADC_Data[1];
+
+Sampler_t Sampler = {
+    .Data = ADC_Data,
+    .Length = ADC_DataLength,
+    .ADC =
+        {
+            .ADCx = ADC1,
+            .Channel = {5},
+            .GPIOxPiny = {A5},
+        },
+    .DMA =
+        {
+            .DMAx = DMA2,
+            .Channel = 0,
+            .Stream = 0,
+        },
+    .Timer =
+        {
+            .TIMx = TIM3,
+            .Hz = 100,
+        },
+};
+
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
@@ -85,7 +110,8 @@ int main() {
     // Timer_Init(&Timer);
     // PWM_Init(&PWM);
     // Servo_Init(&Servo);
-    Encoder_Init(&Encoder);
+    // Encoder_Init(&Encoder);
+    Sampler_Init(&Sampler);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);

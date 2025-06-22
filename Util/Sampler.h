@@ -5,18 +5,8 @@
 #include CMSIS_device_header
 
 #include "ADC.h"
-#include "DAC.h"
 #include "DMA.h"
 #include "Timer.h"
-
-typedef struct {
-    uint32_t *Data;
-    uint32_t Length;
-
-    DAC_t DAC;
-    DMA_t DMA;
-    Timer_t Timer;
-} Generator_t;
 
 typedef struct {
     uint32_t *Data;
@@ -28,12 +18,8 @@ typedef struct {
     Timer_t Timer;
 } Sampler_t;
 
-void Generator_Init(Generator_t *self);
-
-void Sampler_Init(Sampler_t *self);
-void Sampler_Get(Sampler_t *self);
-void Sampler_UpdateIndex(Sampler_t *self);
-
-void Sin_Generate(uint32_t *data, uint32_t length);
+void Sampler_Init(Sampler_t *Self);
+void Sampler_GetValue(Sampler_t *Self);
+void Sampler_UpdateIndex(Sampler_t *Self);
 
 #endif

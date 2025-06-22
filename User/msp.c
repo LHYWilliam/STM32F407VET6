@@ -3,6 +3,7 @@
 
 #include "Encoder.h"
 #include "PWM.h"
+#include "Sampler.h"
 #include "Serial.h"
 #include "Servo.h"
 #include "TIM.h"
@@ -13,6 +14,7 @@ extern Timer_t Timer;
 extern PWM_t PWM;
 extern Servo_t Servo;
 extern Encoder_t Encoder;
+extern Sampler_t Sampler;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -46,9 +48,12 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
     if (htim->Instance == Timer.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(Timer.TIMx);
 
-        if (Timer.Interrupt) {
-            HAL_NVIC_SetPriority(TIMx_IRQN(Timer.TIMx), Timer.Priority, 0);
-            HAL_NVIC_EnableIRQ(TIMx_IRQN(Timer.TIMx));
+        // if (Timer.Interrupt) {
+        //     HAL_NVIC_SetPriority(TIMx_IRQN(Timer.TIMx), Timer.Priority, 0);
+        //     HAL_NVIC_EnableIRQ(TIMx_IRQN(Timer.TIMx));
+        // } else
+        if (htim->Instance == Sampler.Timer.TIMx) {
+            __HAL_RCC_TIMx_CLK_ENABLE(Sampler.Timer.TIMx);
         }
     }
 }
@@ -93,5 +98,26 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
         };
         GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[0]);
         GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[1]);
+    }
+}
+
+void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
+    if (hadc->Instance == Sampler.ADC.ADCx) {
+        __HAL_RCC_ADCx_CLK_ENABLE(Sampler.ADC.ADCx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_ANALOG,
+            .Pull = GPIO_NOPULL,
+        };
+        for (uint8_t i = 0; Sampler.ADC.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, Sampler.ADC.GPIOxPiny[i]);
+        }
+
+        if (Sampler.DMA.DMAx) {
+            __HAL_RCC_DMAx_CLK_ENABLE(Sampler.DMA.DMAx);
+
+            __HAL_LINKDMA(&Sampler.ADC.Handler, DMA_Handle,
+                          Sampler.DMA.Handler);
+        }
     }
 }

@@ -16,6 +16,8 @@ extern PWM_t PWM;
 extern Servo_t Servo;
 extern Encoder_t Encoder;
 
+extern uint32_t ADC_Data[];
+
 void vMainTaskCode(void *pvParameters) {
     Servo_SetAngle(&Servo, 2, 45.);
     Servo_SetAngle(&Servo, 3, 135.);
@@ -43,8 +45,11 @@ void vMainTaskCode(void *pvParameters) {
         //     vTaskDelay(pdMS_TO_TICKS(1));
         // }
 
-        int16_t Count = __HAL_TIM_GetCounter(&Encoder.Handler);
-        Serial_Printf(&Serial, "Encoder Count: %d\r\n", Count);
+        // int16_t Count = __HAL_TIM_GetCounter(&Encoder.Handler);
+        // Serial_Printf(&Serial, "Encoder Count: %d\r\n", Count);
+
+        Serial_Printf(&Serial, "ADC Data: %d\n", ADC_Data[0]);
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
