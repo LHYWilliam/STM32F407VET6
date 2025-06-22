@@ -5,7 +5,6 @@
 #include "LED.h"
 #include "PWM.h"
 #include "Serial.h"
-#include <stdint.h>
 
 extern LED_t LED0;
 extern LED_t LED1;
@@ -23,11 +22,11 @@ void vMainTaskCode(void *pvParameters) {
 
         // vTaskDelay(pdMS_TO_TICKS(100));
 
-        for (uint16_t i = 4000; i < 8000; i++) {
+        for (uint16_t i = 0; i < 1000; i++) {
             PWM_Set(&PWM, 2, i);
             vTaskDelay(pdMS_TO_TICKS(1));
         }
-        for (uint16_t i = 8000; i > 4000; i--) {
+        for (uint16_t i = 1000; i > 0; i--) {
             PWM_Set(&PWM, 2, i);
             vTaskDelay(pdMS_TO_TICKS(1));
         }

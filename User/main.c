@@ -34,18 +34,18 @@ Serial_t Serial = {
 };
 
 Timer_t Timer = {
-    .TIMx = TIM2,
+    .TIMx = TIM3,
     .ms = 500,
     .Interrupt = ENABLE,
     .Priority = 8,
 };
 
 PWM_t PWM = {
-    .TIM = TIM9,
+    .TIM = TIM2,
     .Channel = {2},
-    .GPIOxPiny = {A3},
-    .Prescaler = 8400 - 1,
-    .Period = 10000 - 1,
+    .GPIOxPiny = {A1},
+    .Prescaler = 84 - 1,
+    .Period = 1000 - 1,
 };
 
 TimerHandle_t xLEDTimer;
@@ -60,12 +60,12 @@ int main() {
     HAL_Init();
     SystemClock_Config();
 
-    LED_Init(&LED0);
+    // LED_Init(&LED0);
     LED_Init(&LED1);
     Key_Init(&Key0);
     Serial_Init(&Serial);
     Timer_Init(&Timer);
-    // PWM_Init(&PWM);
+    PWM_Init(&PWM);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);

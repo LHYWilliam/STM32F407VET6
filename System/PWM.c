@@ -1,32 +1,28 @@
-#include <string.h>
-
 #include "PWM.h"
 #include "TIM.h"
 
-void PWM_Init(PWM_t *self) {
-    TIM_t tim = {
-        .TIM = self->TIM,
-        .Prescaler = self->Prescaler,
-        .Period = self->Period,
-        .Handler = &self->Handler,
+void PWM_Init(PWM_t *Self) {
+    TIM_t TIM = {
+        .TIM = Self->TIM,
+        .Prescaler = Self->Prescaler,
+        .Period = Self->Period,
+        .Handler = &Self->Handler,
         .HAL_TIM_Init = HAL_TIM_PWM_Init,
     };
-    TIM_Init(&tim);
+    TIM_Init(&TIM);
 
     TIM_OC_InitTypeDef OC = {
         .OCMode = TIM_OCMODE_PWM1,
-        .Pulse = 0,
         .OCPolarity = TIM_OCPOLARITY_HIGH,
     };
 
-    char *temp = self->Channel;
-    do {
-        uint8_t channel = TIM_CHANNEL_x(temp);
-        HAL_TIM_PWM_ConfigChannel(tim.Handler, &OC, channel);
-        HAL_TIM_PWM_Start(tim.Handler, channel);
-    } while ((temp = strchr(temp, '|')) && (temp = temp + 2));
+    for (uint8_t i = 0; Self->Channel[i]; i++) {
+        uint8_t Channel = TIM_CHANNEL_x(Self->Channel[i]);
+        HAL_TIM_PWM_ConfigChannel(TIM.Handler, &OC, Channel);
+        HAL_TIM_PWM_Start(TIM.Handler, Channel);
+    }
 }
 
-void PWM_Set(PWM_t *self, uint8_t channel, uint32_t value) {
-    __HAL_TIM_SetCompare(&self->Handler, TIM_Channel[channel], value);
+void PWM_Set(PWM_t *Self, uint8_t Channel, uint32_t Value) {
+    __HAL_TIM_SetCompare(&Self->Handler, TIM_CHANNEL_x(Channel), Value);
 }
