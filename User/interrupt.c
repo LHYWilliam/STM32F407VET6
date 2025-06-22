@@ -24,6 +24,6 @@ void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&Timer.Handler); }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
     if (htim == &Timer.Handler) {
-        LED_Toggle(&LED1);
+        // LED_Toggle(&LED1);
     }
 }

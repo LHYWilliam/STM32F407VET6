@@ -23,11 +23,13 @@ void vMainTaskCode(void *pvParameters) {
         // vTaskDelay(pdMS_TO_TICKS(100));
 
         for (uint16_t i = 0; i < 1000; i++) {
-            PWM_Set(&PWM, 2, i);
+            PWM_SetSetCompare(&PWM, 2, i);
+            PWM_SetSetCompare(&PWM, 3, 1000 - i);
             vTaskDelay(pdMS_TO_TICKS(1));
         }
         for (uint16_t i = 1000; i > 0; i--) {
-            PWM_Set(&PWM, 2, i);
+            PWM_SetSetCompare(&PWM, 2, i);
+            PWM_SetSetCompare(&PWM, 3, 1000 - i);
             vTaskDelay(pdMS_TO_TICKS(1));
         }
     }

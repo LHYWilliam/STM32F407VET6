@@ -23,6 +23,6 @@ void PWM_Init(PWM_t *Self) {
     }
 }
 
-void PWM_Set(PWM_t *Self, uint8_t Channel, uint32_t Value) {
+void PWM_SetSetCompare(PWM_t *Self, uint8_t Channel, uint32_t Value) {
     __HAL_TIM_SetCompare(&Self->Handler, TIM_CHANNEL_x(Channel), Value);
 }

@@ -10,7 +10,7 @@ typedef struct {
     TIM_TypeDef *TIM;
     uint8_t Channel[4];
     GPIOxPiny_t GPIOxPiny[4];
-    
+
     uint32_t Prescaler;
     uint32_t Period;
 
@@ -18,6 +18,6 @@ typedef struct {
 } PWM_t;
 
 void PWM_Init(PWM_t *Self);
-void PWM_Set(PWM_t *Self, uint8_t Channel, uint32_t Value);
+void PWM_SetSetCompare(PWM_t *Self, uint8_t Channel, uint32_t Value);
 
 #endif

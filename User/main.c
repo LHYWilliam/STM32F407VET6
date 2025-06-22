@@ -42,8 +42,8 @@ Timer_t Timer = {
 
 PWM_t PWM = {
     .TIM = TIM2,
-    .Channel = {2},
-    .GPIOxPiny = {A1},
+    .Channel = {2, 3},
+    .GPIOxPiny = {A1, A2},
     .Prescaler = 84 - 1,
     .Period = 1000 - 1,
 };
@@ -61,7 +61,7 @@ int main() {
     SystemClock_Config();
 
     // LED_Init(&LED0);
-    LED_Init(&LED1);
+    // LED_Init(&LED1);
     Key_Init(&Key0);
     Serial_Init(&Serial);
     Timer_Init(&Timer);
