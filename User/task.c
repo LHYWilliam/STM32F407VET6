@@ -1,6 +1,7 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
+#include "Encoder.h"
 #include "Key.h"
 #include "LED.h"
 #include "PWM.h"
@@ -13,6 +14,7 @@ extern Key_t Key0;
 extern Serial_t Serial;
 extern PWM_t PWM;
 extern Servo_t Servo;
+extern Encoder_t Encoder;
 
 void vMainTaskCode(void *pvParameters) {
     Servo_SetAngle(&Servo, 2, 45.);
@@ -30,23 +32,26 @@ void vMainTaskCode(void *pvParameters) {
 
         // vTaskDelay(pdMS_TO_TICKS(100));
 
-        for (uint16_t i = 0; i < Period; i++) {
-            Servo_SetAngle(&Servo, 2, 45. + 90. / Period * i);
-            Servo_SetAngle(&Servo, 3, 135. - 90. / Period * (Period - i));
-            vTaskDelay(pdMS_TO_TICKS(1));
-        }
-        for (uint16_t i = Period; i > 0; i--) {
-            Servo_SetAngle(&Servo, 2, 135. - 90. / Period * (Period - i));
-            Servo_SetAngle(&Servo, 3, 45. + 90. / Period * i);
-            vTaskDelay(pdMS_TO_TICKS(1));
-        }
+        // for (uint16_t i = 0; i < Period; i++) {
+        //     Servo_SetAngle(&Servo, 2, 45. + 90. / Period * i);
+        //     Servo_SetAngle(&Servo, 3, 135. - 90. / Period * (Period - i));
+        //     vTaskDelay(pdMS_TO_TICKS(1));
+        // }
+        // for (uint16_t i = Period; i > 0; i--) {
+        //     Servo_SetAngle(&Servo, 2, 135. - 90. / Period * (Period - i));
+        //     Servo_SetAngle(&Servo, 3, 45. + 90. / Period * i);
+        //     vTaskDelay(pdMS_TO_TICKS(1));
+        // }
+
+        int16_t Count = __HAL_TIM_GetCounter(&Encoder.Handler);
+        Serial_Printf(&Serial, "Encoder Count: %d\r\n", Count);
     }
 }
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
     // Serial_Printf(&Serial, "LED toggle at %d ms\r\n",
     //               xTaskGetTickCount() * portTICK_PERIOD_MS);
-    // LED_Toggle(&LED0);
+    LED_Toggle(&LED0);
 }
 
 void vApplicationTickHook() { HAL_IncTick(); }

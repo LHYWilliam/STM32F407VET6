@@ -2,12 +2,14 @@
 #include "task.h"
 #include "timers.h"
 
+#include "Encoder.h"
 #include "Key.h"
 #include "LED.h"
 #include "PWM.h"
 #include "Serial.h"
 #include "Servo.h"
 #include "Timer.h"
+
 
 LED_t LED0 = {
     .GPIOxPiny = A1,
@@ -58,6 +60,12 @@ Servo_t Servo = {
         },
 };
 
+Encoder_t Encoder = {
+    .TIM = TIM3,
+    .Channel = {1, 2},
+    .GPIOxPiny = {A6, A7},
+};
+
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
@@ -70,13 +78,14 @@ int main() {
     HAL_Init();
     SystemClock_Config();
 
-    // LED_Init(&LED0);
-    // LED_Init(&LED1);
+    LED_Init(&LED0);
+    LED_Init(&LED1);
     Key_Init(&Key0);
     Serial_Init(&Serial);
-    Timer_Init(&Timer);
+    // Timer_Init(&Timer);
     // PWM_Init(&PWM);
-    Servo_Init(&Servo);
+    // Servo_Init(&Servo);
+    Encoder_Init(&Encoder);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);

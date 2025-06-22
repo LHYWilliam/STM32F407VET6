@@ -83,6 +83,8 @@ project:
         - file: Hardware/Serial.h
         - file: Hardware/Servo.c
         - file: Hardware/Servo.h
+        - file: Hardware/Encoder.c
+        - file: Hardware/Encoder.h
     - group: Util
       files:
         - file: Util/Timer.c

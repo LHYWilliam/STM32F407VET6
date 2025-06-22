@@ -1,17 +1,18 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "Encoder.h"
 #include "PWM.h"
 #include "Serial.h"
 #include "Servo.h"
 #include "TIM.h"
 #include "Timer.h"
 
-
 extern Serial_t Serial;
 extern Timer_t Timer;
 extern PWM_t PWM;
 extern Servo_t Servo;
+extern Encoder_t Encoder;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -78,5 +79,19 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
         for (uint8_t i = 0; Servo.PWM.Channel[i]; i++) {
             GPIO_InitPin(&GPIO, Servo.PWM.GPIOxPiny[i]);
         }
+    }
+}
+
+void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == Encoder.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Pull = GPIO_NOPULL,
+            .Alternate = GPIO_AFx_TIMy(Encoder.TIM),
+        };
+        GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[0]);
+        GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[1]);
     }
 }
