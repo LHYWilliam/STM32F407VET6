@@ -81,6 +81,8 @@ project:
         - file: Hardware/Key.h
         - file: Hardware/Serial.c
         - file: Hardware/Serial.h
+        - file: Hardware/Servo.c
+        - file: Hardware/Servo.h
     - group: Util
       files:
         - file: Util/Timer.c

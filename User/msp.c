@@ -3,12 +3,15 @@
 
 #include "PWM.h"
 #include "Serial.h"
+#include "Servo.h"
 #include "TIM.h"
 #include "Timer.h"
+
 
 extern Serial_t Serial;
 extern Timer_t Timer;
 extern PWM_t PWM;
+extern Servo_t Servo;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -50,17 +53,30 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
 }
 
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == PWM.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
+    // if (htim->Instance == PWM.TIM) {
+    //     __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
+
+    //     GPIO_t GPIO = {
+    //         .Mode = GPIO_MODE_AF_PP,
+    //         .Pull = GPIO_NOPULL,
+    //         .Alternate = GPIO_AFx_TIMy(PWM.TIM),
+    //     };
+
+    //     for (uint8_t i = 0; PWM.Channel[i]; i++) {
+    //         GPIO_InitPin(&GPIO, PWM.GPIOxPiny[i]);
+    //     }
+    // } else
+    if (htim->Instance == Servo.PWM.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(Servo.PWM.TIM);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_NOPULL,
-            .Alternate = GPIO_AFx_TIMy(PWM.TIM),
+            .Alternate = GPIO_AFx_TIMy(Servo.PWM.TIM),
         };
 
-        for (uint8_t i = 0; PWM.Channel[i]; i++) {
-            GPIO_InitPin(&GPIO, PWM.GPIOxPiny[i]);
+        for (uint8_t i = 0; Servo.PWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, Servo.PWM.GPIOxPiny[i]);
         }
     }
 }

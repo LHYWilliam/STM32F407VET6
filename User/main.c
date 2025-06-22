@@ -6,6 +6,7 @@
 #include "LED.h"
 #include "PWM.h"
 #include "Serial.h"
+#include "Servo.h"
 #include "Timer.h"
 
 LED_t LED0 = {
@@ -48,6 +49,15 @@ PWM_t PWM = {
     .Period = 1000 - 1,
 };
 
+Servo_t Servo = {
+    .PWM =
+        {
+            .TIM = TIM2,
+            .Channel = {2, 3},
+            .GPIOxPiny = {A1, A2},
+        },
+};
+
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
@@ -65,7 +75,8 @@ int main() {
     Key_Init(&Key0);
     Serial_Init(&Serial);
     Timer_Init(&Timer);
-    PWM_Init(&PWM);
+    // PWM_Init(&PWM);
+    Servo_Init(&Servo);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);
