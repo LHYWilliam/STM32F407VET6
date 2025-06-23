@@ -32,6 +32,13 @@
 #define TXBUFFER_SIZE 128
 #define RXBUFFER_SIZE 128
 
+typedef enum {
+    Serial_None,
+    Serial_Byte,
+    Serial_HexPack,
+    Serial_StringPack,
+} Serial_PackType;
+
 typedef struct {
     USART_TypeDef *USART;
     GPIOxPiny_t RX;
@@ -46,12 +53,19 @@ typedef struct {
     uint8_t TXBuffer[TXBUFFER_SIZE];
     uint8_t RXBuffer[RXBUFFER_SIZE];
 
+    uint8_t RecieveByteCount;
+    uint8_t RecieveFlag;
+    Serial_PackType PackType;
+    uint8_t ByteData;
+    uint8_t HexData[32];
+
     UART_HandleTypeDef Handler;
 } Serial_t;
 
 void Serial_Init(Serial_t *Self);
-void Serial_RXITStart(Serial_t *Self, uint8_t size);
-void Serial_SendBytes(Serial_t *Self, uint8_t *bytes, uint8_t length);
-void Serial_Printf(Serial_t *Self, char *format, ...);
+void Serial_RXITStart(Serial_t *Self, uint8_t Size);
+void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length);
+void Serial_Printf(Serial_t *Self, char *Format, ...);
+void Serial_Clear(Serial_t *Self);
 
 #endif

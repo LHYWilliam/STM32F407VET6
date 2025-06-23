@@ -28,7 +28,7 @@ void Time_Delayms(uint32_t ms) {
 }
 
 uint32_t Time_Getus() {
-    return HAL_GetTick() * 1000 +
+    return Time_Getms() * 1000 +
            (SysTick->LOAD + 1 - SysTick->VAL) * 1000 / (SysTick->LOAD + 1);
 }
 

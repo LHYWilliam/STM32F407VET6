@@ -12,5 +12,6 @@ typedef struct {
 
 void Servo_Init(Servo_t *Self);
 void Servo_SetAngle(Servo_t *Self, uint8_t Channel, float Angle);
+void Servo_UpdateCompare(Servo_t *Self, uint8_t Channel, int32_t Delta);
 
 #endif

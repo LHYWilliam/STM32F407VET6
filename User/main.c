@@ -61,9 +61,9 @@ PWM_t PWM = {
 Servo_t Servo = {
     .PWM =
         {
-            .TIM = TIM2,
-            .Channel = {2, 3},
-            .GPIOxPiny = {A1, A2},
+            .TIM = TIM3,
+            .Channel = {1, 2},
+            .GPIOxPiny = {A6, A7},
         },
 };
 
@@ -117,7 +117,7 @@ int main() {
     Serial_Init(&Serial2);
     // Timer_Init(&Timer);
     // PWM_Init(&PWM);
-    // Servo_Init(&Servo);
+    Servo_Init(&Servo);
     // Encoder_Init(&Encoder);
     // Sampler_Init(&Sampler);
 

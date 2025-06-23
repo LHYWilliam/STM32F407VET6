@@ -43,3 +43,9 @@ void Serial_Printf(Serial_t *Self, char *Format, ...) {
     HAL_UART_Transmit(&Self->Handler, Self->TXBuffer,
                       strlen((char *)Self->TXBuffer), HAL_MAX_DELAY);
 }
+
+void Serial_Clear(Serial_t *Self) {
+    Self->RecieveByteCount = 0;
+    Self->PackType = Serial_None;
+    Self->RecieveFlag = RESET;
+}
