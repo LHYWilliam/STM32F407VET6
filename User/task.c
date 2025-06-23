@@ -48,7 +48,7 @@ void vMainTaskCode(void *pvParameters) {
         // int16_t Count = __HAL_TIM_GetCounter(&Encoder.Handler);
         // Serial_Printf(&Serial, "Encoder Count: %d\r\n", Count);
 
-        Serial_Printf(&Serial, "ADC Data: %d\n", ADC_Data[0]);
+        // Serial_Printf(&Serial, "ADC Data: %d\n", ADC_Data[0]);
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }

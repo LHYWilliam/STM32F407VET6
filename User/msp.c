@@ -9,7 +9,8 @@
 #include "TIM.h"
 #include "Timer.h"
 
-extern Serial_t Serial;
+extern Serial_t Serial1;
+extern Serial_t Serial2;
 extern Timer_t Timer;
 extern PWM_t PWM;
 extern Servo_t Servo;
@@ -22,24 +23,43 @@ void HAL_MspInit(void) {
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-    if (huart->Instance == Serial.USART) {
-        __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
+    if (huart->Instance == Serial1.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(Serial1.USART);
 
         GPIO_t RTX = {
             .Mode = GPIO_MODE_AF_PP,
             .Pull = GPIO_PULLUP,
-            .Alternate = GPIO_AF7_USARTx(Serial.USART),
+            .Alternate = GPIO_AF7_USARTx(Serial1.USART),
         };
-        if (*Serial.RX) {
-            GPIO_InitPin(&RTX, Serial.RX);
+        if (*Serial1.RX) {
+            GPIO_InitPin(&RTX, Serial1.RX);
         }
-        if (*Serial.TX) {
-            GPIO_InitPin(&RTX, Serial.TX);
+        if (*Serial1.TX) {
+            GPIO_InitPin(&RTX, Serial1.TX);
         }
 
-        if (Serial.RxIT) {
-            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial.USART), Serial.Priority, 0);
+        if (Serial1.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial1.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(Serial1.USART), Serial1.Priority, 0);
+        }
+    } else if (huart->Instance == Serial2.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(Serial2.USART);
+
+        GPIO_t RTX = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Pull = GPIO_PULLUP,
+            .Alternate = GPIO_AF7_USARTx(Serial2.USART),
+        };
+        if (*Serial2.RX) {
+            GPIO_InitPin(&RTX, Serial2.RX);
+        }
+        if (*Serial2.TX) {
+            GPIO_InitPin(&RTX, Serial2.TX);
+        }
+
+        if (Serial2.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial2.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(Serial2.USART), Serial2.Priority, 0);
         }
     }
 }

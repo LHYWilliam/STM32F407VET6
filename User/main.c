@@ -26,14 +26,21 @@ Key_t Key0 = {
     .Mode = KeyMode_PullDown,
 };
 
-Serial_t Serial = {
+Serial_t Serial1 = {
     .USART = USART1,
     .RX = A10,
     .TX = A9,
     .Baudrate = 115200,
+};
+
+Serial_t Serial2 = {
+    .USART = USART2,
+    .RX = A3,
+    .TX = A2,
+    .Baudrate = 115200,
     .RxIT = ENABLE,
     .RxITSize = 1,
-    .Priority = 8,
+    .Priority = 1,
 };
 
 Timer_t Timer = {
@@ -104,14 +111,15 @@ int main() {
     SystemClock_Config();
 
     LED_Init(&LED0);
-    LED_Init(&LED1);
+    // LED_Init(&LED1);
     Key_Init(&Key0);
-    Serial_Init(&Serial);
+    Serial_Init(&Serial1);
+    Serial_Init(&Serial2);
     // Timer_Init(&Timer);
     // PWM_Init(&PWM);
     // Servo_Init(&Servo);
     // Encoder_Init(&Encoder);
-    Sampler_Init(&Sampler);
+    // Sampler_Init(&Sampler);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);

@@ -6,17 +6,18 @@
 #include "Timer.h"
 
 
-extern Serial_t Serial;
+extern Serial_t Serial1;
+extern Serial_t Serial2;
 extern Timer_t Timer;
 extern LED_t LED1;
 
-void USART1_IRQHandler(void) { HAL_UART_IRQHandler(&Serial.Handler); }
+void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&Serial2.Handler); }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    if (huart->Instance == Serial.USART) {
-        Serial_SendBytes(&Serial, Serial.RXBuffer, Serial.RxITSize);
+    if (huart->Instance == Serial2.USART) {
+        Serial_SendBytes(&Serial1, Serial2.RXBuffer, Serial2.RxITSize);
 
-        Serial_RXITStart(&Serial, 1);
+        Serial_RXITStart(&Serial2, 1);
     }
 }
 
