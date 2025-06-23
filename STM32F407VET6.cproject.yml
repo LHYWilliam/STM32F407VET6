@@ -15,6 +15,7 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
+        - Hardware/ICM42688
       debug: "on"
       misc:
         - C:
@@ -89,14 +90,18 @@ project:
         - file: Hardware/Servo.h
         - file: Hardware/Encoder.c
         - file: Hardware/Encoder.h
+        - file: Hardware/ICM42688/AHRS.c
+        - file: Hardware/ICM42688/AHRS.h
+        - file: Hardware/ICM42688/ICM42688.c
+        - file: Hardware/ICM42688/ICM42688.h
     - group: Util
       files:
         - file: Util/Timer.c
         - file: Util/Timer.h
-        - file: Util/Delay.c
-        - file: Util/Delay.h
         - file: Util/Sampler.c
         - file: Util/Sampler.h
+        - file: Util/Time.c
+        - file: Util/Time.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

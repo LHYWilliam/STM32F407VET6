@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED</IncludePath>
+              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\ICM42688</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -514,6 +514,26 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\Encoder.h</FilePath>
             </File>
+            <File>
+              <FileName>AHRS.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\ICM42688\AHRS.c</FilePath>
+            </File>
+            <File>
+              <FileName>AHRS.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\ICM42688\AHRS.h</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688.c</FilePath>
+            </File>
+            <File>
+              <FileName>ICM42688.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\ICM42688\ICM42688.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -530,16 +550,6 @@
               <FilePath>.\Util\Timer.h</FilePath>
             </File>
             <File>
-              <FileName>Delay.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Util\Delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>Delay.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Util\Delay.h</FilePath>
-            </File>
-            <File>
               <FileName>Sampler.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\Util\Sampler.c</FilePath>
@@ -548,6 +558,16 @@
               <FileName>Sampler.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Util\Sampler.h</FilePath>
+            </File>
+            <File>
+              <FileName>Time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\Time.c</FilePath>
+            </File>
+            <File>
+              <FileName>Time.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\Time.h</FilePath>
             </File>
           </Files>
         </Group>
