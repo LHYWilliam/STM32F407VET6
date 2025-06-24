@@ -20,11 +20,9 @@ extern Encoder_t Encoder;
 extern uint32_t ADC_Data[];
 
 void vMainTaskCode(void *pvParameters) {
-    Servo_SetAngle(&Servo, 1, 110.);
-    Servo_SetAngle(&Servo, 2, 135.);
+    Servo_SetAngle180(&Servo, 1, 110.);
+    Servo_SetAngle270(&Servo, 2, 135.);
     vTaskDelay(pdMS_TO_TICKS(1000));
-
-    const uint16_t Period = 60000;
 
     for (;;) {
         // if (Key_IsPressing(&Key0)) {
@@ -52,19 +50,32 @@ void vMainTaskCode(void *pvParameters) {
         // Serial_Printf(&Serial, "ADC Data: %d\n", ADC_Data[0]);
 
         if (Serial2.RecieveFlag == SET) {
-            int16_t dx =
-                (int16_t)((Serial2.HexData[0] << 8) | Serial2.HexData[1]);
-            int16_t dy =
-                (int16_t)((Serial2.HexData[2] << 8) | Serial2.HexData[3]);
-            Serial_Printf(&Serial1, "dx: %d, dy: %d\n", dx, dy);
+            // int16_t temp1 = (Serial2.HexData[0] << 8 | Serial2.HexData[1]);
+            // int16_t temp2 = (Serial2.HexData[2] << 8 | Serial2.HexData[3]);
+            // int16_t temp3 = (Serial2.HexData[4] << 8 | Serial2.HexData[5]);
+            // int16_t temp4 = (Serial2.HexData[6] << 8 | Serial2.HexData[7]);
 
-            Servo_UpdateCompare(&Servo, 1, dx);
-            Servo_UpdateCompare(&Servo, 2, dy);
+            // float dH = temp1 * 1.f + temp2 / 1000.0f;
+            // float dV = temp3 * 1.f + temp4 / 1000.0f;
+
+            // Serial_Printf(&Serial1, "dH: %d.%d, dV: %d.%d\n", (int16_t)dH,
+            //               (int16_t)(dH * 1000) % 1000, (int16_t)dV,
+            //               (int16_t)(dV * 1000) % 1000);
+
+            int16_t dH =
+                (int16_t)((Serial2.HexData[0] << 8) | Serial2.HexData[1]);
+            int16_t dV =
+                (int16_t)((Serial2.HexData[2] << 8) | Serial2.HexData[3]);
+
+            Servo_UpdateCompare180(&Servo, 1, dV);
+            Servo_UpdateCompare270(&Servo, 2, dH);
 
             Serial_Clear(&Serial2);
+
+            Serial_Printf(&Serial1, "dx, dy: %d, %d\n", dH, dV);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
 

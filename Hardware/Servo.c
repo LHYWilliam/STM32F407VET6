@@ -1,5 +1,4 @@
 #include "Servo.h"
-#include "TIM.h"
 
 void Servo_Init(Servo_t *Self) {
     Self->PWM.Prescaler = 84 - 1;
@@ -7,21 +6,70 @@ void Servo_Init(Servo_t *Self) {
     PWM_Init(&Self->PWM);
 }
 
-void Servo_SetAngle(Servo_t *Self, uint8_t Channel, float Angle) {
-    PWM_SetSetCompare(&Self->PWM, Channel,
-                      (uint32_t)((Angle / 180.0f) * 2000 + 500));
+void Servo_SetCompare180(Servo_t *Self, uint8_t Channel, int32_t Compare) {
+    if (Compare < 500) {
+        Compare = 500;
+    } else if (Compare > 2500) {
+        Compare = 2500;
+    }
+
+    Self->Compare[Channel - 1] = Compare;
+    Self->Angle[Channel - 1] = (float)(Compare - 500) / 2000 * 180.0f;
+
+    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
 }
 
-void Servo_UpdateCompare(Servo_t *Self, uint8_t Channel, int32_t Delta) {
-    int32_t Value =
-        __HAL_TIM_GetCompare(&Self->PWM.Handler, TIM_CHANNEL_x(Channel));
-    Value += Delta;
-
-    if (Value + Delta < 500) {
-        Value = 500;
-    } else if (Value > 2500) {
-        Value = 2500;
+void Servo_SetCompare270(Servo_t *Self, uint8_t Channel, int32_t Compare) {
+    if (Compare < 500) {
+        Compare = 500;
+    } else if (Compare > 2500) {
+        Compare = 2500;
     }
-    
-    __HAL_TIM_SetCompare(&Self->PWM.Handler, TIM_CHANNEL_x(Channel), Value);
+
+    Self->Compare[Channel - 1] = Compare;
+    Self->Angle[Channel - 1] = (float)(Compare - 500) / 2000 * 270.0f;
+
+    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+}
+
+void Servo_SetAngle180(Servo_t *Self, uint8_t Channel, float Angle) {
+    if (Angle < 0.0f) {
+        Angle = 0.0f;
+    } else if (Angle > 180.0f) {
+        Angle = 180.0f;
+    }
+
+    Self->Angle[Channel - 1] = Angle;
+    Self->Compare[Channel - 1] = (uint32_t)((Angle / 180.0f) * 2000 + 500);
+
+    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+}
+
+void Servo_SetAngle270(Servo_t *Self, uint8_t Channel, float Angle) {
+    if (Angle < 0.0f) {
+        Angle = 0.0f;
+    } else if (Angle > 270.0f) {
+        Angle = 270.0f;
+    }
+
+    Self->Angle[Channel - 1] = Angle;
+    Self->Compare[Channel - 1] = (uint32_t)((Angle / 270.0f) * 2000 + 500);
+
+    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+}
+
+void Servo_UpdateCompare180(Servo_t *Self, uint8_t Channel, int32_t Delta) {
+    Servo_SetCompare180(Self, Channel, Self->Compare[Channel - 1] + Delta);
+}
+
+void Servo_UpdateCompare270(Servo_t *Self, uint8_t Channel, int32_t Delta) {
+    Servo_SetCompare270(Self, Channel, Self->Compare[Channel - 1] + Delta);
+}
+
+void Servo_UpdateAngle180(Servo_t *Self, uint8_t Channel, float Delta) {
+    Servo_SetAngle180(Self, Channel, Self->Angle[Channel - 1] + Delta);
+}
+
+void Servo_UpdateAngle270(Servo_t *Self, uint8_t Channel, float Delta) {
+    Servo_SetAngle270(Self, Channel, Self->Angle[Channel - 1] + Delta);
 }
