@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\ICM42688</IncludePath>
+              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -513,26 +513,6 @@
               <FileName>Encoder.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Hardware\Encoder.h</FilePath>
-            </File>
-            <File>
-              <FileName>AHRS.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\ICM42688\AHRS.c</FilePath>
-            </File>
-            <File>
-              <FileName>AHRS.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\ICM42688\AHRS.h</FilePath>
-            </File>
-            <File>
-              <FileName>ICM42688.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\Hardware\ICM42688\ICM42688.c</FilePath>
-            </File>
-            <File>
-              <FileName>ICM42688.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\Hardware\ICM42688\ICM42688.h</FilePath>
             </File>
           </Files>
         </Group>

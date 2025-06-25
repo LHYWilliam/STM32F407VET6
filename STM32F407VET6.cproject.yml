@@ -15,7 +15,6 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
-        - Hardware/ICM42688
       debug: "on"
       misc:
         - C:
@@ -90,10 +89,6 @@ project:
         - file: Hardware/Servo.h
         - file: Hardware/Encoder.c
         - file: Hardware/Encoder.h
-        - file: Hardware/ICM42688/AHRS.c
-        - file: Hardware/ICM42688/AHRS.h
-        - file: Hardware/ICM42688/ICM42688.c
-        - file: Hardware/ICM42688/ICM42688.h
     - group: Util
       files:
         - file: Util/Timer.c
