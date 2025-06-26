@@ -2,6 +2,7 @@
 #include CMSIS_device_header
 
 #include "Encoder.h"
+#include "ICM42688.h"
 #include "PWM.h"
 #include "Sampler.h"
 #include "Serial.h"
@@ -16,6 +17,7 @@ extern PWM_t PWM;
 extern Servo_t Servo;
 extern Encoder_t Encoder;
 extern Sampler_t Sampler;
+extern ICM42688_t ICM42688;
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();
@@ -40,7 +42,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
         if (Serial1.RxIT) {
             HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial1.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial1.USART), Serial1.Priority, 0);
+            HAL_NVIC_SetPriority(USARTx_IRQn(Serial1.USART), Serial1.Priority,
+                                 0);
         }
     } else if (huart->Instance == Serial2.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial2.USART);
@@ -59,22 +62,23 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
         if (Serial2.RxIT) {
             HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial2.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial2.USART), Serial2.Priority, 0);
+            HAL_NVIC_SetPriority(USARTx_IRQn(Serial2.USART), Serial2.Priority,
+                                 0);
         }
     }
 }
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == Timer.TIMx) {
-        __HAL_RCC_TIMx_CLK_ENABLE(Timer.TIMx);
+    // if (htim->Instance == Timer.TIMx) {
+    //     __HAL_RCC_TIMx_CLK_ENABLE(Timer.TIMx);
 
-        // if (Timer.Interrupt) {
-        //     HAL_NVIC_SetPriority(TIMx_IRQN(Timer.TIMx), Timer.Priority, 0);
-        //     HAL_NVIC_EnableIRQ(TIMx_IRQN(Timer.TIMx));
-        // } else
-        if (htim->Instance == Sampler.Timer.TIMx) {
-            __HAL_RCC_TIMx_CLK_ENABLE(Sampler.Timer.TIMx);
-        }
+    //     if (Timer.Interrupt) {
+    //         HAL_NVIC_SetPriority(TIMx_IRQN(Timer.TIMx), Timer.Priority, 0);
+    //         HAL_NVIC_EnableIRQ(TIMx_IRQN(Timer.TIMx));
+    //     }
+    // } else
+    if (htim->Instance == Sampler.Timer.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(Sampler.Timer.TIMx);
     }
 }
 
@@ -139,5 +143,27 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
             __HAL_LINKDMA(&Sampler.ADC.Handler, DMA_Handle,
                           Sampler.DMA.Handler);
         }
+    }
+}
+
+void HAL_SPI_MspInit(SPI_HandleTypeDef *hspi) {
+    if (hspi->Instance == ICM42688.SPIx) {
+        __HAL_RCC_SPIx_CLK_ENABLE(ICM42688.SPIx);
+
+        GPIO_t GPIO;
+
+        GPIO.Mode = GPIO_MODE_AF_PP;
+        GPIO.Alternate = GPIO_AF5_SPI2;
+        GPIO.Pull = GPIO_PULLUP;
+        ICM42688.SCLK_ODR = GPIO_InitPin(&GPIO, ICM42688.SCLK);
+        GPIO_InitPin(&GPIO, ICM42688.MISO);
+        ICM42688.MOSI_ODR = GPIO_InitPin(&GPIO, ICM42688.MOSI);
+
+        GPIO.Mode = GPIO_MODE_OUTPUT_PP;
+        ICM42688.CS_ODR = GPIO_InitPin(&GPIO, ICM42688.CS);
+
+        GPIO_Write(ICM42688.SCLK_ODR, 1);
+        GPIO_Write(ICM42688.MOSI_ODR, 1);
+        GPIO_Write(ICM42688.CS_ODR, 1);
     }
 }
