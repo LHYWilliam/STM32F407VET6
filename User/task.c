@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "Encoder.h"
+#include "GrayScaleSensor.h"
 #include "ICM42688.h"
 #include "ICM42688_AHRS.h"
 #include "Key.h"
@@ -21,6 +22,7 @@ extern PWM_t PWM;
 extern Servo_t Servo;
 extern Encoder_t Encoder;
 extern ICM42688_t ICM42688;
+extern GrayScaleSensor_t GrayScaleSensor;
 
 extern uint32_t ADC_Data[];
 
@@ -50,6 +52,8 @@ void vMainTaskCode(void *pvParameters) {
     }
     */
 
+    // ICM42688
+    /*
     float YawPitchRoll[3];
     for (;;) {
         ICM42688_AHRS_Update(&ICM42688);
@@ -60,12 +64,22 @@ void vMainTaskCode(void *pvParameters) {
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }
+    */
+
+    // GrayScacleSensor
+    uint8_t GrayScaleData[8];
+    for (;;) {
+        GrayScaleSensor_ReadAnalog(&GrayScaleSensor, GrayScaleData);
+
+        printf("%3d, %3d, %3d, %3d, %3d, %3d, %3d, %3d\n", GrayScaleData[0],
+               GrayScaleData[1], GrayScaleData[2], GrayScaleData[3],
+               GrayScaleData[4], GrayScaleData[5], GrayScaleData[6],
+               GrayScaleData[7]);
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
 }
 
-void vLEDTimerCallback(TimerHandle_t pxTimer) {
-    // Serial_Printf(&Serial, "LED toggle at %d ms\r\n",
-    //               xTaskGetTickCount() * portTICK_PERIOD_MS);
-    LED_Toggle(&LED0);
-}
+void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LED0); }
 
 void vApplicationTickHook() { HAL_IncTick(); }

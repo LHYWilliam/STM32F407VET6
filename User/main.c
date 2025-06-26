@@ -1,8 +1,14 @@
+#include "RTE_Components.h"
+#include CMSIS_device_header
+
 #include "FreeRTOS.h"
 #include "task.h"
 #include "timers.h"
 
+#include <stdio.h>
+
 #include "Encoder.h"
+#include "GrayScaleSensor.h"
 #include "ICM42688.h"
 #include "Key.h"
 #include "LED.h"
@@ -11,7 +17,6 @@
 #include "Serial.h"
 #include "Servo.h"
 #include "Timer.h"
-#include <stdio.h>
 
 LED_t LED0 = {
     .GPIOxPiny = A1,
@@ -111,6 +116,13 @@ ICM42688_t ICM42688 = {
     .Ki = 0.001f,
 };
 
+GrayScaleSensor_t GrayScaleSensor = {
+    .SCL = A3,
+    .SDA = A4,
+    .Addr = 0x4C,
+    .Mode = GrayScaleSensorMode_Analog,
+};
+
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
@@ -136,7 +148,8 @@ int main() {
     // Encoder_Init(&Encoder);
     // Sampler_Init(&Sampler);
 
-    ICM42688_Init(&ICM42688);
+    // ICM42688_Init(&ICM42688);
+    GrayScaleSensor_Init(&GrayScaleSensor);
 
     xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
 

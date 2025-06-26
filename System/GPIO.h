@@ -128,16 +128,6 @@
             __HAL_RCC_GPIOC_CLK_ENABLE();                                      \
         } else if ((x) == GPIOD) {                                             \
             __HAL_RCC_GPIOD_CLK_ENABLE();                                      \
-        } else if ((x) == GPIOE) {                                             \
-            __HAL_RCC_GPIOE_CLK_ENABLE();                                      \
-        } else if ((x) == GPIOF) {                                             \
-            __HAL_RCC_GPIOF_CLK_ENABLE();                                      \
-        } else if ((x) == GPIOG) {                                             \
-            __HAL_RCC_GPIOG_CLK_ENABLE();                                      \
-        } else if ((x) == GPIOH) {                                             \
-            __HAL_RCC_GPIOH_CLK_ENABLE();                                      \
-        } else if ((x) == GPIOI) {                                             \
-            __HAL_RCC_GPIOI_CLK_ENABLE();                                      \
         }                                                                      \
     } while (0)
 
@@ -147,26 +137,10 @@
      : (x[0]) == 'C' ? GPIOC                                                   \
      : (x[0]) == 'D' ? GPIOD                                                   \
      : (x[0]) == 'E' ? GPIOE                                                   \
-     : (x[0]) == 'F' ? GPIOF                                                   \
-     : (x[0]) == 'G' ? GPIOG                                                   \
-     : (x[0]) == 'H' ? GPIOH                                                   \
-     : (x[0]) == 'I' ? GPIOI                                                   \
                      : NULL)
 
-#define GPIO_Pin(x)  (x[2] ? 10 + x[2] - '0' : x[1] - '0')
-#define GPIO_Pinx(x) GPIO_PIN_0 << GPIO_Pin(x)
-
-#define GPIO_Input(CR, x)                                                      \
-    do {                                                                       \
-        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
-        MEM_ADDR((CR)) |= ((uint32_t)0b1000 << ((x) % 8 * 4));                 \
-    } while (0)
-
-#define GPIO_Output(CR, x)                                                     \
-    do {                                                                       \
-        MEM_ADDR((CR)) &= (~((uint32_t)0b1111 << ((x) % 8 * 4)));              \
-        MEM_ADDR((CR)) |= ((uint32_t)0b0011 << ((x) % 8 * 4));                 \
-    } while (0)
+#define GPIO_Pin(x)        (x[2] ? 10 + x[2] - '0' : x[1] - '0')
+#define GPIO_Pinx(x)       GPIO_PIN_0 << GPIO_Pin(x)
 
 #define GPIO_Write(x, val) MEM_ADDR((x)) = ((val) ? 1 : 0)
 #define GPIO_Toggle(x)     MEM_ADDR((x)) = !MEM_ADDR((x))
