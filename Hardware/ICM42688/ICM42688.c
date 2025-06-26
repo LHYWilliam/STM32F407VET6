@@ -1,7 +1,7 @@
 #include "ICM42688.h"
-#include "Delay.h"
 #include "ICM42688_AHRS.h"
 #include "ICM42688_SPI.h"
+#include "Time.h"
 
 void ICM42688_ConfigReg(ICM42688_t *Self);
 
@@ -93,7 +93,7 @@ void ICM42688_ConfigReg(ICM42688_t *Self) {
     Value = ICM42688_HWSPI_ReadReg(Self, ICM42688_WHO_AM_I);
     ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0);
     ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x01);
-    Delay_ms(100);
+    Time_Delayms(100);
 
     if (Value == ICM42688_ID) {
         ICM42688_GetAres(Self, AFS_4G);
@@ -116,6 +116,6 @@ void ICM42688_ConfigReg(ICM42688_t *Self) {
         Value |= ((3) << 2);
         Value |= (3);
         ICM42688_HWSPI_WriteReg(Self, ICM42688_PWR_MGMT0, Value);
-        Delay_ms(1);
+        Time_Delayms(1);
     }
 }

@@ -2,7 +2,7 @@
 
 #include "ICM42688.h"
 #include "ICM42688_AHRS.h"
-#include "RTC.h"
+#include "Time.h"
 
 float invSqrt1(float x);
 void ICM42688_AHRS_CalculateGyroVariance(float *RawGyro, int Length,
@@ -17,8 +17,8 @@ void ICM42688_AHRS_Init(ICM42688_t *Self) {
     Self->q[1] = 0.0f;
     Self->q[2] = 0.0f;
     Self->q[3] = 0.0f;
-    Self->LastUpdate = RTC_Getus() / 100;
-    Self->Now = RTC_Getus() / 100;
+    Self->LastUpdate = Time_Getus() / 100;
+    Self->Now = Time_Getus() / 100;
 }
 
 void ICM42688_AHRS_GetRawAccGyro(ICM42688_t *Self, float *RawAccGyro) {
@@ -112,7 +112,7 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self) {
     float q2q3 = Self->q[2] * Self->q[3];
     float q3q3 = Self->q[3] * Self->q[3];
 
-    Self->Now = RTC_Getus() / 100;
+    Self->Now = Time_Getus() / 100;
     if (Self->Now < Self->LastUpdate) {
         halfT = ((float)(Self->Now + (0xffff - Self->LastUpdate)) / 20000.0f);
     } else {

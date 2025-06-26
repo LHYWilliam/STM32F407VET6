@@ -59,6 +59,8 @@ typedef struct {
     uint8_t ByteData;
     uint8_t HexData[32];
 
+    uint8_t Default;
+
     UART_HandleTypeDef Handler;
 } Serial_t;
 

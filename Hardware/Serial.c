@@ -4,6 +4,8 @@
 
 #include "Serial.h"
 
+Serial_t *DefaultSerial;
+
 void Serial_Init(Serial_t *Self) {
     Self->Handler = (UART_HandleTypeDef){
         .Instance = Self->USART,
@@ -23,6 +25,10 @@ void Serial_Init(Serial_t *Self) {
 
     if (Self->RxIT) {
         Serial_RXITStart(Self, Self->RxITSize);
+    }
+
+    if (Self->Default) {
+        DefaultSerial = Self;
     }
 }
 
@@ -48,4 +54,11 @@ void Serial_Clear(Serial_t *Self) {
     Self->RecieveByteCount = 0;
     Self->PackType = Serial_None;
     Self->RecieveFlag = RESET;
+}
+
+int fputc(int ch, FILE *f) {
+    HAL_UART_Transmit(&DefaultSerial->Handler, (uint8_t *)&ch, 1,
+                      HAL_MAX_DELAY);
+
+    return ch;
 }

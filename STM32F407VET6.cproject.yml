@@ -17,6 +17,10 @@ project:
         - Hardware/OLED
         - Hardware/ICM42688
       debug: "on"
+      define:
+        - __MICROLIB
+      define-asm:
+        - __MICROLIB
       misc:
         - C:
             - -std=c99
@@ -45,6 +49,7 @@ project:
           ASM:
             - -masm=auto
           Link:
+            - --library_type=microlib
             - --map
             - --load_addr_map_info
             - --xref
@@ -150,3 +155,6 @@ project:
     - component: Keil::Device:STM32Cube HAL:USART
     - component: Keil::Device:STM32Cube HAL:WWDG
     - component: Keil::Device:Startup
+      misc:
+        - ASM:
+            - -masm=auto

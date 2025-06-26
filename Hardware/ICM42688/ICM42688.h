@@ -164,6 +164,17 @@
 
 #define ICM42688_ID                   0x47
 
+#define __HAL_RCC_SPIx_CLK_ENABLE(x)                                           \
+    do {                                                                       \
+        if ((x) == SPI1) {                                                     \
+            __HAL_RCC_SPI1_CLK_ENABLE();                                       \
+        } else if ((x) == SPI2) {                                              \
+            __HAL_RCC_SPI2_CLK_ENABLE();                                       \
+        } else if ((x) == SPI3) {                                              \
+            __HAL_RCC_SPI3_CLK_ENABLE();                                       \
+        }                                                                      \
+    } while (0)
+
 typedef struct {
     int16_t X;
     int16_t Y;
@@ -199,6 +210,8 @@ typedef struct {
     float GyroSensitivity;
     uint32_t LastUpdate, Now;
     float XIntegral, YIntegral, ZIntegral;
+
+    SPI_HandleTypeDef Handel;
 } ICM42688_t;
 
 void ICM42688_Init(ICM42688_t *Self);
