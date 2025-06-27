@@ -6,7 +6,7 @@
 ErrorStatus GrayScaleSensor_ScanAddress(GrayScaleSensor_t *Self);
 
 ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self) {
-    Time_Delayms(200);
+    Time_Delayms(100);
 
     GraySacleSensor_SWI2C_Init(Self);
 
@@ -14,7 +14,7 @@ ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self) {
         return ERROR;
     }
 
-    Time_Delayms(200);
+    Time_Delayms(100);
 
     if (Self->Mode == GrayScaleSensorMode_Analog) {
         uint8_t Temp[8];

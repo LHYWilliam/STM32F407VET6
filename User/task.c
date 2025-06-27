@@ -57,6 +57,12 @@ void vMainTaskCode(void *pvParameters) {
     float YawPitchRoll[3];
     for (;;) {
         ICM42688_AHRS_Update(&ICM42688);
+
+        if (ICM42688.CalibrationFinished == RESET) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            continue;
+        }
+
         ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
 
         printf(" Yaw: %6.2f, Pitch: %6.2f, Roll: %6.2f\r\n", YawPitchRoll[0],
