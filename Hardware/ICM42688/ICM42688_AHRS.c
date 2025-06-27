@@ -1,8 +1,9 @@
 #include <math.h>
 
+#include "Time.h"
+
 #include "ICM42688.h"
 #include "ICM42688_AHRS.h"
-#include "Time.h"
 
 float invSqrt1(float x);
 void ICM42688_AHRS_CalculateGyroVariance(ICM42688_t *Self, float *RawGyro,

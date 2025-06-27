@@ -175,31 +175,23 @@
         }                                                                      \
     } while (0)
 
-typedef struct {
-    int16_t X;
-    int16_t Y;
-    int16_t Z;
-} ICM42688RawData_t;
-
-typedef struct {
-    float X;
-    float Y;
-    float Z;
-} ICM42688RealData_t;
-
-typedef struct {
+typedef struct ICM42688_t {
     GPIOxPiny_t SCLK;
     GPIOxPiny_t MOSI;
     GPIOxPiny_t MISO;
     GPIOxPiny_t CS;
     uint32_t SCLK_ODR;
+    uint32_t MISO_IDR;
     uint32_t MOSI_ODR;
     uint32_t CS_ODR;
 
     SPI_TypeDef *SPIx;
+    FunctionalState SPI;
 
     float Kp;
     float Ki;
+
+    uint8_t (*SPI_ReadWriteByte)(struct ICM42688_t *Self, uint8_t TxByte);
 
     float Angles[3];
     float RawAccGyro[6];
@@ -217,8 +209,6 @@ typedef struct {
 } ICM42688_t;
 
 void ICM42688_Init(ICM42688_t *Self);
-void ICM42688_GetRawAcc(ICM42688_t *Self, ICM42688RawData_t *AccData);
-void ICM42688_GetRawGyro(ICM42688_t *Self, ICM42688RawData_t *GyroData);
 void ICM42688_GetAccGyro(ICM42688_t *Self, float *AccGyro);
 void ICM42688_GetTemperature(ICM42688_t *Self, int16_t *Temperature);
 

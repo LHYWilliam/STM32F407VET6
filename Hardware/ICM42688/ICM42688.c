@@ -1,12 +1,16 @@
+#include "Time.h"
+
 #include "ICM42688.h"
 #include "ICM42688_AHRS.h"
 #include "ICM42688_SPI.h"
-#include "Time.h"
 
 void ICM42688_ConfigReg(ICM42688_t *Self);
 
 void ICM42688_Init(ICM42688_t *Self) {
-    if (Self->SPIx) {
+    if (Self->SPI) {
+        ICM42688_SWSPI_Init(Self);
+
+    } else if (Self->SPIx) {
         ICM42688_HWSPI_Init(Self);
     }
 
@@ -17,7 +21,7 @@ void ICM42688_Init(ICM42688_t *Self) {
 
 void ICM42688_GetAccGyro(ICM42688_t *Self, float *AccGyro) {
     uint8_t Buffer[12];
-    ICM42688_HWSPI_ReadRegs(Self, ICM42688_ACCEL_DATA_X1, Buffer, 12);
+    ICM42688_SPI_ReadRegs(Self, ICM42688_ACCEL_DATA_X1, Buffer, 12);
 
     AccGyro[0] = (float)((int16_t)(((uint16_t)Buffer[0] << 8) | Buffer[1]) *
                          Self->AccSensitivity);
@@ -35,7 +39,7 @@ void ICM42688_GetAccGyro(ICM42688_t *Self, float *AccGyro) {
 
 void ICM42688_GetTemperature(ICM42688_t *Self, int16_t *Temperature) {
     uint8_t Buffer[2];
-    ICM42688_HWSPI_ReadRegs(Self, ICM42688_TEMP_DATA1, Buffer, 2);
+    ICM42688_SPI_ReadRegs(Self, ICM42688_TEMP_DATA1, Buffer, 2);
 
     *Temperature =
         (int16_t)(((int16_t)((Buffer[0] << 8) | Buffer[1])) / 132.48 + 25);
@@ -90,32 +94,32 @@ void ICM42688_GetGres(ICM42688_t *Self, uint8_t GyroScale) {
 void ICM42688_ConfigReg(ICM42688_t *Self) {
     uint8_t Value = 0;
 
-    Value = ICM42688_HWSPI_ReadReg(Self, ICM42688_WHO_AM_I);
-    ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0);
-    ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x01);
+    Value = ICM42688_SPI_ReadReg(Self, ICM42688_WHO_AM_I);
+    ICM42688_SPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0);
+    ICM42688_SPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x01);
     Time_Delayms(100);
 
     if (Value == ICM42688_ID) {
         ICM42688_GetAres(Self, AFS_4G);
-        ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x00);
+        ICM42688_SPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x00);
 
         Value = (AFS_4G << 5);
         Value |= (AODR_100Hz);
-        ICM42688_HWSPI_WriteReg(Self, ICM42688_ACCEL_CONFIG0, Value);
+        ICM42688_SPI_WriteReg(Self, ICM42688_ACCEL_CONFIG0, Value);
 
         ICM42688_GetGres(Self, GFS_1000DPS);
-        ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x00);
+        ICM42688_SPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x00);
 
         Value = (GFS_1000DPS << 5);
         Value |= (GODR_100Hz);
-        ICM42688_HWSPI_WriteReg(Self, ICM42688_GYRO_CONFIG0, Value);
+        ICM42688_SPI_WriteReg(Self, ICM42688_GYRO_CONFIG0, Value);
 
-        ICM42688_HWSPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x00);
-        Value = ICM42688_HWSPI_ReadReg(Self, ICM42688_PWR_MGMT0);
+        ICM42688_SPI_WriteReg(Self, ICM42688_REG_BANK_SEL, 0x00);
+        Value = ICM42688_SPI_ReadReg(Self, ICM42688_PWR_MGMT0);
         Value &= ~(1 << 5);
         Value |= ((3) << 2);
         Value |= (3);
-        ICM42688_HWSPI_WriteReg(Self, ICM42688_PWR_MGMT0, Value);
+        ICM42688_SPI_WriteReg(Self, ICM42688_PWR_MGMT0, Value);
         Time_Delayms(1);
     }
 }
