@@ -1,25 +1,40 @@
+#include <string.h>
+
 #include "Motor.h"
 #include "PWM.h"
 
 void Motor_Init(Motor_t *Self) {
-    GPIO_t GPIO;
+    Self->_PWM->TIMx = Self->TIMx;
 
-    GPIO.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitPin(&GPIO, Self->PWM);
+    uint8_t i = 0;
+    while (Self->_PWM->Channel[i] != 0) {
+        i++;
+    }
+
+    Self->_PWM->Channel[i] = Self->Channel;
+    strcpy(Self->_PWM->GPIOxPiny[i], Self->PWM);
+
+    if (Self->TIMx == TIM1 || Self->TIMx == TIM8) {
+        Self->_PWM->Prescaler = 168 - 1;
+
+    } else {
+        Self->_PWM->Prescaler = 84 - 1;
+    }
+
+    Self->_PWM->Period = Self->Range - 1;
+
+    GPIO_t GPIO;
 
     GPIO.Mode = GPIO_MODE_OUTPUT_PP;
     Self->IN1_ODR = GPIO_InitPin(&GPIO, Self->IN1);
     Self->IN2_ODR = GPIO_InitPin(&GPIO, Self->IN2);
 
-    PWM_t PWM = {
-        .TIMx = Self->TIMx,
-        .Prescaler = 100 - 1,
-        .Period = Self->Range - 1,
-        .Channel = {Self->Channel},
-    };
-    PWM_Init(&PWM);
+    if (Self->PWM_Init) {
+        PWM_Init(Self->_PWM);
+    }
 }
-void Motor_Set(Motor_t *Self, int16_t Speed) {
+void Motor_SetSpeed(Motor_t *Self, int16_t Speed) {
+    PWM_SetSetCompare(Self->_PWM, Self->Channel, Speed);
     GPIO_Write(Self->IN1_ODR, Speed >= 0 ? Self->Invert : !Self->Invert);
     GPIO_Write(Self->IN2_ODR, Speed >= 0 ? !Self->Invert : Self->Invert);
 }

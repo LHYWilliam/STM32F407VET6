@@ -6,7 +6,6 @@
 #include "PWM.h"
 #include "Sampler.h"
 #include "Serial.h"
-#include "Servo.h"
 #include "TIM.h"
 #include "Timer.h"
 
@@ -19,6 +18,7 @@ extern Encoder_t Encoder2;
 
 // extern Timer_t Timer;
 extern PWM_t ServoPWM;
+extern PWM_t MotorPWM;
 
 extern Sampler_t Sampler;
 extern ICM42688_t ICM42688;
@@ -111,6 +111,17 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
             GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
         }
+    } else if (htim->Instance == MotorPWM.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(MotorPWM.TIMx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_TIMy(MotorPWM.TIMx),
+        };
+
+        for (uint8_t i = 0; MotorPWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, MotorPWM.GPIOxPiny[i]);
+        }
     }
 }
 
@@ -138,6 +149,17 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 
         for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
             GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
+        }
+    } else if (htim->Instance == MotorPWM.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(MotorPWM.TIMx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_TIMy(MotorPWM.TIMx),
+        };
+
+        for (uint8_t i = 0; MotorPWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, MotorPWM.GPIOxPiny[i]);
         }
     }
 }

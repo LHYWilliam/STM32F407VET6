@@ -15,7 +15,7 @@ void Servo_Init(Servo_t *Self) {
         strcpy(Self->PWM->GPIOxPiny[j], Self->GPIOxPiny[i]);
     }
 
-    if (Self->PWM->TIMx == TIM1 || Self->PWM->TIMx == TIM8) {
+    if (Self->TIMx == TIM1 || Self->TIMx == TIM8) {
         Self->PWM->Prescaler = 168 - 1;
 
     } else {

@@ -105,9 +105,9 @@ Servo_t Servo2 = {
 };
 
 Encoder_t Encoder1 = {
-    .TIM = TIM12,
+    .TIM = TIM3,
     .Channel = {1, 2},
-    .GPIOxPiny = {B14, B15},
+    .GPIOxPiny = {B4, B5},
 };
 
 Encoder_t Encoder2 = {
@@ -124,6 +124,9 @@ Motor_t Motor1 = {
     .PWM = E9,
     .IN1 = E8,
     .IN2 = E7,
+    .Range = 1000,
+    ._PWM = &MotorPWM,
+    .PWM_Init = DISABLE,
 };
 
 Motor_t Motor2 = {
@@ -132,6 +135,9 @@ Motor_t Motor2 = {
     .PWM = E11,
     .IN1 = E10,
     .IN2 = E12,
+    .Range = 1000,
+    ._PWM = &MotorPWM,
+    .PWM_Init = ENABLE,
 };
 
 #define ADC_DataLength 1
@@ -143,8 +149,8 @@ Sampler_t Sampler = {
     .ADC =
         {
             .ADCx = ADC1,
-            .Channel = {11, 14, 15},
-            .GPIOxPiny = {C0, C4, C5},
+            .Channel = {2, 14, 15},
+            .GPIOxPiny = {A2, C4, C5},
         },
     .DMA =
         {
@@ -195,8 +201,8 @@ int main() {
 
     Key_Init(&Key1);
     Key_Init(&Key2);
-    // Key_Init(&Key3);
-    // Key_Init(&Key4);
+    Key_Init(&Key3);
+    Key_Init(&Key4);
 
     Serial_Init(&Serial1);
     Serial_Init(&Serial2);
@@ -205,12 +211,13 @@ int main() {
     Servo_Init(&Servo1);
     Servo_Init(&Servo2);
 
-    // Encoder_Init(&Encoder1);
-    // Encoder_Init(&Encoder2);
+    Encoder_Init(&Encoder1);
+    Encoder_Init(&Encoder2);
+
+    Motor_Init(&Motor1);
+    Motor_Init(&Motor2);
 
     // Timer_Init(&Timer);
-    // PWM_Init(&PWM);
-    // Servo_Init(&Servo);
     // Sampler_Init(&Sampler);
 
     // ICM42688_Init(&ICM42688);

@@ -5,6 +5,7 @@
 #include CMSIS_device_header
 
 #include "GPIO.h"
+#include "PWM.h"
 
 typedef struct {
     TIM_TypeDef *TIMx;
@@ -18,9 +19,12 @@ typedef struct {
 
     uint16_t Range;
     FunctionalState Invert;
+
+    PWM_t *_PWM;
+    FunctionalState PWM_Init;
 } Motor_t;
 
 void Motor_Init(Motor_t *Self);
-void Motor_Set(Motor_t *Self, int16_t Speed);
+void Motor_SetSpeed(Motor_t *Self, int16_t Speed);
 
 #endif

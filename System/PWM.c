@@ -7,12 +7,13 @@ void PWM_Init(PWM_t *Self) {
         .Prescaler = Self->Prescaler,
         .Period = Self->Period,
         .Handler = &Self->Handler,
-        .HAL_TIM_Init =
-            Self->TIMx == TIM8 ? HAL_TIM_Base_Init : HAL_TIM_PWM_Init,
+        .HAL_TIM_Init = (Self->TIMx == TIM1 || Self->TIMx == TIM8)
+                            ? HAL_TIM_Base_Init
+                            : HAL_TIM_PWM_Init,
     };
     TIM_Init(&TIM);
 
-    if (Self->TIMx == TIM8) {
+    if (Self->TIMx == TIM1 || Self->TIMx == TIM8) {
         HAL_TIM_PWM_Init(&Self->Handler);
     }
 
@@ -30,7 +31,7 @@ void PWM_Init(PWM_t *Self) {
         HAL_TIM_PWM_ConfigChannel(&Self->Handler, &OC, Channel);
     }
 
-    if (Self->TIMx == TIM8) {
+    if (Self->TIMx == TIM1 || Self->TIMx == TIM8) {
         TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {
             .BreakPolarity = TIM_BREAKPOLARITY_HIGH,
         };

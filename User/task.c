@@ -1,6 +1,7 @@
 #include "FreeRTOS.h"
 #include "timers.h"
 
+#include <stdint.h>
 #include <stdio.h>
 
 #include "Encoder.h"
@@ -9,7 +10,7 @@
 #include "ICM42688_AHRS.h"
 #include "Key.h"
 #include "LED.h"
-#include "PWM.h"
+#include "Motor.h"
 #include "Serial.h"
 #include "Servo.h"
 
@@ -32,8 +33,9 @@ extern Servo_t Servo2;
 extern Encoder_t Encoder1;
 extern Encoder_t Encoder2;
 
-// extern PWM_t PWM;
-// extern Encoder_t Encoder;
+extern Motor_t Motor1;
+extern Motor_t Motor2;
+
 // extern ICM42688_t ICM42688;
 // extern GrayScaleSensor_t GrayScaleSensor;
 
@@ -95,50 +97,48 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     /////////////////////////  Servo Test ///////////////////////////////
+    // for (;;) {
+    //     for (uint8_t i = 0; i < 60; i++) {
+    //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo1, 2, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo2, 3, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo2, 4, 45. + 90. / 60 * i);
+    //         vTaskDelay(pdMS_TO_TICKS(100));
+    //     }
+    //     for (uint8_t i = 60; i > 0; i--) {
+    //         Servo_SetAngle180(&Servo1, 1, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo1, 2, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo2, 3, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo2, 4, 135. - 90. / 60 * (60 - i));
+    //         vTaskDelay(pdMS_TO_TICKS(100));
+    //     }
+    // }
+
+    /////////////////////// Encoder Test//////////////////////////
+    // for (;;) {
+    //     int16_t Count1 = Encoder_GetCounter(&Encoder1);
+    //     int16_t Count2 = Encoder_GetCounter(&Encoder2);
+
+    //     printf("Count1: %d, Count2: %d\n", Count1, Count2);
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    ///////////////// Motor Test /////////////////
     for (;;) {
-        for (uint8_t i = 0; i < 60; i++) {
-            Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
-            Servo_SetAngle180(&Servo1, 2, 45. + 90. / 60 * i);
-            Servo_SetAngle180(&Servo2, 3, 45. + 90. / 60 * i);
-            Servo_SetAngle180(&Servo2, 4, 45. + 90. / 60 * i);
-            vTaskDelay(pdMS_TO_TICKS(100));
+        for (int16_t i = -Motor1.Range; i < Motor1.Range; i++) {
+            Motor_SetSpeed(&Motor1, i);
+            Motor_SetSpeed(&Motor2, i);
+
+            vTaskDelay(pdMS_TO_TICKS(1));
         }
-        for (uint8_t i = 60; i > 0; i--) {
-            Servo_SetAngle180(&Servo1, 1, 135. - 90. / 60 * (60 - i));
-            Servo_SetAngle180(&Servo1, 2, 135. - 90. / 60 * (60 - i));
-            Servo_SetAngle180(&Servo2, 3, 135. - 90. / 60 * (60 - i));
-            Servo_SetAngle180(&Servo2, 4, 135. - 90. / 60 * (60 - i));
-            vTaskDelay(pdMS_TO_TICKS(100));
+        for (int16_t i = Motor1.Range; i > -Motor1.Range; i--) {
+            Motor_SetSpeed(&Motor1, i);
+            Motor_SetSpeed(&Motor2, i);
+
+            vTaskDelay(pdMS_TO_TICKS(1));
         }
     }
-
-    //////////////// PWM Test //////////////////////
-    // for (;;) {
-    // for (uint16_t i = 0; i < 1000; i++) {
-    //     __HAL_TIM_SetCompare(&Servo1.PWM->Handler, TIM_CHANNEL_1, i);
-    //     __HAL_TIM_SetCompare(&Servo1.PWM->Handler, TIM_CHANNEL_2, i);
-    //     __HAL_TIM_SetCompare(&Servo2.PWM->Handler, TIM_CHANNEL_3, i);
-    //     __HAL_TIM_SetCompare(&Servo2.PWM->Handler, TIM_CHANNEL_4, i);
-    //     vTaskDelay(pdMS_TO_TICKS(1));
-    // }
-    // for (uint16_t i = 1000; i > 0; i--) {
-    //     __HAL_TIM_SetCompare(&Servo1.PWM->Handler, TIM_CHANNEL_1, i);
-    //     __HAL_TIM_SetCompare(&Servo1.PWM->Handler, TIM_CHANNEL_2, i);
-    //     __HAL_TIM_SetCompare(&Servo2.PWM->Handler, TIM_CHANNEL_3, i);
-    //     __HAL_TIM_SetCompare(&Servo2.PWM->Handler, TIM_CHANNEL_4, i);
-    //     vTaskDelay(pdMS_TO_TICKS(1));
-    // }
-    // }
-
-    ///////////////////////// Encoder Test//////////////////////////
-    // for (;;) {
-    // int16_t Count1 = Encoder_GetCounter(&Encoder1);
-    // int16_t Count2 = Encoder_GetCounter(&Encoder2);
-
-    // printf("Count1: %d, Count2: %d\n", Count1, Count2);
-
-    // vTaskDelay(pdMS_TO_TICKS(100));
-    // }
 }
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
