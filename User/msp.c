@@ -12,10 +12,14 @@
 
 extern Serial_t Serial1;
 extern Serial_t Serial2;
-extern Timer_t Timer;
-extern PWM_t PWM;
-extern Servo_t Servo;
-extern Encoder_t Encoder;
+extern Serial_t Serial3;
+
+extern Encoder_t Encoder1;
+extern Encoder_t Encoder2;
+
+// extern Timer_t Timer;
+extern PWM_t ServoPWM;
+
 extern Sampler_t Sampler;
 extern ICM42688_t ICM42688;
 
@@ -28,16 +32,15 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     if (huart->Instance == Serial1.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial1.USART);
 
-        GPIO_t RTX = {
+        GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial1.USART),
         };
-        if (*Serial1.RX) {
-            GPIO_InitPin(&RTX, Serial1.RX);
-        }
         if (*Serial1.TX) {
-            GPIO_InitPin(&RTX, Serial1.TX);
+            GPIO_InitPin(&GPIO, Serial1.TX);
+        }
+        if (*Serial1.RX) {
+            GPIO_InitPin(&GPIO, Serial1.RX);
         }
 
         if (Serial1.RxIT) {
@@ -48,21 +51,39 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     } else if (huart->Instance == Serial2.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial2.USART);
 
-        GPIO_t RTX = {
+        GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial2.USART),
         };
-        if (*Serial2.RX) {
-            GPIO_InitPin(&RTX, Serial2.RX);
-        }
         if (*Serial2.TX) {
-            GPIO_InitPin(&RTX, Serial2.TX);
+            GPIO_InitPin(&GPIO, Serial2.TX);
+        }
+        if (*Serial2.RX) {
+            GPIO_InitPin(&GPIO, Serial2.RX);
         }
 
         if (Serial2.RxIT) {
             HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial2.USART));
             HAL_NVIC_SetPriority(USARTx_IRQn(Serial2.USART), Serial2.Priority,
+                                 0);
+        }
+    } else if (huart->Instance == Serial3.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(Serial3.USART);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AF7_USARTx(Serial3.USART),
+        };
+        if (*Serial3.TX) {
+            GPIO_InitPin(&GPIO, Serial3.TX);
+        }
+        if (*Serial3.RX) {
+            GPIO_InitPin(&GPIO, Serial3.RX);
+        }
+
+        if (Serial3.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial3.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(Serial3.USART), Serial3.Priority,
                                  0);
         }
     }
@@ -79,6 +100,17 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
     // } else
     if (htim->Instance == Sampler.Timer.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(Sampler.Timer.TIMx);
+    } else if (htim->Instance == ServoPWM.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(ServoPWM.TIMx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_TIMy(ServoPWM.TIMx),
+        };
+
+        for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
+        }
     }
 }
 
@@ -96,32 +128,40 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
     //         GPIO_InitPin(&GPIO, PWM.GPIOxPiny[i]);
     //     }
     // } else
-    if (htim->Instance == Servo.PWM.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(Servo.PWM.TIM);
+    if (htim->Instance == ServoPWM.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(ServoPWM.TIMx);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_NOPULL,
-            .Alternate = GPIO_AFx_TIMy(Servo.PWM.TIM),
+            .Alternate = GPIO_AFx_TIMy(ServoPWM.TIMx),
         };
 
-        for (uint8_t i = 0; Servo.PWM.Channel[i]; i++) {
-            GPIO_InitPin(&GPIO, Servo.PWM.GPIOxPiny[i]);
+        for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
         }
     }
 }
 
 void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == Encoder.TIM) {
+    if (htim->Instance == Encoder1.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_NOPULL,
-            .Alternate = GPIO_AFx_TIMy(Encoder.TIM),
+            .Alternate = GPIO_AFx_TIMy(Encoder1.TIM),
         };
-        GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[0]);
-        GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[1]);
+        GPIO_InitPin(&GPIO, Encoder1.GPIOxPiny[0]);
+        GPIO_InitPin(&GPIO, Encoder1.GPIOxPiny[1]);
+
+    } else if (htim->Instance == Encoder2.TIM) {
+        __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_TIMy(Encoder2.TIM),
+        };
+        GPIO_InitPin(&GPIO, Encoder2.GPIOxPiny[0]);
+        GPIO_InitPin(&GPIO, Encoder2.GPIOxPiny[1]);
     }
 }
 

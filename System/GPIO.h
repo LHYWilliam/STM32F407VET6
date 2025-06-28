@@ -128,6 +128,8 @@
             __HAL_RCC_GPIOC_CLK_ENABLE();                                      \
         } else if ((x) == GPIOD) {                                             \
             __HAL_RCC_GPIOD_CLK_ENABLE();                                      \
+        } else if ((x) == GPIOE) {                                             \
+            __HAL_RCC_GPIOE_CLK_ENABLE();                                      \
         }                                                                      \
     } while (0)
 
@@ -157,6 +159,7 @@
      : (x) == TIM9  ? GPIO_AF3_TIM9                                            \
      : (x) == TIM10 ? GPIO_AF3_TIM10                                           \
      : (x) == TIM11 ? GPIO_AF3_TIM11                                           \
+     : (x) == TIM12 ? GPIO_AF9_TIM12                                           \
                     : NULL)
 
 typedef char GPIOxPiny_t[4];

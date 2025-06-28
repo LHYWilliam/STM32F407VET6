@@ -2,7 +2,7 @@
 
 void Timer_Init(Timer_t *Self) {
     TIM_t TIM = {
-        .TIM = Self->TIMx,
+        .TIMx = Self->TIMx,
         .Prescaler = Self->ms ? (8400 - 1) : (Self->Hz ? 84 - 1 : NULL),
         .Period = Self->ms
                       ? (Self->ms * 10 - 1)

@@ -46,14 +46,14 @@
                    : NULL)
 
 #define TIM_CHANNEL_x(x)                                                       \
-    ((x) == 1   ? TIM_CHANNEL_1                                           \
-     : (x) == 2 ? TIM_CHANNEL_2                                           \
-     : (x) == 3 ? TIM_CHANNEL_3                                           \
-     : (x) == 4 ? TIM_CHANNEL_4                                           \
-                     : NULL)
+    ((x) == 1   ? TIM_CHANNEL_1                                                \
+     : (x) == 2 ? TIM_CHANNEL_2                                                \
+     : (x) == 3 ? TIM_CHANNEL_3                                                \
+     : (x) == 4 ? TIM_CHANNEL_4                                                \
+                : NULL)
 
 typedef struct {
-    TIM_TypeDef *TIM;
+    TIM_TypeDef *TIMx;
     uint32_t Prescaler;
     uint32_t Period;
 

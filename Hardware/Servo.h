@@ -7,7 +7,12 @@
 #include "PWM.h"
 
 typedef struct {
-    PWM_t PWM;
+    TIM_TypeDef *TIMx;
+    uint8_t Channel[4];
+    GPIOxPiny_t GPIOxPiny[4];
+
+    PWM_t *PWM;
+    FunctionalState PWM_Init;
 
     float Angle[4];
     uint32_t Compare[4];

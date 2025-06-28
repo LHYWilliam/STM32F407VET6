@@ -7,7 +7,7 @@
 
 extern Serial_t Serial1;
 extern Serial_t Serial2;
-extern Timer_t Timer;
+// extern Timer_t Timer;
 extern LED_t LED1;
 
 void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&Serial2.Handler); }
@@ -51,10 +51,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     }
 }
 
-void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&Timer.Handler); }
+// void TIM3_IRQHandler(void) { HAL_TIM_IRQHandler(&Timer.Handler); }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-    if (htim == &Timer.Handler) {
-        // LED_Toggle(&LED1);
-    }
+    // if (htim == &Timer.Handler) {
+    //     // LED_Toggle(&LED1);
+    // }
 }

@@ -106,6 +106,8 @@ project:
         - file: Hardware/GrayScaleSensor/GrayScaleSensor.h
         - file: Hardware/GrayScaleSensor/GrayScaleSensor_I2C.c
         - file: Hardware/GrayScaleSensor/GrayScaleSensor_I2C.h
+        - file: Hardware/Motor.c
+        - file: Hardware/Motor.h
     - group: Util
       files:
         - file: Util/Timer.c

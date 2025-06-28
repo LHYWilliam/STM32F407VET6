@@ -1,9 +1,32 @@
+#include <string.h>
+
 #include "Servo.h"
 
 void Servo_Init(Servo_t *Self) {
-    Self->PWM.Prescaler = 84 - 1;
-    Self->PWM.Period = 20000 - 1;
-    PWM_Init(&Self->PWM);
+    Self->PWM->TIMx = Self->TIMx;
+
+    for (uint8_t i = 0; Self->Channel[i]; i++) {
+        uint8_t j = 0;
+        while (Self->PWM->Channel[j] != 0) {
+            j++;
+        }
+
+        Self->PWM->Channel[j] = Self->Channel[i];
+        strcpy(Self->PWM->GPIOxPiny[j], Self->GPIOxPiny[i]);
+    }
+
+    if (Self->PWM->TIMx == TIM1 || Self->PWM->TIMx == TIM8) {
+        Self->PWM->Prescaler = 168 - 1;
+
+    } else {
+        Self->PWM->Prescaler = 84 - 1;
+    }
+
+    Self->PWM->Period = 20000 - 1;
+
+    if (Self->PWM_Init) {
+        PWM_Init(Self->PWM);
+    }
 }
 
 void Servo_SetCompare180(Servo_t *Self, uint8_t Channel, int32_t Compare) {
@@ -16,7 +39,7 @@ void Servo_SetCompare180(Servo_t *Self, uint8_t Channel, int32_t Compare) {
     Self->Compare[Channel - 1] = Compare;
     Self->Angle[Channel - 1] = (float)(Compare - 500) / 2000 * 180.0f;
 
-    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+    PWM_SetSetCompare(Self->PWM, Channel, Self->Compare[Channel - 1]);
 }
 
 void Servo_SetCompare270(Servo_t *Self, uint8_t Channel, int32_t Compare) {
@@ -29,7 +52,7 @@ void Servo_SetCompare270(Servo_t *Self, uint8_t Channel, int32_t Compare) {
     Self->Compare[Channel - 1] = Compare;
     Self->Angle[Channel - 1] = (float)(Compare - 500) / 2000 * 270.0f;
 
-    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+    PWM_SetSetCompare(Self->PWM, Channel, Self->Compare[Channel - 1]);
 }
 
 void Servo_SetAngle180(Servo_t *Self, uint8_t Channel, float Angle) {
@@ -42,7 +65,7 @@ void Servo_SetAngle180(Servo_t *Self, uint8_t Channel, float Angle) {
     Self->Angle[Channel - 1] = Angle;
     Self->Compare[Channel - 1] = (uint32_t)((Angle / 180.0f) * 2000 + 500);
 
-    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+    PWM_SetSetCompare(Self->PWM, Channel, Self->Compare[Channel - 1]);
 }
 
 void Servo_SetAngle270(Servo_t *Self, uint8_t Channel, float Angle) {
@@ -55,7 +78,7 @@ void Servo_SetAngle270(Servo_t *Self, uint8_t Channel, float Angle) {
     Self->Angle[Channel - 1] = Angle;
     Self->Compare[Channel - 1] = (uint32_t)((Angle / 270.0f) * 2000 + 500);
 
-    PWM_SetSetCompare(&Self->PWM, Channel, Self->Compare[Channel - 1]);
+    PWM_SetSetCompare(Self->PWM, Channel, Self->Compare[Channel - 1]);
 }
 
 void Servo_UpdateCompare180(Servo_t *Self, uint8_t Channel, int32_t Delta) {
