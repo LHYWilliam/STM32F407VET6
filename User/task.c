@@ -125,27 +125,31 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     ///////////////// Motor Test /////////////////
+    // for (;;) {
+    //     for (int16_t i = -Motor1.Range; i < Motor1.Range; i++) {
+    //         Motor_SetSpeed(&Motor1, i);
+    //         Motor_SetSpeed(&Motor2, i);
+
+    //         vTaskDelay(pdMS_TO_TICKS(1));
+    //     }
+    //     for (int16_t i = Motor1.Range; i > -Motor1.Range; i--) {
+    //         Motor_SetSpeed(&Motor1, i);
+    //         Motor_SetSpeed(&Motor2, i);
+
+    //         vTaskDelay(pdMS_TO_TICKS(1));
+    //     }
+    // }
+
     for (;;) {
-        for (int16_t i = -Motor1.Range; i < Motor1.Range; i++) {
-            Motor_SetSpeed(&Motor1, i);
-            Motor_SetSpeed(&Motor2, i);
-
-            vTaskDelay(pdMS_TO_TICKS(1));
-        }
-        for (int16_t i = Motor1.Range; i > -Motor1.Range; i--) {
-            Motor_SetSpeed(&Motor1, i);
-            Motor_SetSpeed(&Motor2, i);
-
-            vTaskDelay(pdMS_TO_TICKS(1));
-        }
+        vTaskDelay(pdMS_TO_TICKS(1));
     }
 }
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
     // LED_Toggle(&LED1);
-    // Serial_Printf(&Serial1, "Hello from Serial1\n");
-    // Serial_Printf(&Serial2, "Hello from Serial2\n");
-    // Serial_Printf(&Serial3, "Hello from Serial3\n");
+    Serial_Printf(&Serial1, "Hello from Serial1\n");
+    Serial_Printf(&Serial2, "Hello from Serial2\n");
+    Serial_Printf(&Serial3, "Hello from Serial3\n");
 }
 
 void vApplicationTickHook() { HAL_IncTick(); }

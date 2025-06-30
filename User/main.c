@@ -45,12 +45,12 @@ Key_t Key2 = {
 };
 
 Key_t Key3 = {
-    .GPIOxPiny = B14,
+    .GPIOxPiny = E14,
     .Mode = KeyMode_PullUp,
 };
 
 Key_t Key4 = {
-    .GPIOxPiny = B15,
+    .GPIOxPiny = E15,
     .Mode = KeyMode_PullUp,
 };
 
@@ -63,9 +63,9 @@ Serial_t Serial1 = {
 };
 
 Serial_t Serial2 = {
-    .USART = USART2,
-    .TX = D5,
-    .RX = D6,
+    .USART = UART4,
+    .TX = C10,
+    .RX = C11,
     .Baudrate = 115200,
     .RxIT = ENABLE,
     .RxITSize = 1,
@@ -140,8 +140,8 @@ Motor_t Motor2 = {
     .PWM_Init = ENABLE,
 };
 
-#define ADC_DataLength 1
-uint32_t ADC_Data[1];
+#define ADC_DataLength 3
+uint32_t ADC_Data[3];
 
 Sampler_t Sampler = {
     .Data = ADC_Data,

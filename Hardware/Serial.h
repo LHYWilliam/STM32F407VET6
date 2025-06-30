@@ -14,6 +14,8 @@
             __HAL_RCC_USART2_CLK_ENABLE();                                     \
         } else if ((x) == USART3) {                                            \
             __HAL_RCC_USART3_CLK_ENABLE();                                     \
+        } else if ((x) == UART4) {                                             \
+            __HAL_RCC_UART4_CLK_ENABLE();                                      \
         }                                                                      \
     } while (0)
 
@@ -21,12 +23,14 @@
     ((x) == USART1   ? GPIO_AF7_USART1                                         \
      : (x) == USART2 ? GPIO_AF7_USART2                                         \
      : (x) == USART3 ? GPIO_AF7_USART3                                         \
+     : (x) == UART4  ? GPIO_AF8_UART4                                          \
                      : NULL)
 
 #define USARTx_IRQn(x)                                                         \
     ((x) == USART1   ? USART1_IRQn                                             \
      : (x) == USART2 ? USART2_IRQn                                             \
      : (x) == USART3 ? USART3_IRQn                                             \
+     : (x) == UART4  ? UART4_IRQn                                              \
                      : NULL)
 
 #define TXBUFFER_SIZE 128
