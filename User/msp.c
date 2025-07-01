@@ -16,11 +16,11 @@ extern Serial_t Serial3;
 extern Encoder_t Encoder1;
 extern Encoder_t Encoder2;
 
-// extern Timer_t Timer;
 extern PWM_t ServoPWM;
 extern PWM_t MotorPWM;
 
 extern Sampler_t Sampler;
+
 extern ICM42688_t ICM42688;
 
 void HAL_MspInit(void) {
@@ -128,19 +128,6 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
 }
 
 void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
-    // if (htim->Instance == PWM.TIM) {
-    //     __HAL_RCC_TIMx_CLK_ENABLE(PWM.TIM);
-
-    //     GPIO_t GPIO = {
-    //         .Mode = GPIO_MODE_AF_PP,
-    //         .Pull = GPIO_NOPULL,
-    //         .Alternate = GPIO_AFx_TIMy(PWM.TIM),
-    //     };
-
-    //     for (uint8_t i = 0; PWM.Channel[i]; i++) {
-    //         GPIO_InitPin(&GPIO, PWM.GPIOxPiny[i]);
-    //     }
-    // } else
     if (htim->Instance == ServoPWM.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(ServoPWM.TIMx);
 

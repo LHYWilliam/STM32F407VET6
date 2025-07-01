@@ -39,8 +39,8 @@ extern Motor_t Motor2;
 
 extern Sampler_t Sampler;
 
-// extern ICM42688_t ICM42688;
-// extern GrayScaleSensor_t GrayScaleSensor;
+extern ICM42688_t ICM42688;
+extern GrayScaleSensor_t GrayScaleSensor;
 
 extern uint32_t ADC_Data[];
 
@@ -152,19 +152,13 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    for (;;) {
-        printf("%4d\n", Sampler_GetValue(&Sampler, 3));
+    ////////////// Sampler Test /////////////////////
+    // for (;;) {
+    //     printf("%4d, %4d,  %4d\n", Sampler.Data[0], Sampler.Data[1],
+    //            Sampler.Data[2]);
 
-        // printf("%4d, %4d,  %4d\n", Sampler_GetValue(&Sampler, 3),
-        //        Sampler_GetValue(&Sampler, 4), Sampler_GetValue(&Sampler, 5));
-
-        // printf("%4d\n", Sampler.Data[0]);
-
-        // printf("%4d, %4d,  %4d\n", Sampler.Data[0], Sampler.Data[1],
-        //        Sampler.Data[2]);
-
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 
     for (;;) {
         vTaskDelay(pdMS_TO_TICKS(1));
