@@ -51,8 +51,8 @@ Key_Init(&Key1);
 ```
 Serial_t Serial = {
     .USART = USART1,
-    .RX = A10,
     .TX = A9,
+    .RX = A10,
     .Baudrate = 115200,
     .RxIT = ENABLE,
     .RxITSize = 1,
@@ -68,16 +68,15 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
     if (huart->Instance == Serial.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
 
-        GPIO_t RTX = {
+        GPIO_t TRX = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_PULLUP,
             .Alternate = GPIO_AF7_USARTx(Serial.USART),
         };
-        if (*Serial.RX) {
-            GPIO_InitPin(&RTX, Serial.RX);
-        }
         if (*Serial.TX) {
             GPIO_InitPin(&RTX, Serial.TX);
+        }
+        if (*Serial.RX) {
+            GPIO_InitPin(&RTX, Serial.RX);
         }
 
         if (Serial.RxIT) {
@@ -155,32 +154,56 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 # Servo
 * main.c
 ```
-Servo_t Servo = {
-    .PWM =
-        {
-            .TIM = TIM2,
-            .Channel = {2, 3},
-            .GPIOxPiny = {A1, A2},
-        },
+PWM_t ServoPWM;
+
+Servo_t Servo1 = {
+    .TIMx = TIM8,
+    .Channel = {1, 2},
+    .GPIOxPiny = {C6, C7},
+    .PWM = &ServoPWM,
+    .PWM_Init = DISABLE,
 };
 
-Servo_Init(&Servo);
+Servo_t Servo2 = {
+    .TIMx = TIM8,
+    .Channel = {3, 4},
+    .GPIOxPiny = {C8, C9},
+    .PWM = &ServoPWM,
+    .PWM_Init = ENABLE,
+};
+
+Servo_Init(&Servo1);
+Servo_Init(&Servo2S);
 ```
 
 * msp.c
 ```
-void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == Servo.PWM.TIM) {
-        __HAL_RCC_TIMx_CLK_ENABLE(Servo.PWM.TIM);
+void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == ServoPWM.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(ServoPWM.TIMx);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_NOPULL,
-            .Alternate = GPIO_AFx_TIMy(Servo.PWM.TIM),
+            .Alternate = GPIO_AFx_TIMy(ServoPWM.TIMx),
         };
 
-        for (uint8_t i = 0; Servo.PWM.Channel[i]; i++) {
-            GPIO_InitPin(&GPIO, Servo.PWM.GPIOxPiny[i]);
+        for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
+        }
+    }
+}
+
+void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
+    if (htim->Instance == ServoPWM.TIMx) {
+        __HAL_RCC_TIMx_CLK_ENABLE(ServoPWM.TIMx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_TIMy(ServoPWM.TIMx),
+        };
+
+        for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
         }
     }
 }
@@ -193,7 +216,7 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 Encoder_t Encoder = {
     .TIM = TIM3,
     .Channel = {1, 2},
-    .GPIOxPiny = {A6, A7},
+    .GPIOxPiny = {B4, B5},
 };
 
 Encoder_Init(&Encoder);
@@ -207,7 +230,6 @@ void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Pull = GPIO_NOPULL,
             .Alternate = GPIO_AFx_TIMy(Encoder.TIM),
         };
         GPIO_InitPin(&GPIO, Encoder.GPIOxPiny[0]);
@@ -277,15 +299,58 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
 
 # ADC
 * main.c
+
+### Soft + Single Channel
 ```
+Sampler_t Sampler = {
+    .ADC =
+        {
+            .ADCx = ADC1,
+            .Channel = {3},
+            .GPIOxPiny = {A3},
+            .Continuous = ENABLE,
+        },
+};
+
+Sampler_Init(&Sampler);
+
+Sampler_GetValue(&Sampler, 3);
+```
+
+### Soft + Multi Channel
+```
+Sampler_t Sampler = {
+    .ADC =
+        {
+            .ADCx = ADC1,
+            .Channel = {3, 4, 5},
+            .GPIOxPiny = {A3, A4, A5},
+        },
+};
+
+Sampler_Init(&Sampler);
+
+Sampler_GetValue(&Sampler, 3);
+Sampler_GetValue(&Sampler, 4);
+Sampler_GetValue(&Sampler, 5);
+```
+
+### DMA + TIM + Single Channel
+```
+#define ADC_DataLength 1
+uint32_t ADC_Data[ADC_DataLength];
+
 Sampler_t Sampler = {
     .Data = ADC_Data,
     .Length = ADC_DataLength,
     .ADC =
         {
             .ADCx = ADC1,
-            .Channel = "5",
-            .GPIOxPiny = "A5",
+            .Channel =
+                {
+                    3,
+                },
+            .GPIOxPiny = {A3},
         },
     .DMA =
         {
@@ -296,11 +361,52 @@ Sampler_t Sampler = {
     .Timer =
         {
             .TIMx = TIM3,
-            .Hz = ADC_Frequency,
+            .Hz = 100,
         },
 };
 
 Sampler_Init(&Sampler);
+
+Sampler.Data[0];
+```
+
+### DMA + TIM + Multi Channel
+```
+#define ADC_DataLength 3
+uint32_t ADC_Data[ADC_DataLength];
+
+Sampler_t Sampler = {
+    .Data = ADC_Data,
+    .Length = ADC_DataLength,
+    .ADC =
+        {
+            .ADCx = ADC1,
+            .Channel =
+                {
+                    3,
+                    4,
+                    5,
+                },
+            .GPIOxPiny = {A3, A4, A5},
+        },
+    .DMA =
+        {
+            .DMAx = DMA2,
+            .Channel = 0,
+            .Stream = 0,
+        },
+    .Timer =
+        {
+            .TIMx = TIM2,
+            .Hz = 100,
+        },
+};
+
+Sampler_Init(&Sampler);
+
+Sampler.Data[0];
+Sampler.Data[2];
+Sampler.Data[2];
 ```
 
 * msp.c

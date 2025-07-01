@@ -100,6 +100,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
     // } else
     if (htim->Instance == Sampler.Timer.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(Sampler.Timer.TIMx);
+
     } else if (htim->Instance == ServoPWM.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(ServoPWM.TIMx);
 
@@ -111,6 +112,7 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef *htim) {
         for (uint8_t i = 0; ServoPWM.Channel[i]; i++) {
             GPIO_InitPin(&GPIO, ServoPWM.GPIOxPiny[i]);
         }
+
     } else if (htim->Instance == MotorPWM.TIMx) {
         __HAL_RCC_TIMx_CLK_ENABLE(MotorPWM.TIMx);
 
@@ -193,7 +195,6 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_ANALOG,
-            .Pull = GPIO_NOPULL,
         };
         for (uint8_t i = 0; Sampler.ADC.Channel[i]; i++) {
             GPIO_InitPin(&GPIO, Sampler.ADC.GPIOxPiny[i]);
@@ -201,6 +202,8 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef *hadc) {
 
         if (Sampler.DMA.DMAx) {
             __HAL_RCC_DMAx_CLK_ENABLE(Sampler.DMA.DMAx);
+
+            DMA_Init(&Sampler.DMA);
 
             __HAL_LINKDMA(&Sampler.ADC.Handler, DMA_Handle,
                           Sampler.DMA.Handler);

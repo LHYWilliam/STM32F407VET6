@@ -11,7 +11,7 @@
 #define ADC_EXTERNALTRIGCONV_Tx_TRGO(x)                                        \
     ((x) == TIM2   ? ADC_EXTERNALTRIGCONV_T2_TRGO                              \
      : (x) == TIM3 ? ADC_EXTERNALTRIGCONV_T3_TRGO                              \
-     : (x) == TIM5 ? ADC_EXTERNALTRIGCONV_T8_TRGO                              \
+     : (x) == TIM8 ? ADC_EXTERNALTRIGCONV_T8_TRGO                              \
                    : NULL)
 
 #define ADC_CHANNEL_x(x)                                                       \
@@ -50,7 +50,9 @@ typedef struct {
     GPIOxPiny_t GPIOxPiny[8];
 
     uint32_t Trigger;
-    uint8_t Continuous;
+    FunctionalState Continuous;
+
+    uint8_t NbrOfConversion;
 
     ADC_HandleTypeDef Handler;
 } ADC_t;
@@ -59,5 +61,6 @@ void ADC_Init(ADC_t *Self);
 void ADC_Start(ADC_t *Self);
 void ADC_DMAStart(ADC_t *Self, uint32_t *Data, uint32_t Length);
 uint32_t ADC_GetValue(ADC_t *Self);
+void ADC_ConfigChannel(ADC_t *Self, uint8_t Channel, uint8_t Rank);
 
 #endif

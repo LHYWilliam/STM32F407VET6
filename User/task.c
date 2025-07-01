@@ -11,6 +11,7 @@
 #include "Key.h"
 #include "LED.h"
 #include "Motor.h"
+#include "Sampler.h"
 #include "Serial.h"
 #include "Servo.h"
 
@@ -35,6 +36,8 @@ extern Encoder_t Encoder2;
 
 extern Motor_t Motor1;
 extern Motor_t Motor2;
+
+extern Sampler_t Sampler;
 
 // extern ICM42688_t ICM42688;
 // extern GrayScaleSensor_t GrayScaleSensor;
@@ -140,6 +143,29 @@ void vMainTaskCode(void *pvParameters) {
     //     }
     // }
 
+    //////////// Serial Test //////////////////
+    // for (;;) {
+    //     Serial_Printf(&Serial1, "Hello from Serial1\n");
+    //     Serial_Printf(&Serial2, "Hello from Serial2\n");
+    //     Serial_Printf(&Serial3, "Hello from Serial3\n");
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    for (;;) {
+        printf("%4d\n", Sampler_GetValue(&Sampler, 3));
+
+        // printf("%4d, %4d,  %4d\n", Sampler_GetValue(&Sampler, 3),
+        //        Sampler_GetValue(&Sampler, 4), Sampler_GetValue(&Sampler, 5));
+
+        // printf("%4d\n", Sampler.Data[0]);
+
+        // printf("%4d, %4d,  %4d\n", Sampler.Data[0], Sampler.Data[1],
+        //        Sampler.Data[2]);
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+
     for (;;) {
         vTaskDelay(pdMS_TO_TICKS(1));
     }
@@ -147,9 +173,6 @@ void vMainTaskCode(void *pvParameters) {
 
 void vLEDTimerCallback(TimerHandle_t pxTimer) {
     // LED_Toggle(&LED1);
-    Serial_Printf(&Serial1, "Hello from Serial1\n");
-    Serial_Printf(&Serial2, "Hello from Serial2\n");
-    Serial_Printf(&Serial3, "Hello from Serial3\n");
 }
 
 void vApplicationTickHook() { HAL_IncTick(); }

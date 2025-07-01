@@ -140,30 +140,82 @@ Motor_t Motor2 = {
     .PWM_Init = ENABLE,
 };
 
-#define ADC_DataLength 3
-uint32_t ADC_Data[3];
-
 Sampler_t Sampler = {
-    .Data = ADC_Data,
-    .Length = ADC_DataLength,
     .ADC =
         {
             .ADCx = ADC1,
-            .Channel = {2, 14, 15},
-            .GPIOxPiny = {A2, C4, C5},
-        },
-    .DMA =
-        {
-            .DMAx = DMA2,
-            .Channel = 0,
-            .Stream = 0,
-        },
-    .Timer =
-        {
-            .TIMx = TIM3,
-            .Hz = 100,
+            .Channel = {3},
+            .GPIOxPiny = {A3},
+            .Continuous = ENABLE,
         },
 };
+
+// Sampler_t Sampler = {
+//     .ADC =
+//         {
+//             .ADCx = ADC1,
+//             .Channel = {3, 4, 5},
+//             .GPIOxPiny = {A3, A4, A5},
+//         },
+// };
+
+// #define ADC_DataLength 1
+// uint32_t ADC_Data[ADC_DataLength];
+
+// Sampler_t Sampler = {
+//     .Data = ADC_Data,
+//     .Length = ADC_DataLength,
+//     .ADC =
+//         {
+//             .ADCx = ADC1,
+//             .Channel =
+//                 {
+//                     3,
+//                 },
+//             .GPIOxPiny = {A3},
+//         },
+//     .DMA =
+//         {
+//             .DMAx = DMA2,
+//             .Channel = 0,
+//             .Stream = 0,
+//         },
+//     .Timer =
+//         {
+//             .TIMx = TIM3,
+//             .Hz = 100,
+//         },
+// };
+
+// #define ADC_DataLength 3
+// uint32_t ADC_Data[ADC_DataLength];
+
+// Sampler_t Sampler = {
+//     .Data = ADC_Data,
+//     .Length = ADC_DataLength,
+//     .ADC =
+//         {
+//             .ADCx = ADC1,
+//             .Channel =
+//                 {
+//                     3,
+//                     4,
+//                     5,
+//                 },
+//             .GPIOxPiny = {A3, A4, A5},
+//         },
+//     .DMA =
+//         {
+//             .DMAx = DMA2,
+//             .Channel = 0,
+//             .Stream = 0,
+//         },
+//     .Timer =
+//         {
+//             .TIMx = TIM2,
+//             .Hz = 100,
+//         },
+// };
 
 ICM42688_t ICM42688 = {
     .SPIx = SPI2,
@@ -193,32 +245,35 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
 
 int main() {
     HAL_Init();
-    SystemClock_Config(25, 336, 2, 7);
+    SystemClock_Config(25, 336, 2, 4);
 
-    LED_Init(&LED1);
-    LED_Init(&LED2);
-    LED_Init(&LED3);
+    // LED_Init(&LED1);
+    // LED_Init(&LED2);
+    // LED_Init(&LED3);
 
-    Key_Init(&Key1);
-    Key_Init(&Key2);
-    Key_Init(&Key3);
-    Key_Init(&Key4);
+    // Key_Init(&Key1);
+    // Key_Init(&Key2);
+    // Key_Init(&Key3);
+    // Key_Init(&Key4);
 
     Serial_Init(&Serial1);
-    Serial_Init(&Serial2);
-    Serial_Init(&Serial3);
+    // Serial_Init(&Serial2);
+    // Serial_Init(&Serial3);
 
-    Servo_Init(&Servo1);
-    Servo_Init(&Servo2);
+    // Servo_Init(&Servo1);
+    // Servo_Init(&Servo2);
 
-    Encoder_Init(&Encoder1);
-    Encoder_Init(&Encoder2);
+    // Encoder_Init(&Encoder1);
+    // Encoder_Init(&Encoder2);
 
-    Motor_Init(&Motor1);
-    Motor_Init(&Motor2);
+    // Motor_Init(&Motor1);
+    // Motor_Init(&Motor2);
+
+    __HAL_RCC_DMA2_CLK_ENABLE();
+
+    Sampler_Init(&Sampler);
 
     // Timer_Init(&Timer);
-    // Sampler_Init(&Sampler);
 
     // ICM42688_Init(&ICM42688);
     // GrayScaleSensor_Init(&GrayScaleSensor);
@@ -234,46 +289,78 @@ int main() {
 
 void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
                         uint16_t PLLQ) {
-    HAL_StatusTypeDef ret = HAL_OK;
-    RCC_OscInitTypeDef RCC_OscInitStructure;
-    RCC_ClkInitTypeDef RCC_ClkInitStructure;
+    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
+    /** Configure the main internal regulator output voltage
+     */
     __HAL_RCC_PWR_CLK_ENABLE();
-
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
 
-    RCC_OscInitStructure.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-    RCC_OscInitStructure.HSEState = RCC_HSE_ON;
-    RCC_OscInitStructure.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStructure.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-    RCC_OscInitStructure.PLL.PLLM = PLLM;
-    RCC_OscInitStructure.PLL.PLLN = PLLN;
-    RCC_OscInitStructure.PLL.PLLP = PLLP;
-    RCC_OscInitStructure.PLL.PLLQ = PLLQ;
-    ret = HAL_RCC_OscConfig(&RCC_OscInitStructure);
+    /** Initializes the RCC Oscillators according to the specified parameters
+     * in the RCC_OscInitTypeDef structure.
+     */
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    RCC_OscInitStruct.PLL.PLLM = PLLM;
+    RCC_OscInitStruct.PLL.PLLN = PLLN;
+    RCC_OscInitStruct.PLL.PLLP = PLLP;
+    RCC_OscInitStruct.PLL.PLLQ = PLLQ;
+    HAL_RCC_OscConfig(&RCC_OscInitStruct);
 
-    if (ret != HAL_OK) {
-        while (1)
-            ;
-    }
+    /** Initializes the CPU, AHB and APB buses clocks
+     */
+    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
+                                  RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-    RCC_ClkInitStructure.ClockType =
-        (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 |
-         RCC_CLOCKTYPE_PCLK2);
-    RCC_ClkInitStructure.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStructure.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStructure.APB1CLKDivider = RCC_HCLK_DIV4;
-    RCC_ClkInitStructure.APB2CLKDivider = RCC_HCLK_DIV2;
-    ret = HAL_RCC_ClockConfig(&RCC_ClkInitStructure, FLASH_LATENCY_5);
+    HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
 
-    if (ret != HAL_OK) {
-        while (1)
-            ;
-    }
+    // HAL_StatusTypeDef ret = HAL_OK;
+    // RCC_OscInitTypeDef RCC_OscInitStructure;
+    // RCC_ClkInitTypeDef RCC_ClkInitStructure;
 
-    if (HAL_GetREVID() == 0x1001) {
-        __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
-    }
+    // __HAL_RCC_PWR_CLK_ENABLE();
+
+    // __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+
+    // RCC_OscInitStructure.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+    // RCC_OscInitStructure.HSEState = RCC_HSE_ON;
+    // RCC_OscInitStructure.PLL.PLLState = RCC_PLL_ON;
+    // RCC_OscInitStructure.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+    // RCC_OscInitStructure.PLL.PLLM = PLLM;
+    // RCC_OscInitStructure.PLL.PLLN = PLLN;
+    // RCC_OscInitStructure.PLL.PLLP = PLLP;
+    // RCC_OscInitStructure.PLL.PLLQ = PLLQ;
+    // ret = HAL_RCC_OscConfig(&RCC_OscInitStructure);
+
+    // if (ret != HAL_OK) {
+    //     while (1)
+    //         ;
+    // }
+
+    // RCC_ClkInitStructure.ClockType =
+    //     (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 |
+    //      RCC_CLOCKTYPE_PCLK2);
+    // RCC_ClkInitStructure.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
+    // RCC_ClkInitStructure.AHBCLKDivider = RCC_SYSCLK_DIV1;
+    // RCC_ClkInitStructure.APB1CLKDivider = RCC_HCLK_DIV4;
+    // RCC_ClkInitStructure.APB2CLKDivider = RCC_HCLK_DIV2;
+    // ret = HAL_RCC_ClockConfig(&RCC_ClkInitStructure, FLASH_LATENCY_5);
+
+    // if (ret != HAL_OK) {
+    //     while (1)
+    //         ;
+    // }
+
+    // if (HAL_GetREVID() == 0x1001) {
+    //     __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+    // }
 
     // HAL_StatusTypeDef ret = HAL_OK;
     // RCC_OscInitTypeDef RCC_OscInitStructure;

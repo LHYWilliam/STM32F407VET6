@@ -19,7 +19,7 @@ typedef struct {
 } Sampler_t;
 
 void Sampler_Init(Sampler_t *Self);
-void Sampler_GetValue(Sampler_t *Self);
+uint32_t Sampler_GetValue(Sampler_t *Self, uint8_t Channel);
 void Sampler_UpdateIndex(Sampler_t *Self);
 
 #endif

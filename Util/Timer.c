@@ -13,10 +13,11 @@ void Timer_Init(Timer_t *Self) {
     TIM_Init(&TIM);
 
     if (Self->Trigger) {
-        TIM_MasterConfigTypeDef Trigger = {
+        TIM_MasterConfigTypeDef sMasterConfig = {
             .MasterOutputTrigger = Self->Trigger,
+            .MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE,
         };
-        HAL_TIMEx_MasterConfigSynchronization(&Self->Handler, &Trigger);
+        HAL_TIMEx_MasterConfigSynchronization(&Self->Handler, &sMasterConfig);
     }
 
     if (Self->Interrupt) {

@@ -185,7 +185,7 @@ void ICM42688_AHRS_CalculateGyroVariance(ICM42688_t *Self, float *RawGyro,
                                          float *GyroAverage) {
     static double GyroSum[3];
     static int GyroCount = 0;
-    static double GyroBuffer[3][300];
+    static double GyroBuffer[3][100];
     static double GyroSquareSum[3];
 
     if (Self->CalibrationFinished == RESET) {
