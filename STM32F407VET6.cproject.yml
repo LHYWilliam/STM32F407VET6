@@ -15,8 +15,8 @@ project:
         - Hardware
         - Hardware/LCD
         - Hardware/OLED
+        - Hardware/GWGray
         - Hardware/ICM42688
-        - Hardware/GrayScaleSensor
       debug: "on"
       define:
         - __MICROLIB
@@ -102,12 +102,12 @@ project:
         - file: Hardware/ICM42688/ICM42688_AHRS.h
         - file: Hardware/ICM42688/ICM42688_SPI.c
         - file: Hardware/ICM42688/ICM42688_SPI.h
-        - file: Hardware/GrayScaleSensor/GrayScaleSensor.c
-        - file: Hardware/GrayScaleSensor/GrayScaleSensor.h
-        - file: Hardware/GrayScaleSensor/GrayScaleSensor_I2C.c
-        - file: Hardware/GrayScaleSensor/GrayScaleSensor_I2C.h
         - file: Hardware/Motor.c
         - file: Hardware/Motor.h
+        - file: Hardware/GWGray/GWGray.c
+        - file: Hardware/GWGray/GWGray.h
+        - file: Hardware/GWGray/GWGray_I2C.c
+        - file: Hardware/GWGray/GWGray_I2C.h
     - group: Util
       files:
         - file: Util/Timer.c

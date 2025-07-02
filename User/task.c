@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "Encoder.h"
-#include "GrayScaleSensor.h"
+#include "GWGray.h"
 #include "ICM42688.h"
 #include "ICM42688_AHRS.h"
 #include "Key.h"

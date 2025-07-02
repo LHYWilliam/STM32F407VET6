@@ -1,7 +1,7 @@
 #include "Time.h"
 
-#include "GrayScaleSensor.h"
-#include "GrayScaleSensor_I2C.h"
+#include "GWGray.h"
+#include "GWGray_I2C.h"
 
 ErrorStatus GrayScaleSensor_ScanAddress(GrayScaleSensor_t *Self);
 

@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #include "Encoder.h"
-#include "GrayScaleSensor.h"
+#include "GWGray.h"
 #include "ICM42688.h"
 #include "Key.h"
 #include "LED.h"

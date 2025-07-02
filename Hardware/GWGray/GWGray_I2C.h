@@ -4,7 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#include "GrayScaleSensor.h"
+#include "GWGray.h"
 
 #define ACK       0x0
 #define NACK      0x1

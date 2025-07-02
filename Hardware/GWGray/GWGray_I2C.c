@@ -1,7 +1,7 @@
 #include "GPIO.h"
 #include "Time.h"
 
-#include "GrayScaleSensor_I2C.h"
+#include "GWGray_I2C.h"
 
 void GraySacleSensor_SWI2C_Init(GrayScaleSensor_t *Self) {
     GPIO_t GPIO;
