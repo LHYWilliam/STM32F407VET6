@@ -98,9 +98,6 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self) {
     float ax = Self->CalibratedAccGyro[0];
     float ay = Self->CalibratedAccGyro[1];
     float az = Self->CalibratedAccGyro[2];
-    float mx = Self->CalibratedAccGyro[6];
-    float my = Self->CalibratedAccGyro[7];
-    float mz = Self->CalibratedAccGyro[8];
 
     float norm;
 
@@ -127,15 +124,12 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self) {
     }
     Self->LastUpdate = Self->Now;
 
-    norm = invSqrt1(ax * ax + ay * ay + az * az);
-    ax = ax * norm;
-    ay = ay * norm;
-    az = az * norm;
-
-    norm = invSqrt1(mx * mx + my * my + mz * mz);
-    mx = mx * norm;
-    my = my * norm;
-    mz = mz * norm;
+    if (ax != 0.0f || ay != 0.0f || az != 0.0f) {
+        norm = invSqrt1(ax * ax + ay * ay + az * az);
+        ax = ax * norm;
+        ay = ay * norm;
+        az = az * norm;
+    }
 
     vx = 2 * (q1q3 - q0q2);
     vy = 2 * (q0q1 + q2q3);
@@ -166,6 +160,7 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self) {
 
     norm = invSqrt1(tempq0 * tempq0 + tempq1 * tempq1 + tempq2 * tempq2 +
                     tempq3 * tempq3);
+
     Self->q[0] = tempq0 * norm;
     Self->q[1] = tempq1 * norm;
     Self->q[2] = tempq2 * norm;

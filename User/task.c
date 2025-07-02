@@ -45,14 +45,6 @@ extern GrayScaleSensor_t GrayScaleSensor;
 extern uint32_t ADC_Data[];
 
 void vMainTaskCode(void *pvParameters) {
-    for (;;) {
-        int16_t Error = GrayScaleSensor_CaculateAnalogError(&GrayScaleSensor);
-
-        printf("%d\n", Error);
-
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
-
     //////////////////// K230 Test ///////////////////
     // Servo_SetAngle180(&Servo, 1, 110.);
     // Servo_SetAngle270(&Servo, 2, 135.);
@@ -88,7 +80,7 @@ void vMainTaskCode(void *pvParameters) {
 
     //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
 
-    //     printf(" Yaw: %6.2f, Pitch: %6.2f, Roll: %6.2f\r\n", YawPitchRoll[0],
+    //     printf(" Yaw, Pitch, Roll: %6.2f, %6.2f, %6.2f\n", YawPitchRoll[0],
     //            YawPitchRoll[1], YawPitchRoll[2]);
 
     //     vTaskDelay(pdMS_TO_TICKS(10));
@@ -103,6 +95,16 @@ void vMainTaskCode(void *pvParameters) {
     //            GrayScaleData[1], GrayScaleData[2], GrayScaleData[3],
     //            GrayScaleData[4], GrayScaleData[5], GrayScaleData[6],
     //            GrayScaleData[7]);
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    //////// Gray PID Test //////////////////
+    // for (;;) {
+    //     int16_t Error =
+    //     GrayScaleSensor_CaculateAnalogError(&GrayScaleSensor);
+
+    //     printf("%d\n", Error);
 
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
