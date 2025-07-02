@@ -84,11 +84,11 @@ typedef struct {
     uint32_t SCL_Pin;
     GPIO_TypeDef *SDA_GPIO;
     uint32_t SDA_Pin;
-} GrayScaleSensor_t;
+} GWGray_t;
 
-ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self);
-void GrayScaleSensor_ReadDigital(GrayScaleSensor_t *Self, uint8_t *Data);
-void GrayScaleSensor_ReadAnalog(GrayScaleSensor_t *Self, uint8_t *Data);
-int16_t GrayScaleSensor_CaculateAnalogError(GrayScaleSensor_t *Self);
+ErrorStatus GWGray_Init(GWGray_t *Self);
+void GWGray_ReadDigital(GWGray_t *Self, uint8_t *Data);
+void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data);
+int16_t GWGray_CaculateAnalogError(GWGray_t *Self);
 
 #endif

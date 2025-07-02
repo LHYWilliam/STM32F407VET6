@@ -170,7 +170,7 @@ ICM42688_t ICM42688 = {
     .CS = C1,
 };
 
-GrayScaleSensor_t GrayScaleSensor = {
+GWGray_t GWGray = {
     .SCL = B8,
     .SDA = B9,
     .DevAddr = 0x4C,
@@ -214,7 +214,7 @@ int main() {
     Sampler_Init(&Sampler);
 
     ICM42688_Init(&ICM42688);
-    GrayScaleSensor_Init(&GrayScaleSensor);
+    GWGray_Init(&GWGray);
 
     xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
 

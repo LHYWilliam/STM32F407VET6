@@ -3,14 +3,14 @@
 #include "GWGray.h"
 #include "GWGray_I2C.h"
 
-ErrorStatus GrayScaleSensor_ScanAddress(GrayScaleSensor_t *Self);
+ErrorStatus GWGray_ScanAddress(GWGray_t *Self);
 
-ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self) {
+ErrorStatus GWGray_Init(GWGray_t *Self) {
     Time_Delayms(100);
 
-    GraySacleSensor_SWI2C_Init(Self);
+    GWGray_SWI2C_Init(Self);
 
-    if (GrayScaleSensor_ScanAddress(Self) == ERROR) {
+    if (GWGray_ScanAddress(Self) == ERROR) {
         return ERROR;
     }
 
@@ -19,17 +19,17 @@ ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self) {
     return SUCCESS;
 }
 
-void GrayScaleSensor_ReadDigital(GrayScaleSensor_t *Self, uint8_t *Data) {
+void GWGray_ReadDigital(GWGray_t *Self, uint8_t *Data) {
     uint8_t Byte;
-    GraySacleSensor_SWI2C_SingedAddrReadBytes(Self, Self->DevAddr << 1,
-                                              GW_GRAY_DIGITAL_MODE, &Byte, 1);
+    GWGray_SWI2C_SingedAddrReadBytes(Self, Self->DevAddr << 1,
+                                     GW_GRAY_DIGITAL_MODE, &Byte, 1);
 
     SplitByteToArray(Byte, Data);
 }
 
-void GrayScaleSensor_ReadAnalog(GrayScaleSensor_t *Self, uint8_t *Data) {
-    GraySacleSensor_SWI2C_SingedAddrReadBytes(Self, Self->DevAddr << 1,
-                                              GW_GRAY_ANALOG_MODE, Data, 8);
+void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data) {
+    GWGray_SWI2C_SingedAddrReadBytes(Self, Self->DevAddr << 1,
+                                     GW_GRAY_ANALOG_MODE, Data, 8);
 
     for (uint8_t i = 0; i < 8; i++) {
         Data[i] = 255 - Data[i];
@@ -41,10 +41,10 @@ void GrayScaleSensor_ReadAnalog(GrayScaleSensor_t *Self, uint8_t *Data) {
 #define OnCenterGroup(Index) (3 <= (Index) && (Index) <= 4)
 #define OnRightGroup(Index)  (5 <= (Index) && (Index) <= 7)
 
-int16_t GrayScaleSensor_CaculateAnalogError(GrayScaleSensor_t *Self) {
+int16_t GWGray_CaculateAnalogError(GWGray_t *Self) {
     uint8_t DigitalData[8], AnalogData[8];
-    GrayScaleSensor_ReadDigital(Self, DigitalData);
-    GrayScaleSensor_ReadAnalog(Self, AnalogData);
+    GWGray_ReadDigital(Self, DigitalData);
+    GWGray_ReadAnalog(Self, AnalogData);
 
     uint8_t OnLineIndex = 8;
     for (uint8_t i = 0; i < 8; i++) {
@@ -83,10 +83,10 @@ int16_t GrayScaleSensor_CaculateAnalogError(GrayScaleSensor_t *Self) {
     return Error;
 }
 
-int16_t GrayScaleSensor_CaculateAnalogError2(GrayScaleSensor_t *Self) {
+int16_t GWGray_CaculateAnalogError2(GWGray_t *Self) {
     uint8_t DigitalData[8], AnalogData[8];
-    GrayScaleSensor_ReadDigital(Self, DigitalData);
-    GrayScaleSensor_ReadAnalog(Self, AnalogData);
+    GWGray_ReadDigital(Self, DigitalData);
+    GWGray_ReadAnalog(Self, AnalogData);
 
     uint8_t OnLineIndex = 8, CenterIndex = 8;
     for (uint8_t i = 0; i < 8; i++) {
@@ -150,11 +150,10 @@ int16_t GrayScaleSensor_CaculateAnalogError2(GrayScaleSensor_t *Self) {
     return Error;
 }
 
-ErrorStatus GrayScaleSensor_ScanAddress(GrayScaleSensor_t *Self) {
+ErrorStatus GWGray_ScanAddress(GWGray_t *Self) {
     uint8_t Temp;
     for (uint8_t i = 1; i < 127; i++) {
-        if (GraySacleSensor_SWI2C_NowAddrReadBytes(Self, i << 1, &Temp, 1) ==
-                0 &&
+        if (GWGray_SWI2C_NowAddrReadBytes(Self, i << 1, &Temp, 1) == 0 &&
             Self->DevAddr == i) {
 
             return SUCCESS;

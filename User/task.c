@@ -40,7 +40,7 @@ extern Motor_t Motor2;
 extern Sampler_t Sampler;
 
 extern ICM42688_t ICM42688;
-extern GrayScaleSensor_t GrayScaleSensor;
+extern GWGray_t GWGray;
 
 extern uint32_t ADC_Data[];
 
@@ -87,22 +87,19 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     ////////////// GrayScacleSensor Test ///////////////////////
-    // uint8_t GrayScaleData[8];
+    // uint8_t Data[8];
     // for (;;) {
-    //     GrayScaleSensor_ReadAnalog(&GrayScaleSensor, GrayScaleData);
+    //     GWGray_ReadAnalog(&GWGray, Data);
 
-    //     printf("%3d, %3d, %3d, %3d, %3d, %3d, %3d, %3d\n", GrayScaleData[0],
-    //            GrayScaleData[1], GrayScaleData[2], GrayScaleData[3],
-    //            GrayScaleData[4], GrayScaleData[5], GrayScaleData[6],
-    //            GrayScaleData[7]);
+    //     printf("%3d, %3d, %3d, %3d, %3d, %3d, %3d, %3d\n", Data[0], Data[1],
+    //            Data[2], Data[3], Data[4], Data[5], Data[6], Data[7]);
 
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
     //////// Gray PID Test //////////////////
     // for (;;) {
-    //     int16_t Error =
-    //     GrayScaleSensor_CaculateAnalogError(&GrayScaleSensor);
+    //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
 
     //     printf("%d\n", Error);
 

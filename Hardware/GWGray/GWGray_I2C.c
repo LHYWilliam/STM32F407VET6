@@ -3,7 +3,7 @@
 
 #include "GWGray_I2C.h"
 
-void GraySacleSensor_SWI2C_Init(GrayScaleSensor_t *Self) {
+void GWGray_SWI2C_Init(GWGray_t *Self) {
     GPIO_t GPIO;
 
     GPIO.Mode = GPIO_MODE_OUTPUT_OD;
@@ -20,13 +20,13 @@ void GraySacleSensor_SWI2C_Init(GrayScaleSensor_t *Self) {
     HAL_GPIO_WritePin(Self->SDA_GPIO, Self->SDA_Pin, GPIO_PIN_SET);
 }
 
-void GraySacleSensor_SWI2C_SDAOut(GrayScaleSensor_t *Self, uint8_t Bit) {
+void GWGray_SWI2C_SDAOut(GWGray_t *Self, uint8_t Bit) {
     HAL_GPIO_WritePin(Self->SDA_GPIO, Self->SDA_Pin, (GPIO_PinState)Bit);
 
     Time_Delayus(10);
 }
 
-uint8_t GraySacleSensor_SWI2C_SDAIn(GrayScaleSensor_t *Self) {
+uint8_t GWGray_SWI2C_SDAIn(GWGray_t *Self) {
     uint8_t Bit;
     Bit = (uint8_t)HAL_GPIO_ReadPin(Self->SDA_GPIO, Self->SDA_Pin);
 
@@ -34,154 +34,145 @@ uint8_t GraySacleSensor_SWI2C_SDAIn(GrayScaleSensor_t *Self) {
     return Bit;
 }
 
-void GraySacleSensor_SWI2C_SCLOut(GrayScaleSensor_t *Self, uint8_t Bit) {
+void GWGray_SWI2C_SCLOut(GWGray_t *Self, uint8_t Bit) {
     HAL_GPIO_WritePin(Self->SCL_GPIO, Self->SCL_Pin, (GPIO_PinState)Bit);
 
     Time_Delayus(10);
 }
 
-void GraySacleSensor_SWI2C_Start(GrayScaleSensor_t *Self) {
-    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
-    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
-    GraySacleSensor_SWI2C_SDAOut(Self, LOW);
-    GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+void GWGray_SWI2C_Start(GWGray_t *Self) {
+    GWGray_SWI2C_SDAOut(Self, HIGH);
+    GWGray_SWI2C_SCLOut(Self, HIGH);
+    GWGray_SWI2C_SDAOut(Self, LOW);
+    GWGray_SWI2C_SCLOut(Self, LOW);
 }
 
-void GraySacleSensor_SWI2C_Stop(GrayScaleSensor_t *Self) {
-    GraySacleSensor_SWI2C_SDAOut(Self, LOW);
-    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
-    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
+void GWGray_SWI2C_Stop(GWGray_t *Self) {
+    GWGray_SWI2C_SDAOut(Self, LOW);
+    GWGray_SWI2C_SCLOut(Self, HIGH);
+    GWGray_SWI2C_SDAOut(Self, HIGH);
 }
 
-void GraySacleSensor_SWI2C_WriteBit(GrayScaleSensor_t *Self, uint8_t Bit) {
-    GraySacleSensor_SWI2C_SDAOut(Self, Bit);
-    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
-    GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+void GWGray_SWI2C_WriteBit(GWGray_t *Self, uint8_t Bit) {
+    GWGray_SWI2C_SDAOut(Self, Bit);
+    GWGray_SWI2C_SCLOut(Self, HIGH);
+    GWGray_SWI2C_SCLOut(Self, LOW);
 }
 
-uint8_t GraySacleSensor_SWI2C_ReadBit(GrayScaleSensor_t *Self) {
-    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
-    GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
-    uint8_t Bit = GraySacleSensor_SWI2C_SDAIn(Self);
-    GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+uint8_t GWGray_SWI2C_ReadBit(GWGray_t *Self) {
+    GWGray_SWI2C_SDAOut(Self, HIGH);
+    GWGray_SWI2C_SCLOut(Self, HIGH);
+    uint8_t Bit = GWGray_SWI2C_SDAIn(Self);
+    GWGray_SWI2C_SCLOut(Self, LOW);
 
     return Bit;
 }
 
-uint8_t GraySacleSensor_SWI2C_WriteByte(GrayScaleSensor_t *Self, uint8_t Byte) {
+uint8_t GWGray_SWI2C_WriteByte(GWGray_t *Self, uint8_t Byte) {
     for (uint8_t i = 0; i < 8; ++i) {
-        GraySacleSensor_SWI2C_WriteBit(Self, Byte & (0x80 >> i));
+        GWGray_SWI2C_WriteBit(Self, Byte & (0x80 >> i));
     }
 
-    uint8_t Ack = GraySacleSensor_SWI2C_ReadBit(Self);
+    uint8_t Ack = GWGray_SWI2C_ReadBit(Self);
 
     return Ack;
 }
 
-uint8_t GraySacleSensor_SWI2C_ReadByte(GrayScaleSensor_t *Self, uint8_t Ack) {
+uint8_t GWGray_SWI2C_ReadByte(GWGray_t *Self, uint8_t Ack) {
     uint8_t Byte = 0;
 
-    GraySacleSensor_SWI2C_SDAOut(Self, HIGH);
+    GWGray_SWI2C_SDAOut(Self, HIGH);
 
     for (uint8_t i = 0; i < 8; ++i) {
-        GraySacleSensor_SWI2C_SCLOut(Self, HIGH);
+        GWGray_SWI2C_SCLOut(Self, HIGH);
         Byte <<= 1;
-        Byte |= GraySacleSensor_SWI2C_SDAIn(Self);
-        GraySacleSensor_SWI2C_SCLOut(Self, LOW);
+        Byte |= GWGray_SWI2C_SDAIn(Self);
+        GWGray_SWI2C_SCLOut(Self, LOW);
     }
 
-    GraySacleSensor_SWI2C_WriteBit(Self, Ack);
+    GWGray_SWI2C_WriteBit(Self, Ack);
 
     return Byte;
 }
 
-int8_t GraySacleSensor_SWI2C_NowAddrReadBytes(GrayScaleSensor_t *Self,
-                                              uint8_t DevAddr, uint8_t *Bytes,
-                                              uint8_t Length) {
+int8_t GWGray_SWI2C_NowAddrReadBytes(GWGray_t *Self, uint8_t DevAddr,
+                                     uint8_t *Bytes, uint8_t Length) {
 
-    GraySacleSensor_SWI2C_Start(Self);
+    GWGray_SWI2C_Start(Self);
 
-    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_READ);
+    uint8_t Ack = GWGray_SWI2C_WriteByte(Self, DevAddr | I2C_READ);
     if (Ack) {
-        GraySacleSensor_SWI2C_Stop(Self);
+        GWGray_SWI2C_Stop(Self);
         return 1;
     }
 
     uint8_t i;
     for (i = 0; i < Length - 1; ++i) {
-        Bytes[i] = GraySacleSensor_SWI2C_ReadByte(Self, ACK);
+        Bytes[i] = GWGray_SWI2C_ReadByte(Self, ACK);
     }
 
-    Bytes[i] = GraySacleSensor_SWI2C_ReadByte(Self, NACK);
+    Bytes[i] = GWGray_SWI2C_ReadByte(Self, NACK);
 
-    GraySacleSensor_SWI2C_Stop(Self);
+    GWGray_SWI2C_Stop(Self);
 
     return 0;
 }
 
-int8_t GraySacleSensor_SWI2C_NowAddrWriteBytes(GrayScaleSensor_t *Self,
-                                               uint8_t DevAddr,
-                                               const uint8_t *Bytes,
-                                               uint8_t Length) {
-    GraySacleSensor_SWI2C_Start(Self);
+int8_t GWGray_SWI2C_NowAddrWriteBytes(GWGray_t *Self, uint8_t DevAddr,
+                                      const uint8_t *Bytes, uint8_t Length) {
+    GWGray_SWI2C_Start(Self);
 
-    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
+    uint8_t Ack = GWGray_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
     if (Ack) {
-        GraySacleSensor_SWI2C_Stop(Self);
+        GWGray_SWI2C_Stop(Self);
         return 1;
     }
 
     for (uint8_t i = 0; i < Length; ++i) {
-        Ack = GraySacleSensor_SWI2C_WriteByte(Self, Bytes[i]);
+        Ack = GWGray_SWI2C_WriteByte(Self, Bytes[i]);
     }
 
-    GraySacleSensor_SWI2C_Stop(Self);
+    GWGray_SWI2C_Stop(Self);
 
     return 0;
 }
 
-int8_t GraySacleSensor_SWI2C_NowAddrReadByte(GrayScaleSensor_t *Self,
-                                             uint8_t DevAddr, uint8_t *data) {
-    return GraySacleSensor_SWI2C_NowAddrReadBytes(Self, DevAddr, data, 1);
+int8_t GWGray_SWI2C_NowAddrReadByte(GWGray_t *Self, uint8_t DevAddr,
+                                    uint8_t *data) {
+    return GWGray_SWI2C_NowAddrReadBytes(Self, DevAddr, data, 1);
 }
 
-int8_t GraySacleSensor_SWI2C_NowAddrWriteByte(GrayScaleSensor_t *Self,
-                                              uint8_t DevAddr,
+int8_t GraySacleSensor_SWI2C_NowAddrWriteByte(GWGray_t *Self, uint8_t DevAddr,
                                               const uint8_t Byte) {
-    return GraySacleSensor_SWI2C_NowAddrWriteBytes(Self, DevAddr, &Byte, 1);
+    return GWGray_SWI2C_NowAddrWriteBytes(Self, DevAddr, &Byte, 1);
 }
 
-int8_t GraySacleSensor_SWI2C_SingedAddrReadBytes(GrayScaleSensor_t *Self,
-                                                 uint8_t DevAddr,
-                                                 uint8_t MemAddr,
-                                                 uint8_t *Bytes,
-                                                 uint8_t Length) {
-    GraySacleSensor_SWI2C_Start(Self);
+int8_t GWGray_SWI2C_SingedAddrReadBytes(GWGray_t *Self, uint8_t DevAddr,
+                                        uint8_t MemAddr, uint8_t *Bytes,
+                                        uint8_t Length) {
+    GWGray_SWI2C_Start(Self);
 
-    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
+    uint8_t Ack = GWGray_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
     if (Ack) {
-        GraySacleSensor_SWI2C_Stop(Self);
+        GWGray_SWI2C_Stop(Self);
         return 1;
     }
-    Ack = GraySacleSensor_SWI2C_WriteByte(Self, MemAddr);
+    Ack = GWGray_SWI2C_WriteByte(Self, MemAddr);
 
-    return GraySacleSensor_SWI2C_NowAddrReadBytes(Self, DevAddr, Bytes, Length);
+    return GWGray_SWI2C_NowAddrReadBytes(Self, DevAddr, Bytes, Length);
 }
 
-int8_t GraySacleSensor_SWI2C_SingedAddrWriteBytes(GrayScaleSensor_t *Self,
-                                                  uint8_t DevAddr,
-                                                  uint8_t MemAddr,
-                                                  const uint8_t *Bytes,
-                                                  uint8_t Length) {
-    GraySacleSensor_SWI2C_Start(Self);
+int8_t GWGray_SWI2C_SingedAddrWriteBytes(GWGray_t *Self, uint8_t DevAddr,
+                                         uint8_t MemAddr, const uint8_t *Bytes,
+                                         uint8_t Length) {
+    GWGray_SWI2C_Start(Self);
 
-    uint8_t Ack = GraySacleSensor_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
+    uint8_t Ack = GWGray_SWI2C_WriteByte(Self, DevAddr | I2C_WRITE);
     if (Ack) {
-        GraySacleSensor_SWI2C_Stop(Self);
+        GWGray_SWI2C_Stop(Self);
         return 1;
     }
-    Ack = GraySacleSensor_SWI2C_WriteByte(Self, MemAddr);
+    Ack = GWGray_SWI2C_WriteByte(Self, MemAddr);
 
-    return GraySacleSensor_SWI2C_NowAddrWriteBytes(Self, DevAddr, Bytes,
-                                                   Length);
+    return GWGray_SWI2C_NowAddrWriteBytes(Self, DevAddr, Bytes, Length);
 }
