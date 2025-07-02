@@ -175,8 +175,7 @@ ICM42688_t ICM42688 = {
 GrayScaleSensor_t GrayScaleSensor = {
     .SCL = B8,
     .SDA = B9,
-    .Addr = 0x4C,
-    .Mode = GrayScaleSensorMode_Analog,
+    .DevAddr = 0x4C,
 };
 
 TimerHandle_t xLEDTimer;

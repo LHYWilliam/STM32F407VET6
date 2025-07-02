@@ -16,53 +16,88 @@ ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self) {
 
     Time_Delayms(100);
 
-    if (Self->Mode == GrayScaleSensorMode_Analog) {
-        uint8_t Temp[8];
-        GraySacleSensor_SWI2C_SingedAddrReadBytes(Self, Self->Addr << 1,
-                                                  GW_GRAY_ANALOG_MODE, Temp, 8);
-    }
-
-#if GW_READ_DIGITAL_DATA
-    uint8_t gray_sensor[8];
-    uint8_t digital_data;
-
-    sw_i2c_write_byte(&i2c_interface, 0x4C << 1, GW_GRAY_DIGITAL_MODE);
-
-    sw_i2c_read_byte(&i2c_interface, 0x4C << 1, &digital_data);
-    while (1) {
-
-        sw_i2c_read_byte(&i2c_interface, 0x4C << 1, &digital_data);
-
-        if (digital_data == 0xF0) {
-        }
-
-        if (GET_NTH_BIT(digital_data, 2)) {
-        }
-
-        SEP_ALL_BIT8(digital_data, gray_sensor[0], gray_sensor[1],
-                     gray_sensor[2], gray_sensor[3], gray_sensor[4],
-                     gray_sensor[5], gray_sensor[6], gray_sensor[7]);
-
-        if (gray_sensor[0]) {
-        }
-
-        delay_us(1000);
-    }
-#else
-#endif
-
     return SUCCESS;
 }
 
-void GrayScaleSensor_ReadAnalog(GrayScaleSensor_t *Self, uint8_t *Data) {
-    if (Self->Mode == GrayScaleSensorMode_Analog) {
-        GraySacleSensor_SWI2C_NowAddrReadBytes(Self, Self->Addr << 1, Data, 8);
-    } else {
-        GraySacleSensor_SWI2C_SingedAddrReadBytes(Self, Self->Addr << 1,
-                                                  GW_GRAY_ANALOG_MODE, Data, 8);
+void GrayScaleSensor_ReadDigital(GrayScaleSensor_t *Self, uint8_t *Data) {
+    uint8_t Byte;
+    GraySacleSensor_SWI2C_SingedAddrReadBytes(Self, Self->DevAddr << 1,
+                                              GW_GRAY_DIGITAL_MODE, &Byte, 1);
 
-        Self->Mode = GrayScaleSensorMode_Analog;
+    SplitByteToArray(Byte, Data);
+}
+
+void GrayScaleSensor_ReadAnalog(GrayScaleSensor_t *Self, uint8_t *Data) {
+    GraySacleSensor_SWI2C_SingedAddrReadBytes(Self, Self->DevAddr << 1,
+                                              GW_GRAY_ANALOG_MODE, Data, 8);
+}
+
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+int16_t GrayScaleSensor_CaculateAnalogError(GrayScaleSensor_t *Self) {
+    uint8_t DigitalData[8], AnalogData[8];
+    GrayScaleSensor_ReadDigital(Self, DigitalData);
+    GrayScaleSensor_ReadAnalog(Self, AnalogData);
+
+    uint8_t OnLineIndex = 8, CenterIndex = 8;
+    for (uint8_t i = 0; i < 8; i++) {
+        if (DigitalData[i] == 0) {
+            OnLineIndex = i;
+        }
+
+        if (2 < OnLineIndex && OnLineIndex < 8) {
+            break;
+        }
     }
+
+    if (OnLineIndex == 8) {
+        return 0;
+    }
+
+    uint8_t LeftAnalog, CenterAnalog, RightAnalog;
+    if (0 <= OnLineIndex && OnLineIndex <= 2) {
+        CenterIndex = OnLineIndex + 1;
+        LeftAnalog = AnalogData[CenterIndex - 1];
+        CenterAnalog = AnalogData[CenterIndex];
+        RightAnalog = AnalogData[CenterIndex + 1];
+
+    } else if (3 <= OnLineIndex && OnLineIndex <= 4) {
+        LeftAnalog = AnalogData[3];
+        RightAnalog = AnalogData[4];
+
+    } else if (5 <= OnLineIndex && OnLineIndex <= 7) {
+        CenterIndex = OnLineIndex - 1;
+        LeftAnalog = AnalogData[CenterIndex - 1];
+        CenterAnalog = AnalogData[CenterIndex];
+        RightAnalog = AnalogData[CenterIndex + 1];
+    }
+
+    int16_t Error;
+    if (3 <= OnLineIndex && OnLineIndex <= 4) {
+        Error = LeftAnalog - RightAnalog;
+
+    } else if ((0 <= OnLineIndex && OnLineIndex <= 2) ||
+               (5 <= OnLineIndex && OnLineIndex <= 7)) {
+        uint8_t LeftRightMaxAnalog, WhenLRMCenterAnalog;
+        LeftRightMaxAnalog = MAX(Self->LeftRightMaxAnalogs[CenterIndex - 1],
+                                 Self->LeftRightMaxAnalogs[CenterIndex + 1]);
+        WhenLRMCenterAnalog = Self->WhenLRMCenterAnalogs[CenterIndex];
+
+        if (CenterAnalog > WhenLRMCenterAnalog) {
+            Error = LeftAnalog - RightAnalog;
+
+        } else if (LeftAnalog > RightAnalog) {
+            Error = (2 * LeftRightMaxAnalog - LeftAnalog) - RightAnalog;
+
+        } else if (LeftAnalog < RightAnalog) {
+            Error = LeftAnalog - (2 * LeftRightMaxAnalog - RightAnalog);
+        }
+
+    } else {
+        Error = 0;
+    }
+
+    return Error;
 }
 
 ErrorStatus GrayScaleSensor_ScanAddress(GrayScaleSensor_t *Self) {
@@ -70,7 +105,7 @@ ErrorStatus GrayScaleSensor_ScanAddress(GrayScaleSensor_t *Self) {
     for (uint8_t i = 1; i < 127; i++) {
         if (GraySacleSensor_SWI2C_NowAddrReadBytes(Self, i << 1, &Temp, 1) ==
                 0 &&
-            Self->Addr == i) {
+            Self->DevAddr == i) {
 
             return SUCCESS;
         }

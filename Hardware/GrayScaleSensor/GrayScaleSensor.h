@@ -50,23 +50,20 @@
 // 读取固件版本号
 #define GW_GRAY_FIRMWARE              0xC1
 
-// 从I2C得到的8位的数字信号的数据 读取第n位的数据
-
-#define GET_NTH_BIT(sensor_value, nth_bit)                                     \
-    (((sensor_value) >> ((nth_bit) - 1)) & 0x01)
+// 从I2C得到的8位的数字信号的数据 读取第Index位的数据
+#define GetByteByIndex(Byte, Index)   (((Byte) >> (Index)) & 0x01)
 
 // 从一个变量分离出所有的bit
-#define SEP_ALL_BIT8(sensor_value, val1, val2, val3, val4, val5, val6, val7,   \
-                     val8)                                                     \
+#define SplitByteToArray(Byte, Array)                                          \
     do {                                                                       \
-        val1 = GET_NTH_BIT(sensor_value, 1);                                   \
-        val2 = GET_NTH_BIT(sensor_value, 2);                                   \
-        val3 = GET_NTH_BIT(sensor_value, 3);                                   \
-        val4 = GET_NTH_BIT(sensor_value, 4);                                   \
-        val5 = GET_NTH_BIT(sensor_value, 5);                                   \
-        val6 = GET_NTH_BIT(sensor_value, 6);                                   \
-        val7 = GET_NTH_BIT(sensor_value, 7);                                   \
-        val8 = GET_NTH_BIT(sensor_value, 8);                                   \
+        Array[0] = GetByteByIndex(Byte, 0);                                    \
+        Array[1] = GetByteByIndex(Byte, 1);                                    \
+        Array[2] = GetByteByIndex(Byte, 2);                                    \
+        Array[3] = GetByteByIndex(Byte, 3);                                    \
+        Array[4] = GetByteByIndex(Byte, 4);                                    \
+        Array[5] = GetByteByIndex(Byte, 5);                                    \
+        Array[6] = GetByteByIndex(Byte, 6);                                    \
+        Array[7] = GetByteByIndex(Byte, 7);                                    \
     } while (0)
 
 // 设置设备I2C地址
@@ -75,17 +72,13 @@
 // 广播重置地址所需要发的数据
 #define GW_GRAY_BROADCAST_RESET "\xB8\xD0\xCE\xAA\xBF\xC6\xBC\xBC"
 
-typedef enum {
-    GrayScaleSensorMode_Digital,
-    GrayScaleSensorMode_Analog,
-} GrayScaleSensorMode_t;
-
 typedef struct {
     GPIOxPiny_t SCL;
     GPIOxPiny_t SDA;
-    uint8_t Addr;
+    uint8_t DevAddr;
 
-    GrayScaleSensorMode_t Mode;
+    uint8_t LeftRightMaxAnalogs[8];
+    uint8_t WhenLRMCenterAnalogs[8];
 
     GPIO_TypeDef *SCL_GPIO;
     uint32_t SCL_Pin;
@@ -94,6 +87,8 @@ typedef struct {
 } GrayScaleSensor_t;
 
 ErrorStatus GrayScaleSensor_Init(GrayScaleSensor_t *Self);
+void GrayScaleSensor_ReadDigital(GrayScaleSensor_t *Self, uint8_t *Data);
 void GrayScaleSensor_ReadAnalog(GrayScaleSensor_t *Self, uint8_t *Data);
+int16_t GrayScaleSensor_CaculateAnalogError(GrayScaleSensor_t *Self);
 
 #endif
