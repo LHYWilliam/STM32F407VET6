@@ -45,6 +45,14 @@ extern GrayScaleSensor_t GrayScaleSensor;
 extern uint32_t ADC_Data[];
 
 void vMainTaskCode(void *pvParameters) {
+    for (;;) {
+        int16_t Error = GrayScaleSensor_CaculateAnalogError(&GrayScaleSensor);
+
+        printf("%d\n", Error);
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
+
     //////////////////// K230 Test ///////////////////
     // Servo_SetAngle180(&Servo, 1, 110.);
     // Servo_SetAngle270(&Servo, 2, 135.);

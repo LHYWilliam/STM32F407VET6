@@ -14,12 +14,18 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self);
 void ICM42688_AHRS_CalculateAngle(ICM42688_t *Self);
 
 void ICM42688_AHRS_Init(ICM42688_t *Self) {
+    if (Self->Kp < 0.1f) {
+        Self->Kp = 0.5f;
+        Self->Ki = 0.001f;
+    }
+
     Self->q[0] = 1.0f;
     Self->q[1] = 0.0f;
     Self->q[2] = 0.0f;
     Self->q[3] = 0.0f;
-    Self->LastUpdate = Time_Getus() / 100;
+
     Self->Now = Time_Getus() / 100;
+    Self->LastUpdate = Self->Now;
 }
 
 void ICM42688_AHRS_GetRawAccGyro(ICM42688_t *Self, float *RawAccGyro) {

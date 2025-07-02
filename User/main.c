@@ -168,8 +168,6 @@ ICM42688_t ICM42688 = {
     .MISO = C2,
     .MOSI = C3,
     .CS = C1,
-    .Kp = 0.5f,
-    .Ki = 0.001f,
 };
 
 GrayScaleSensor_t GrayScaleSensor = {
