@@ -59,6 +59,9 @@ Serial_t SerialBoard = {
     .RX = A10,
     .Baudrate = 115200,
     .Default = ENABLE,
+    .RxIT = ENABLE,
+    .RxITSize = 1,
+    .Priority = 1,
 };
 
 Serial_t SerialBluetooth = {

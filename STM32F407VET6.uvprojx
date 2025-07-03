@@ -609,6 +609,16 @@
               <FileType>5</FileType>
               <FilePath>.\Util\Time.h</FilePath>
             </File>
+            <File>
+              <FileName>PID.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\PID.c</FilePath>
+            </File>
+            <File>
+              <FileName>PID.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\PID.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

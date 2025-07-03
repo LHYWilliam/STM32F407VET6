@@ -1,19 +1,59 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
-#include "LED.h"
 #include "Serial.h"
-#include "Timer.h"
 
 extern Serial_t SerialBoard;
 extern Serial_t SerialBluetooth;
-// extern Timer_t Timer;
-extern LED_t LED1;
 
-void USART2_IRQHandler(void) { HAL_UART_IRQHandler(&SerialBluetooth.Handler); }
+void USART1_IRQHandler() { HAL_UART_IRQHandler(&SerialBoard.Handler); }
+
+void USART2_IRQHandler() { HAL_UART_IRQHandler(&SerialBluetooth.Handler); }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    if (huart->Instance == SerialBluetooth.USART) {
+    if (huart->Instance == SerialBoard.USART) {
+        // Serial_SendBytes(&SerialBoard, SerialBoard.RXBuffer, 1);
+        // Serial_RXITStart(&SerialBoard, 1);
+
+        if (SerialBoard.RecieveFlag == SET) {
+            Serial_RXITStart(&SerialBoard, 1);
+            return;
+        }
+
+        SerialBoard.ByteData = SerialBoard.RXBuffer[0];
+
+        switch (SerialBoard.PackType) {
+        case Serial_None:
+            if (SerialBoard.ByteData == 0xFF) {
+                SerialBoard.PackType = Serial_HexPack;
+            } else {
+                Serial_Clear(&SerialBoard);
+            }
+            break;
+
+        case Serial_HexPack:
+            if (SerialBoard.ByteData == 0xFE &&
+                SerialBoard.RecieveByteCount == 4) {
+                SerialBoard.RecieveFlag = SET;
+
+            } else {
+                SerialBluetooth.HexData[SerialBoard.RecieveByteCount++] =
+                    SerialBluetooth.ByteData;
+            }
+
+            if (SerialBoard.RecieveByteCount > 4) {
+                Serial_Clear(&SerialBoard);
+            }
+            break;
+
+        default:
+            Serial_Clear(&SerialBoard);
+            break;
+        }
+
+        Serial_RXITStart(&SerialBoard, 1);
+
+    } else if (huart->Instance == SerialBluetooth.USART) {
         SerialBluetooth.ByteData = SerialBluetooth.RXBuffer[0];
 
         if (SerialBluetooth.RecieveFlag == SET) {

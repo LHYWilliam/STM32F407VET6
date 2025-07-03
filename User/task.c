@@ -45,16 +45,18 @@ extern GWGray_t GWGray;
 
 extern uint32_t ADC_Data[];
 
+const float EncoderToPWM = 10000.f / 1486;
+
 void vMainTaskCode(void *pvParameters) {
     // ----------------- Serial Test ----------------- //
-    for (;;) {
-        Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
-        Serial_Printf(&SerialBluetooth, "Hello from SerialBluetooth\n");
-        Serial_Printf(&SerialK230, "Hello from SerialK230\n");
-        Serial_Printf(&SerialJY61P, "Hello from SerialJY61P\n");
+    // for (;;) {
+    //     Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
+    //     Serial_Printf(&SerialBluetooth, "Hello from SerialBluetooth\n");
+    //     Serial_Printf(&SerialK230, "Hello from SerialK230\n");
+    //     Serial_Printf(&SerialJY61P, "Hello from SerialJY61P\n");
 
-        vTaskDelay(pdMS_TO_TICKS(100));
-    }
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 
     // ---------------- Key Test ---------------- //
     // for (;;) {
@@ -100,13 +102,13 @@ void vMainTaskCode(void *pvParameters) {
     // Motor_SetSpeed(&MotorRight, -1000);
 
     // ---------------- Encoder Test ---------------- //
-    // Motor_SetSpeed(&MotorLeft, 100);
-    // Motor_SetSpeed(&MotorRight, -100);
+    // Motor_SetSpeed(&MotorLeft, 0);
+    // Motor_SetSpeed(&MotorRight, 0);
     // for (;;) {
-    //     int16_t Count1 = Encoder_GetCounter(&EncoderLeft);
-    //     int16_t Count2 = Encoder_GetCounter(&EncoderRight);
+    //     int16_t CountLeft = Encoder_GetCounter(&EncoderLeft);
+    //     int16_t CountRight = Encoder_GetCounter(&EncoderRight);
 
-    //     printf("Count1: %d, Count2: %d\n", Count1, Count2);
+    //     printf("CountLeft, CountRight: %d, %d\n", CountLeft, CountRight);
 
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }

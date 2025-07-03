@@ -19,7 +19,7 @@
         }                                                                      \
     } while (0)
 
-#define GPIO_AF7_USARTx(x)                                                     \
+#define GPIO_AFx_USARTy(x)                                                     \
     ((x) == USART1   ? GPIO_AF7_USART1                                         \
      : (x) == USART2 ? GPIO_AF7_USART2                                         \
      : (x) == USART3 ? GPIO_AF7_USART3                                         \

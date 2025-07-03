@@ -35,7 +35,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(SerialBoard.USART),
+            .Alternate = GPIO_AFx_USARTy(SerialBoard.USART),
         };
         if (*SerialBoard.TX) {
             GPIO_InitPin(&GPIO, SerialBoard.TX);
@@ -49,12 +49,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
             HAL_NVIC_SetPriority(USARTx_IRQn(SerialBoard.USART),
                                  SerialBoard.Priority, 0);
         }
+
     } else if (huart->Instance == SerialBluetooth.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(SerialBluetooth.USART);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(SerialBluetooth.USART),
+            .Alternate = GPIO_AFx_USARTy(SerialBluetooth.USART),
         };
         if (*SerialBluetooth.TX) {
             GPIO_InitPin(&GPIO, SerialBluetooth.TX);
@@ -68,12 +69,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
             HAL_NVIC_SetPriority(USARTx_IRQn(SerialBluetooth.USART),
                                  SerialBluetooth.Priority, 0);
         }
+
     } else if (huart->Instance == SerialK230.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(SerialK230.USART);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(SerialK230.USART),
+            .Alternate = GPIO_AFx_USARTy(SerialK230.USART),
         };
         if (*SerialK230.TX) {
             GPIO_InitPin(&GPIO, SerialK230.TX);
@@ -87,12 +89,13 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
             HAL_NVIC_SetPriority(USARTx_IRQn(SerialK230.USART),
                                  SerialK230.Priority, 0);
         }
+
     } else if (huart->Instance == SerialJY61P.USART) {
         __HAL_RCC_USARTx_CLK_ENABLE(SerialJY61P.USART);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(SerialJY61P.USART),
+            .Alternate = GPIO_AFx_USARTy(SerialJY61P.USART),
         };
         if (*SerialJY61P.TX) {
             GPIO_InitPin(&GPIO, SerialJY61P.TX);

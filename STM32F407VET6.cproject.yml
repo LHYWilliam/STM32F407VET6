@@ -116,6 +116,8 @@ project:
         - file: Util/Sampler.h
         - file: Util/Time.c
         - file: Util/Time.h
+        - file: Util/PID.c
+        - file: Util/PID.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick
