@@ -1,4 +1,5 @@
 #include "FreeRTOS.h"
+#include "pid.h"
 #include "timers.h"
 
 #include <stdint.h>
@@ -11,6 +12,7 @@
 #include "Key.h"
 #include "LED.h"
 #include "Motor.h"
+#include "PID.h"
 #include "Sampler.h"
 #include "Serial.h"
 #include "Servo.h"
@@ -45,7 +47,23 @@ extern GWGray_t GWGray;
 
 extern uint32_t ADC_Data[];
 
-const float EncoderToPWM = 10000.f / 1486;
+const float EncoderToPWM = 10000. / 183.;
+
+PID_t MotorLeftSpeedPID = {
+    .Kp = 4,
+    .Ki = 20,
+    .IMax = 10000,
+
+};
+
+// .Kd = 0.001,
+
+PID_t MotorRightSpeedPID = {
+    .Kp = 4,
+    .Ki = 20,
+    .IMax = 10000,
+
+};
 
 void vMainTaskCode(void *pvParameters) {
     // ----------------- Serial Test ----------------- //
@@ -110,7 +128,7 @@ void vMainTaskCode(void *pvParameters) {
 
     //     printf("CountLeft, CountRight: %d, %d\n", CountLeft, CountRight);
 
-    //     vTaskDelay(pdMS_TO_TICKS(100));
+    //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
     // ----------------  Servo Test ---------------- //
@@ -156,6 +174,30 @@ void vMainTaskCode(void *pvParameters) {
     //     printf("%d\n", Error);
 
     //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ----------------- MotorSpeedPID Test ----------------- //
+    // int16_t TargetSpeed = 0;
+    // Motor_SetSpeed(&MotorRight, TargetSpeed);
+
+    // for (;;) {
+    //     int16_t Count = Encoder_GetCounter(&EncoderRight);
+    //     float Error = TargetSpeed - Count * EncoderToPWM;
+    //     int16_t Out = PID_Caculate(&MotorSpeedPID, Error);
+
+    //     Motor_SetSpeed(&MotorRight, Out);
+
+    //     printf("Target, Real, Error, Out: %d, %d, %d, %d\n", TargetSpeed,
+    //            (int16_t)(Count * EncoderToPWM), (int16_t)Error, Out);
+
+    //     if (SerialBoard.RecieveFlag == SET) {
+    //         TargetSpeed = SerialBoard.HexData[0] << 8 |
+    //         SerialBoard.HexData[1];
+
+    //         Serial_Clear(&SerialBoard);
+    //     }
+
+    //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
     //////////////////// K230 Test ///////////////////

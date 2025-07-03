@@ -26,6 +26,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         case Serial_None:
             if (SerialBoard.ByteData == 0xFF) {
                 SerialBoard.PackType = Serial_HexPack;
+
             } else {
                 Serial_Clear(&SerialBoard);
             }
@@ -33,15 +34,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
         case Serial_HexPack:
             if (SerialBoard.ByteData == 0xFE &&
-                SerialBoard.RecieveByteCount == 4) {
+                SerialBoard.RecieveByteCount == 2) {
                 SerialBoard.RecieveFlag = SET;
 
             } else {
-                SerialBluetooth.HexData[SerialBoard.RecieveByteCount++] =
-                    SerialBluetooth.ByteData;
+                SerialBoard.HexData[SerialBoard.RecieveByteCount++] =
+                    SerialBoard.ByteData;
             }
 
-            if (SerialBoard.RecieveByteCount > 4) {
+            if (SerialBoard.RecieveByteCount > 2) {
                 Serial_Clear(&SerialBoard);
             }
             break;
