@@ -18,38 +18,38 @@
 #include "Serial.h"
 #include "Servo.h"
 
-LED_t LED1 = {
-    .GPIOxPiny = D13,
-    .Mode = LEDMode_PullUp,
-};
-
-LED_t LED2 = {
-    .GPIOxPiny = D12,
-    .Mode = LEDMode_PullUp,
-};
-
-LED_t LED3 = {
+LED_t LEDRed = {
     .GPIOxPiny = D11,
     .Mode = LEDMode_PullUp,
 };
 
+LED_t LEDGreen = {
+    .GPIOxPiny = D12,
+    .Mode = LEDMode_PullUp,
+};
+
+LED_t LEDBlue = {
+    .GPIOxPiny = D13,
+    .Mode = LEDMode_PullUp,
+};
+
 Key_t Key1 = {
-    .GPIOxPiny = B12,
-    .Mode = KeyMode_PullUp,
-};
-
-Key_t Key2 = {
-    .GPIOxPiny = B13,
-    .Mode = KeyMode_PullUp,
-};
-
-Key_t Key3 = {
     .GPIOxPiny = E14,
     .Mode = KeyMode_PullUp,
 };
 
-Key_t Key4 = {
+Key_t Key2 = {
     .GPIOxPiny = E15,
+    .Mode = KeyMode_PullUp,
+};
+
+Key_t Key3 = {
+    .GPIOxPiny = B12,
+    .Mode = KeyMode_PullUp,
+};
+
+Key_t Key4 = {
+    .GPIOxPiny = B13,
     .Mode = KeyMode_PullUp,
 };
 
@@ -96,38 +96,39 @@ Servo_t Servo2 = {
     .PWM_Init = ENABLE,
 };
 
-Encoder_t Encoder1 = {
-    .TIM = TIM3,
-    .Channel = {1, 2},
-    .GPIOxPiny = {B4, B5},
-};
-
-Encoder_t Encoder2 = {
+Encoder_t EncoderLeft = {
     .TIM = TIM4,
     .Channel = {1, 2},
     .GPIOxPiny = {B6, B7},
 };
 
-PWM_t MotorPWM;
-
-Motor_t Motor1 = {
-    .TIMx = TIM1,
-    .Channel = 1,
-    .PWM = E9,
-    .IN1 = E8,
-    .IN2 = E7,
-    .Range = 1000,
-    ._PWM = &MotorPWM,
-    .PWM_Init = DISABLE,
+Encoder_t EncoderRight = {
+    .TIM = TIM3,
+    .Channel = {1, 2},
+    .GPIOxPiny = {B4, B5},
 };
 
-Motor_t Motor2 = {
+PWM_t MotorPWM;
+
+Motor_t MotorLeft = {
     .TIMx = TIM1,
     .Channel = 2,
     .PWM = E11,
     .IN1 = E10,
     .IN2 = E12,
-    .Range = 1000,
+    .Range = 10000,
+    ._PWM = &MotorPWM,
+    .Invert = ENABLE,
+    .PWM_Init = DISABLE,
+};
+
+Motor_t MotorRight = {
+    .TIMx = TIM1,
+    .Channel = 1,
+    .PWM = E9,
+    .IN1 = E8,
+    .IN2 = E7,
+    .Range = 10000,
     ._PWM = &MotorPWM,
     .PWM_Init = ENABLE,
 };
@@ -187,11 +188,12 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
 
 int main() {
     HAL_Init();
-    SystemClock_Config(25, 336, 2, 4);
+    // SystemClock_Config(25, 336, 2, 4);
+    SystemClock_Config(4, 168, 2, 4);
 
-    LED_Init(&LED1);
-    LED_Init(&LED2);
-    LED_Init(&LED3);
+    LED_Init(&LEDRed);
+    LED_Init(&LEDGreen);
+    LED_Init(&LEDBlue);
 
     Key_Init(&Key1);
     Key_Init(&Key2);
@@ -205,11 +207,13 @@ int main() {
     Servo_Init(&Servo1);
     Servo_Init(&Servo2);
 
-    Encoder_Init(&Encoder1);
-    Encoder_Init(&Encoder2);
+    Encoder_Init(&EncoderLeft);
+    Encoder_Init(&EncoderRight);
 
-    Motor_Init(&Motor1);
-    Motor_Init(&Motor2);
+    Motor_Init(&MotorLeft);
+    Motor_Init(&MotorRight);
+    Motor_SetSpeed(&MotorLeft, 0);
+    Motor_SetSpeed(&MotorRight, 0);
 
     Sampler_Init(&Sampler);
 

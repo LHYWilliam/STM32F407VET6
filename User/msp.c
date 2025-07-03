@@ -13,8 +13,8 @@ extern Serial_t Serial1;
 extern Serial_t Serial2;
 extern Serial_t Serial3;
 
-extern Encoder_t Encoder1;
-extern Encoder_t Encoder2;
+extern Encoder_t EncoderLeft;
+extern Encoder_t EncoderRight;
 
 extern PWM_t ServoPWM;
 extern PWM_t MotorPWM;
@@ -154,25 +154,25 @@ void HAL_TIM_PWM_MspInit(TIM_HandleTypeDef *htim) {
 }
 
 void HAL_TIM_Encoder_MspInit(TIM_HandleTypeDef *htim) {
-    if (htim->Instance == Encoder1.TIM) {
+    if (htim->Instance == EncoderLeft.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AFx_TIMy(Encoder1.TIM),
+            .Alternate = GPIO_AFx_TIMy(EncoderLeft.TIM),
         };
-        GPIO_InitPin(&GPIO, Encoder1.GPIOxPiny[0]);
-        GPIO_InitPin(&GPIO, Encoder1.GPIOxPiny[1]);
+        GPIO_InitPin(&GPIO, EncoderLeft.GPIOxPiny[0]);
+        GPIO_InitPin(&GPIO, EncoderLeft.GPIOxPiny[1]);
 
-    } else if (htim->Instance == Encoder2.TIM) {
+    } else if (htim->Instance == EncoderRight.TIM) {
         __HAL_RCC_TIMx_CLK_ENABLE(htim->Instance);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AFx_TIMy(Encoder2.TIM),
+            .Alternate = GPIO_AFx_TIMy(EncoderRight.TIM),
         };
-        GPIO_InitPin(&GPIO, Encoder2.GPIOxPiny[0]);
-        GPIO_InitPin(&GPIO, Encoder2.GPIOxPiny[1]);
+        GPIO_InitPin(&GPIO, EncoderRight.GPIOxPiny[0]);
+        GPIO_InitPin(&GPIO, EncoderRight.GPIOxPiny[1]);
     }
 }
 

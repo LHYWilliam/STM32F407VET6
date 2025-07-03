@@ -17,7 +17,7 @@ typedef struct {
     uint32_t IN1_ODR;
     uint32_t IN2_ODR;
 
-    uint16_t Range;
+    uint32_t Range;
     FunctionalState Invert;
 
     PWM_t *_PWM;
@@ -25,6 +25,6 @@ typedef struct {
 } Motor_t;
 
 void Motor_Init(Motor_t *Self);
-void Motor_SetSpeed(Motor_t *Self, int16_t Speed);
+void Motor_SetSpeed(Motor_t *Self, int32_t Speed);
 
 #endif

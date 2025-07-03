@@ -15,9 +15,9 @@
 #include "Serial.h"
 #include "Servo.h"
 
-extern LED_t LED1;
-extern LED_t LED2;
-extern LED_t LED3;
+extern LED_t LEDRed;
+extern LED_t LEDGreen;
+extern LED_t LEDBlue;
 
 extern Key_t Key1;
 extern Key_t Key2;
@@ -31,11 +31,11 @@ extern Serial_t Serial3;
 extern Servo_t Servo1;
 extern Servo_t Servo2;
 
-extern Encoder_t Encoder1;
-extern Encoder_t Encoder2;
+extern Encoder_t EncoderLeft;
+extern Encoder_t EncoderRight;
 
-extern Motor_t Motor1;
-extern Motor_t Motor2;
+extern Motor_t MotorLeft;
+extern Motor_t MotorRight;
 
 extern Sampler_t Sampler;
 
@@ -45,6 +45,115 @@ extern GWGray_t GWGray;
 extern uint32_t ADC_Data[];
 
 void vMainTaskCode(void *pvParameters) {
+    // ----------------- Serial Test ----------------- //
+    // for (;;) {
+    //     Serial_Printf(&Serial1, "Hello from Serial1\n");
+    //     Serial_Printf(&Serial2, "Hello from Serial2\n");
+    //     Serial_Printf(&Serial3, "Hello from Serial3\n");
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- Key Test ---------------- //
+    // for (;;) {
+    //     if (Key_IsPressing(&Key1)) {
+    //         printf("Key1 is pressing\n");
+    //     }
+    //     if (Key_IsPressing(&Key2)) {
+    //         printf("Key2 is pressing\n");
+    //     }
+    //     if (Key_IsPressing(&Key3)) {
+    //         printf("Key3 is pressing\n");
+    //     }
+    //     if (Key_IsPressing(&Key4)) {
+    //         printf("Key4 is pressing\n");
+    //     }
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- LED Test ---------------- //
+    // for (;;) {
+    //     if (Key_IsPressing(&Key1)) {
+    //         LED_On(&LEDRed);
+    //     } else {
+    //         LED_Off(&LEDRed);
+    //     }
+    //     if (Key_IsPressing(&Key2)) {
+    //         LED_On(&LEDGreen);
+    //     } else {
+    //         LED_Off(&LEDGreen);
+    //     }
+    //     if (Key_IsPressing(&Key3)) {
+    //         LED_On(&LEDBlue);
+    //     } else {
+    //         LED_Off(&LEDBlue);
+    //     }
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- Motor Test ---------------- //
+    // Motor_SetSpeed(&MotorLeft, 1000);
+    // Motor_SetSpeed(&MotorRight, -1000);
+
+    // ---------------- Encoder Test ---------------- //
+    // Motor_SetSpeed(&MotorLeft, 100);
+    // Motor_SetSpeed(&MotorRight, -100);
+    // for (;;) {
+    //     int16_t Count1 = Encoder_GetCounter(&EncoderLeft);
+    //     int16_t Count2 = Encoder_GetCounter(&EncoderRight);
+
+    //     printf("Count1: %d, Count2: %d\n", Count1, Count2);
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ----------------  Servo Test ---------------- //
+    // for (;;) {
+    //     for (uint8_t i = 0; i < 60; i++) {
+    //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo1, 2, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo2, 3, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo2, 4, 45. + 90. / 60 * i);
+    //         vTaskDelay(pdMS_TO_TICKS(100));
+    //     }
+    //     for (uint8_t i = 60; i > 0; i--) {
+    //         Servo_SetAngle180(&Servo1, 1, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo1, 2, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo2, 3, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo2, 4, 135. - 90. / 60 * (60 - i));
+    //         vTaskDelay(pdMS_TO_TICKS(100));
+    //     }
+    // }
+
+    // ---------------- ICM42688 Test ---------------- //
+    // float YawPitchRoll[3];
+    // for (;;) {
+    //     ICM42688_AHRS_Update(&ICM42688);
+
+    //     if (ICM42688.CalibrationFinished == RESET) {
+    //         vTaskDelay(pdMS_TO_TICKS(10));
+    //         continue;
+    //     }
+
+    //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
+
+    //     printf(" Yaw, Pitch, Roll: %6.2f, %6.2f, %6.2f\n", YawPitchRoll[0],
+    //            YawPitchRoll[1], YawPitchRoll[2]);
+
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
+    // ---------------- Gray PID Test ---------------- //
+    // for (;;) {
+    //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
+
+    //     printf("%d\n", Error);
+
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
     //////////////////// K230 Test ///////////////////
     // Servo_SetAngle180(&Servo, 1, 110.);
     // Servo_SetAngle270(&Servo, 2, 135.);
@@ -66,97 +175,6 @@ void vMainTaskCode(void *pvParameters) {
     //     }
 
     //     vTaskDelay(pdMS_TO_TICKS(1));
-    // }
-
-    /////////////// ICM42688 Test ////////////////////////
-    // float YawPitchRoll[3];
-    // for (;;) {
-    //     ICM42688_AHRS_Update(&ICM42688);
-
-    //     if (ICM42688.CalibrationFinished == RESET) {
-    //         vTaskDelay(pdMS_TO_TICKS(10));
-    //         continue;
-    //     }
-
-    //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
-
-    //     printf(" Yaw, Pitch, Roll: %6.2f, %6.2f, %6.2f\n", YawPitchRoll[0],
-    //            YawPitchRoll[1], YawPitchRoll[2]);
-
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
-
-    ////////////// GrayScacleSensor Test ///////////////////////
-    // uint8_t Data[8];
-    // for (;;) {
-    //     GWGray_ReadAnalog(&GWGray, Data);
-
-    //     printf("%3d, %3d, %3d, %3d, %3d, %3d, %3d, %3d\n", Data[0], Data[1],
-    //            Data[2], Data[3], Data[4], Data[5], Data[6], Data[7]);
-
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    //////// Gray PID Test //////////////////
-    // for (;;) {
-    //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
-
-    //     printf("%d\n", Error);
-
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    /////////////////////////  Servo Test ///////////////////////////////
-    // for (;;) {
-    //     for (uint8_t i = 0; i < 60; i++) {
-    //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
-    //         Servo_SetAngle180(&Servo1, 2, 45. + 90. / 60 * i);
-    //         Servo_SetAngle180(&Servo2, 3, 45. + 90. / 60 * i);
-    //         Servo_SetAngle180(&Servo2, 4, 45. + 90. / 60 * i);
-    //         vTaskDelay(pdMS_TO_TICKS(100));
-    //     }
-    //     for (uint8_t i = 60; i > 0; i--) {
-    //         Servo_SetAngle180(&Servo1, 1, 135. - 90. / 60 * (60 - i));
-    //         Servo_SetAngle180(&Servo1, 2, 135. - 90. / 60 * (60 - i));
-    //         Servo_SetAngle180(&Servo2, 3, 135. - 90. / 60 * (60 - i));
-    //         Servo_SetAngle180(&Servo2, 4, 135. - 90. / 60 * (60 - i));
-    //         vTaskDelay(pdMS_TO_TICKS(100));
-    //     }
-    // }
-
-    /////////////////////// Encoder Test//////////////////////////
-    // for (;;) {
-    //     int16_t Count1 = Encoder_GetCounter(&Encoder1);
-    //     int16_t Count2 = Encoder_GetCounter(&Encoder2);
-
-    //     printf("Count1: %d, Count2: %d\n", Count1, Count2);
-
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    ///////////////// Motor Test /////////////////
-    // for (;;) {
-    //     for (int16_t i = -Motor1.Range; i < Motor1.Range; i++) {
-    //         Motor_SetSpeed(&Motor1, i);
-    //         Motor_SetSpeed(&Motor2, i);
-
-    //         vTaskDelay(pdMS_TO_TICKS(1));
-    //     }
-    //     for (int16_t i = Motor1.Range; i > -Motor1.Range; i--) {
-    //         Motor_SetSpeed(&Motor1, i);
-    //         Motor_SetSpeed(&Motor2, i);
-
-    //         vTaskDelay(pdMS_TO_TICKS(1));
-    //     }
-    // }
-
-    //////////// Serial Test //////////////////
-    // for (;;) {
-    //     Serial_Printf(&Serial1, "Hello from Serial1\n");
-    //     Serial_Printf(&Serial2, "Hello from Serial2\n");
-    //     Serial_Printf(&Serial3, "Hello from Serial3\n");
-
-    //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
     ////////////// Sampler Test /////////////////////

@@ -33,8 +33,8 @@ void Motor_Init(Motor_t *Self) {
         PWM_Init(Self->_PWM);
     }
 }
-void Motor_SetSpeed(Motor_t *Self, int16_t Speed) {
-    PWM_SetSetCompare(Self->_PWM, Self->Channel, Speed);
+void Motor_SetSpeed(Motor_t *Self, int32_t Speed) {
+    PWM_SetSetCompare(Self->_PWM, Self->Channel, Speed >= 0 ? Speed : -Speed);
     GPIO_Write(Self->IN1_ODR, Speed >= 0 ? Self->Invert : !Self->Invert);
     GPIO_Write(Self->IN2_ODR, Speed >= 0 ? !Self->Invert : Self->Invert);
 }
