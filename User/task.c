@@ -24,9 +24,10 @@ extern Key_t Key2;
 extern Key_t Key3;
 extern Key_t Key4;
 
-extern Serial_t Serial1;
-extern Serial_t Serial2;
-extern Serial_t Serial3;
+extern Serial_t SerialBoard;
+extern Serial_t SerialBluetooth;
+extern Serial_t SerialK230;
+extern Serial_t SerialJY61P;
 
 extern Servo_t Servo1;
 extern Servo_t Servo2;
@@ -46,13 +47,14 @@ extern uint32_t ADC_Data[];
 
 void vMainTaskCode(void *pvParameters) {
     // ----------------- Serial Test ----------------- //
-    // for (;;) {
-    //     Serial_Printf(&Serial1, "Hello from Serial1\n");
-    //     Serial_Printf(&Serial2, "Hello from Serial2\n");
-    //     Serial_Printf(&Serial3, "Hello from Serial3\n");
+    for (;;) {
+        Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
+        Serial_Printf(&SerialBluetooth, "Hello from SerialBluetooth\n");
+        Serial_Printf(&SerialK230, "Hello from SerialK230\n");
+        Serial_Printf(&SerialJY61P, "Hello from SerialJY61P\n");
 
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
 
     // ---------------- Key Test ---------------- //
     // for (;;) {

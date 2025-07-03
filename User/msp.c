@@ -9,9 +9,10 @@
 #include "TIM.h"
 #include "Timer.h"
 
-extern Serial_t Serial1;
-extern Serial_t Serial2;
-extern Serial_t Serial3;
+extern Serial_t SerialBoard;
+extern Serial_t SerialBluetooth;
+extern Serial_t SerialK230;
+extern Serial_t SerialJY61P;
 
 extern Encoder_t EncoderLeft;
 extern Encoder_t EncoderRight;
@@ -29,62 +30,81 @@ void HAL_MspInit(void) {
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-    if (huart->Instance == Serial1.USART) {
-        __HAL_RCC_USARTx_CLK_ENABLE(Serial1.USART);
+    if (huart->Instance == SerialBoard.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(SerialBoard.USART);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(Serial1.USART),
+            .Alternate = GPIO_AF7_USARTx(SerialBoard.USART),
         };
-        if (*Serial1.TX) {
-            GPIO_InitPin(&GPIO, Serial1.TX);
+        if (*SerialBoard.TX) {
+            GPIO_InitPin(&GPIO, SerialBoard.TX);
         }
-        if (*Serial1.RX) {
-            GPIO_InitPin(&GPIO, Serial1.RX);
+        if (*SerialBoard.RX) {
+            GPIO_InitPin(&GPIO, SerialBoard.RX);
         }
 
-        if (Serial1.RxIT) {
-            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial1.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial1.USART), Serial1.Priority,
-                                 0);
+        if (SerialBoard.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(SerialBoard.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(SerialBoard.USART),
+                                 SerialBoard.Priority, 0);
         }
-    } else if (huart->Instance == Serial2.USART) {
-        __HAL_RCC_USARTx_CLK_ENABLE(Serial2.USART);
+    } else if (huart->Instance == SerialBluetooth.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(SerialBluetooth.USART);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(Serial2.USART),
+            .Alternate = GPIO_AF7_USARTx(SerialBluetooth.USART),
         };
-        if (*Serial2.TX) {
-            GPIO_InitPin(&GPIO, Serial2.TX);
+        if (*SerialBluetooth.TX) {
+            GPIO_InitPin(&GPIO, SerialBluetooth.TX);
         }
-        if (*Serial2.RX) {
-            GPIO_InitPin(&GPIO, Serial2.RX);
+        if (*SerialBluetooth.RX) {
+            GPIO_InitPin(&GPIO, SerialBluetooth.RX);
         }
 
-        if (Serial2.RxIT) {
-            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial2.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial2.USART), Serial2.Priority,
-                                 0);
+        if (SerialBluetooth.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(SerialBluetooth.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(SerialBluetooth.USART),
+                                 SerialBluetooth.Priority, 0);
         }
-    } else if (huart->Instance == Serial3.USART) {
-        __HAL_RCC_USARTx_CLK_ENABLE(Serial3.USART);
+    } else if (huart->Instance == SerialK230.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(SerialK230.USART);
 
         GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(Serial3.USART),
+            .Alternate = GPIO_AF7_USARTx(SerialK230.USART),
         };
-        if (*Serial3.TX) {
-            GPIO_InitPin(&GPIO, Serial3.TX);
+        if (*SerialK230.TX) {
+            GPIO_InitPin(&GPIO, SerialK230.TX);
         }
-        if (*Serial3.RX) {
-            GPIO_InitPin(&GPIO, Serial3.RX);
+        if (*SerialK230.RX) {
+            GPIO_InitPin(&GPIO, SerialK230.RX);
         }
 
-        if (Serial3.RxIT) {
-            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial3.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial3.USART), Serial3.Priority,
-                                 0);
+        if (SerialK230.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(SerialK230.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(SerialK230.USART),
+                                 SerialK230.Priority, 0);
+        }
+    } else if (huart->Instance == SerialJY61P.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(SerialJY61P.USART);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AF7_USARTx(SerialJY61P.USART),
+        };
+        if (*SerialJY61P.TX) {
+            GPIO_InitPin(&GPIO, SerialJY61P.TX);
+        }
+        if (*SerialJY61P.RX) {
+            GPIO_InitPin(&GPIO, SerialJY61P.RX);
+        }
+
+        if (SerialJY61P.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(SerialJY61P.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(SerialJY61P.USART),
+                                 SerialJY61P.Priority, 0);
         }
     }
 }

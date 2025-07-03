@@ -53,7 +53,7 @@ Key_t Key4 = {
     .Mode = KeyMode_PullUp,
 };
 
-Serial_t Serial1 = {
+Serial_t SerialBoard = {
     .USART = USART1,
     .TX = A9,
     .RX = A10,
@@ -61,20 +61,27 @@ Serial_t Serial1 = {
     .Default = ENABLE,
 };
 
-Serial_t Serial2 = {
-    .USART = UART4,
-    .TX = C10,
-    .RX = C11,
-    .Baudrate = 115200,
+Serial_t SerialBluetooth = {
+    .USART = USART2,
+    .TX = D5,
+    .RX = D6,
+    .Baudrate = 9600,
     .RxIT = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
 };
 
-Serial_t Serial3 = {
+Serial_t SerialK230 = {
     .USART = USART3,
     .TX = D8,
     .RX = D9,
+    .Baudrate = 115200,
+};
+
+Serial_t SerialJY61P = {
+    .USART = UART4,
+    .TX = C11,
+    .RX = C10,
     .Baudrate = 115200,
 };
 
@@ -200,9 +207,10 @@ int main() {
     Key_Init(&Key3);
     Key_Init(&Key4);
 
-    Serial_Init(&Serial1);
-    Serial_Init(&Serial2);
-    Serial_Init(&Serial3);
+    Serial_Init(&SerialBoard);
+    Serial_Init(&SerialBluetooth);
+    Serial_Init(&SerialK230);
+    Serial_Init(&SerialJY61P);
 
     Servo_Init(&Servo1);
     Servo_Init(&Servo2);
