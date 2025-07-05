@@ -404,6 +404,16 @@
               <FileType>1</FileType>
               <FilePath>.\User\interrupt.c</FilePath>
             </File>
+            <File>
+              <FileName>define.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\define.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\User\main.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -72,6 +72,8 @@ project:
         - file: User/task.c
         - file: User/msp.c
         - file: User/interrupt.c
+        - file: User/define.c
+        - file: User/main.h
     - group: System
       files:
         - file: System/GPIO.c

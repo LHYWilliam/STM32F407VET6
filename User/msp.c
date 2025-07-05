@@ -1,28 +1,4 @@
-#include "RTE_Components.h"
-#include CMSIS_device_header
-
-#include "Encoder.h"
-#include "ICM42688.h"
-#include "PWM.h"
-#include "Sampler.h"
-#include "Serial.h"
-#include "TIM.h"
-#include "Timer.h"
-
-extern Serial_t SerialBoard;
-extern Serial_t SerialBluetooth;
-extern Serial_t SerialK230;
-extern Serial_t SerialJY61P;
-
-extern Encoder_t EncoderLeft;
-extern Encoder_t EncoderRight;
-
-extern PWM_t ServoPWM;
-extern PWM_t MotorPWM;
-
-extern Sampler_t Sampler;
-
-extern ICM42688_t ICM42688;
+#include "main.h"
 
 void HAL_MspInit(void) {
     __HAL_RCC_SYSCFG_CLK_ENABLE();

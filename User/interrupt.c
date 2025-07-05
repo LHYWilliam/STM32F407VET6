@@ -1,10 +1,4 @@
-#include "RTE_Components.h"
-#include CMSIS_device_header
-
-#include "Serial.h"
-
-extern Serial_t SerialBoard;
-extern Serial_t SerialBluetooth;
+#include "main.h"
 
 void USART1_IRQHandler() { HAL_UART_IRQHandler(&SerialBoard.Handler); }
 
