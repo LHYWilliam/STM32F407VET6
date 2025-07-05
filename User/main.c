@@ -19,44 +19,44 @@
 #include "Servo.h"
 
 LED_t LEDRed = {
-    .GPIOxPiny = D11,
+    .GPIOxPiny = PD11,
     .Mode = LEDMode_PullUp,
 };
 
 LED_t LEDGreen = {
-    .GPIOxPiny = D12,
+    .GPIOxPiny = PD12,
     .Mode = LEDMode_PullUp,
 };
 
 LED_t LEDBlue = {
-    .GPIOxPiny = D13,
+    .GPIOxPiny = PD13,
     .Mode = LEDMode_PullUp,
 };
 
 Key_t Key1 = {
-    .GPIOxPiny = E14,
+    .GPIOxPiny = PE14,
     .Mode = KeyMode_PullUp,
 };
 
 Key_t Key2 = {
-    .GPIOxPiny = E15,
+    .GPIOxPiny = PE15,
     .Mode = KeyMode_PullUp,
 };
 
 Key_t Key3 = {
-    .GPIOxPiny = B12,
+    .GPIOxPiny = PB12,
     .Mode = KeyMode_PullUp,
 };
 
 Key_t Key4 = {
-    .GPIOxPiny = B13,
+    .GPIOxPiny = PB13,
     .Mode = KeyMode_PullUp,
 };
 
 Serial_t SerialBoard = {
     .USART = USART1,
-    .TX = A9,
-    .RX = A10,
+    .TX = PA9,
+    .RX = PA10,
     .Baudrate = 115200,
     .Default = ENABLE,
     .RxIT = ENABLE,
@@ -66,8 +66,8 @@ Serial_t SerialBoard = {
 
 Serial_t SerialBluetooth = {
     .USART = USART2,
-    .TX = D5,
-    .RX = D6,
+    .TX = PD5,
+    .RX = PD6,
     .Baudrate = 9600,
     .RxIT = ENABLE,
     .RxITSize = 1,
@@ -76,15 +76,15 @@ Serial_t SerialBluetooth = {
 
 Serial_t SerialK230 = {
     .USART = USART3,
-    .TX = D8,
-    .RX = D9,
+    .TX = PD8,
+    .RX = PD9,
     .Baudrate = 115200,
 };
 
 Serial_t SerialJY61P = {
     .USART = UART4,
-    .TX = C11,
-    .RX = C10,
+    .TX = PC11,
+    .RX = PC10,
     .Baudrate = 115200,
 };
 
@@ -93,7 +93,7 @@ PWM_t ServoPWM;
 Servo_t Servo1 = {
     .TIMx = TIM8,
     .Channel = {1, 2},
-    .GPIOxPiny = {C6, C7},
+    .GPIOxPiny = {PC6, PC7},
     .PWM = &ServoPWM,
     .PWM_Init = DISABLE,
 };
@@ -101,7 +101,7 @@ Servo_t Servo1 = {
 Servo_t Servo2 = {
     .TIMx = TIM8,
     .Channel = {3, 4},
-    .GPIOxPiny = {C8, C9},
+    .GPIOxPiny = {PC8, PC9},
     .PWM = &ServoPWM,
     .PWM_Init = ENABLE,
 };
@@ -109,13 +109,13 @@ Servo_t Servo2 = {
 Encoder_t EncoderLeft = {
     .TIM = TIM4,
     .Channel = {1, 2},
-    .GPIOxPiny = {B6, B7},
+    .GPIOxPiny = {PB6, PB7},
 };
 
 Encoder_t EncoderRight = {
     .TIM = TIM3,
     .Channel = {1, 2},
-    .GPIOxPiny = {B4, B5},
+    .GPIOxPiny = {PB4, PB5},
 };
 
 PWM_t MotorPWM;
@@ -123,9 +123,9 @@ PWM_t MotorPWM;
 Motor_t MotorLeft = {
     .TIMx = TIM1,
     .Channel = 2,
-    .PWM = E11,
-    .IN1 = E10,
-    .IN2 = E12,
+    .PWM = PE11,
+    .IN1 = PE10,
+    .IN2 = PE12,
     .Range = 10000,
     ._PWM = &MotorPWM,
     .Invert = ENABLE,
@@ -135,9 +135,9 @@ Motor_t MotorLeft = {
 Motor_t MotorRight = {
     .TIMx = TIM1,
     .Channel = 1,
-    .PWM = E9,
-    .IN1 = E8,
-    .IN2 = E7,
+    .PWM = PE9,
+    .IN1 = PE8,
+    .IN2 = PE7,
     .Range = 10000,
     ._PWM = &MotorPWM,
     .PWM_Init = ENABLE,
@@ -158,7 +158,7 @@ Sampler_t Sampler = {
                     4,
                     5,
                 },
-            .GPIOxPiny = {A3, A4, A5},
+            .GPIOxPiny = {PA3, PA4, PA5},
         },
     .DMA =
         {
@@ -175,15 +175,15 @@ Sampler_t Sampler = {
 
 ICM42688_t ICM42688 = {
     .SPIx = SPI2,
-    .SCLK = B10,
-    .MISO = C2,
-    .MOSI = C3,
-    .CS = C1,
+    .SCLK = PB10,
+    .MISO = PC2,
+    .MOSI = PC3,
+    .CS = PC1,
 };
 
 GWGray_t GWGray = {
-    .SCL = B8,
-    .SDA = B9,
+    .SCL = PB8,
+    .SDA = PB9,
     .DevAddr = 0x4C,
 };
 

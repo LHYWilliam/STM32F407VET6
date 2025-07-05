@@ -108,6 +108,16 @@ project:
         - file: Hardware/GWGray/GWGray.h
         - file: Hardware/GWGray/GWGray_I2C.c
         - file: Hardware/GWGray/GWGray_I2C.h
+        - file: Hardware/OLED/Menu.c
+        - file: Hardware/OLED/Menu.h
+        - file: Hardware/OLED/OLED.c
+        - file: Hardware/OLED/OLED.h
+        - file: Hardware/OLED/OLED_Font.c
+        - file: Hardware/OLED/OLED_Font.h
+        - file: Hardware/OLED/OLED_I2C.c
+        - file: Hardware/OLED/OLED_I2C.h
+        - file: Hardware/OLED/OLED_SPI.c
+        - file: Hardware/OLED/OLED_SPI.h
     - group: Util
       files:
         - file: Util/Timer.c

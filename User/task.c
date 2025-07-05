@@ -1,5 +1,4 @@
 #include "FreeRTOS.h"
-#include "pid.h"
 #include "timers.h"
 
 #include <stdint.h>
@@ -47,25 +46,57 @@ extern GWGray_t GWGray;
 
 extern uint32_t ADC_Data[];
 
-const float EncoderToPWM = 10000. / 183.;
+const float EncoderLeftToPWM = 10000. / 183.;
+const float EncoderRightToPWM = 10000. / 194.;
 
 PID_t MotorLeftSpeedPID = {
-    .Kp = 4,
-    .Ki = 20,
+    .Kp = 2,
+    .Ki = 12,
     .IMax = 10000,
-
 };
 
 // .Kd = 0.001,
 
 PID_t MotorRightSpeedPID = {
-    .Kp = 4,
-    .Ki = 20,
+    .Kp = 2,
+    .Ki = 12,
     .IMax = 10000,
 
 };
 
+PID_t GrayPID = {
+    .Kp = -3,
+    .Ki = -1,
+    .IMax = 512,
+};
+
 void vMainTaskCode(void *pvParameters) {
+    // int16_t BaseSpeed = 500;
+
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+
+    // for (;;) {
+    //     int16_t CounterLeft = Encoder_GetCounter(&EncoderLeft);
+    //     int16_t CounterRight = Encoder_GetCounter(&EncoderRight);
+
+    //     int16_t GrayError = GWGray_CaculateAnalogError(&GWGray);
+    //     int16_t GrayDiffSpeed = PID_Caculate(&GrayPID, GrayError);
+
+    //     int16_t LeftOut = PID_Caculate(&MotorLeftSpeedPID,
+    //                                    BaseSpeed + GrayDiffSpeed -
+    //                                        CounterLeft * EncoderLeftToPWM);
+    //     int16_t RightOut = PID_Caculate(&MotorRightSpeedPID,
+    //                                     BaseSpeed - GrayDiffSpeed -
+    //                                         CounterRight *
+    //                                         EncoderRightToPWM);
+
+    //     Motor_SetSpeed(&MotorLeft, LeftOut);
+    //     Motor_SetSpeed(&MotorRight, RightOut);
+
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
     // ----------------- Serial Test ----------------- //
     // for (;;) {
     //     Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
@@ -120,8 +151,10 @@ void vMainTaskCode(void *pvParameters) {
     // Motor_SetSpeed(&MotorRight, -1000);
 
     // ---------------- Encoder Test ---------------- //
-    // Motor_SetSpeed(&MotorLeft, 0);
-    // Motor_SetSpeed(&MotorRight, 0);
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+    // Motor_SetSpeed(&MotorLeft, 10000);
+    // Motor_SetSpeed(&MotorRight, 10000);
     // for (;;) {
     //     int16_t CountLeft = Encoder_GetCounter(&EncoderLeft);
     //     int16_t CountRight = Encoder_GetCounter(&EncoderRight);
@@ -177,18 +210,21 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     // ----------------- MotorSpeedPID Test ----------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+
     // int16_t TargetSpeed = 0;
-    // Motor_SetSpeed(&MotorRight, TargetSpeed);
+    // Motor_SetSpeed(&MotorLeft, TargetSpeed);
 
     // for (;;) {
-    //     int16_t Count = Encoder_GetCounter(&EncoderRight);
-    //     float Error = TargetSpeed - Count * EncoderToPWM;
-    //     int16_t Out = PID_Caculate(&MotorSpeedPID, Error);
+    //     int16_t Count = Encoder_GetCounter(&EncoderLeft);
+    //     float Error = TargetSpeed - Count * EncoderLeftToPWM;
+    //     int16_t Out = PID_Caculate(&MotorLeftSpeedPID, Error);
 
-    //     Motor_SetSpeed(&MotorRight, Out);
+    //     Motor_SetSpeed(&MotorLeft, Out);
 
     //     printf("Target, Real, Error, Out: %d, %d, %d, %d\n", TargetSpeed,
-    //            (int16_t)(Count * EncoderToPWM), (int16_t)Error, Out);
+    //            (int16_t)(Count * EncoderLeftToPWM), (int16_t)Error, Out);
 
     //     if (SerialBoard.RecieveFlag == SET) {
     //         TargetSpeed = SerialBoard.HexData[0] << 8 |
@@ -230,6 +266,13 @@ void vMainTaskCode(void *pvParameters) {
 
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
+
+    // -------- OLED Test -------- //
+    for (;;) {
+        LED_Toggle(&LEDRed);
+
+        vTaskDelay(pdMS_TO_TICKS(100));
+    }
 
     for (;;) {
         vTaskDelay(pdMS_TO_TICKS(1));

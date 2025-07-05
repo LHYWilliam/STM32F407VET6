@@ -24,7 +24,7 @@ void ICM42688_AHRS_Init(ICM42688_t *Self) {
     Self->q[2] = 0.0f;
     Self->q[3] = 0.0f;
 
-    Self->Now = Time_Getus() / 100;
+    Self->Now = Time_Getms();
     Self->LastUpdate = Self->Now;
 }
 
@@ -116,11 +116,11 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self) {
     float q2q3 = Self->q[2] * Self->q[3];
     float q3q3 = Self->q[3] * Self->q[3];
 
-    Self->Now = Time_Getus() / 100;
+    Self->Now = Time_Getms();
     if (Self->Now < Self->LastUpdate) {
-        halfT = ((float)(Self->Now + (0xffff - Self->LastUpdate)) / 20000.0f);
+        halfT = ((float)(Self->Now + (0xffff - Self->LastUpdate)) / 2000.0f);
     } else {
-        halfT = ((float)(Self->Now - Self->LastUpdate) / 20000.0f);
+        halfT = ((float)(Self->Now - Self->LastUpdate) / 2000.0f);
     }
     Self->LastUpdate = Self->Now;
 

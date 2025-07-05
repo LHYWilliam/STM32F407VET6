@@ -574,6 +574,56 @@
               <FileType>5</FileType>
               <FilePath>.\Hardware\GWGray\GWGray_I2C.h</FilePath>
             </File>
+            <File>
+              <FileName>Menu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\Menu.c</FilePath>
+            </File>
+            <File>
+              <FileName>Menu.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\Menu.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED_Font.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Font.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED_Font.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_I2C.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED_I2C.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_I2C.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED_I2C.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Hardware\OLED\OLED_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_SPI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Hardware\OLED\OLED_SPI.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
