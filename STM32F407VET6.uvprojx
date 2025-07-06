@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\GWGray;.\Hardware\ICM42688</IncludePath>
+              <IncludePath>.\Util;.\User;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\GWGray;.\Hardware\ICM42688</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,6 +413,26 @@
               <FileName>main.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\User\main.h</FilePath>
+            </File>
+            <File>
+              <FileName>Click.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\Menu\Click.c</FilePath>
+            </File>
+            <File>
+              <FileName>Rotation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\Menu\Rotation.c</FilePath>
+            </File>
+            <File>
+              <FileName>Show.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\Menu\Show.c</FilePath>
+            </File>
+            <File>
+              <FileName>Update.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\User\Menu\Update.c</FilePath>
             </File>
           </Files>
         </Group>

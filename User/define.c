@@ -1,23 +1,4 @@
-#include "RTE_Components.h"
-#include CMSIS_device_header
-
-#include "FreeRTOS.h"
-#include "task.h"
-#include "timers.h"
-
-#include <stdio.h>
-
-#include "Encoder.h"
-#include "GWGray.h"
-#include "ICM42688.h"
-#include "Key.h"
-#include "LED.h"
-#include "Motor.h"
-#include "OLED.h"
-#include "PWM.h"
-#include "Sampler.h"
-#include "Serial.h"
-#include "Servo.h"
+#include "main.h"
 
 LED_t LEDRed = {
     .GPIOxPiny = PD11,
@@ -199,8 +180,91 @@ ICM42688_t ICM42688 = {
 TaskHandle_t xMainTaskHandle;
 void vMainTaskCode(void *pvParameters);
 
+TaskHandle_t xMenuInteractionTaskHandle;
+void vMenuInteractionTaskCode(void *pvParameters);
+
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
 
+TimerHandle_t vOLEDTimer;
+void vOLEDTimerCallback(TimerHandle_t pxTimer);
+
 void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
                         uint16_t PLLQ);
+
+#define TextPage_Back(title)                                                   \
+    (TextPage_t) {                                                             \
+        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
+    }
+
+TextMenu_t TextMenu;
+
+SelectioneBar_t Bar;
+
+TextPage_t SettingPage = {
+    .Title = "Setting",
+    .ShowCallback = TextPage_ShowCallback,
+    .UpdateCallback = TextPage_UpdateCallback,
+    .NumOfLowerPages = 13,
+    .LowerPages =
+        (TextPage_t[]){
+            TextPage_Back("<"),
+            (TextPage_t){
+                .Title = "1. SADSADASDASD",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "2. dsfdsafsd ",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "3. adsfasdf asdf",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "4. dsafawefasfsd",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "5. fdhsrtgfdv",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "6. fvfrefdfd",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "7. SADSADASDASD",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "8. dsfdsafsd ",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "9. adsfasdf asdf",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "10. dsafawefasfsd",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "11. fdhsrtgfdv",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+            (TextPage_t){
+                .Title = "12. fvfrefdfd",
+                .RotationCallback = TextPage_CursorCallback,
+            },
+        },
+};
+
+void TextPage_BackCallback(void *pvParameters);
+void TextPage_EnterCallback(void *pvParameters);
+
+void TextPage_CursorCallback(int16_t Encoder);
+
+void TextPage_ShowCallback(void *pvParameters);
+
+void TextPage_UpdateCallback(void *pvParameters);

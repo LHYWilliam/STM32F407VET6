@@ -11,8 +11,54 @@ void OLED_HWI2C_WriteDatas(OLED_t *Self, uint8_t *Data, uint16_t Length);
 void OLED_HWI2C_WriteCommand(OLED_t *Self, uint8_t Command);
 void OLED_HWI2C_WriteCommands(OLED_t *Self, uint8_t *Command, uint16_t Length);
 
-#define OLED_WriteSCL(Self, x) GPIO_Write(Self->SCL_ODR, x)
-#define OLED_WriteSDA(Self, x) GPIO_Write(Self->SDA_ODR, x)
+void OLED_WriteSCL(OLED_t *Self, uint8_t x) {
+    GPIO_Write(Self->SCL_ODR, x);
+
+    {
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+    }
+}
+void OLED_WriteSDA(OLED_t *Self, uint8_t x) {
+    GPIO_Write(Self->SDA_ODR, x);
+
+    {
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+        __NOP();
+    }
+}
 
 void OLED_SWI2C_Init(OLED_t *Self) {
     GPIO_t GPIO;
@@ -28,48 +74,29 @@ void OLED_SWI2C_Init(OLED_t *Self) {
     Self->OLED_WriteCommands = OLED_SWI2C_WriteCommands;
 }
 
-void OLED_SWI2C_Delay() {
-    // Time_Delayus(1);
-
-    static volatile uint8_t i;
-
-    i = 2;
-    while (i--)
-        ;
-}
-
 void OLED_SWI2C_Start(OLED_t *Self) {
     OLED_WriteSDA(Self, 1);
     OLED_WriteSCL(Self, 1);
-    // OLED_SWI2C_Delay();
     OLED_WriteSDA(Self, 0);
-    OLED_SWI2C_Delay(); // DO NOT REMOVE
     OLED_WriteSCL(Self, 0);
-    // OLED_SWI2C_Delay();
 }
 
 void OLED_SWI2C_Stop(OLED_t *Self) {
     OLED_WriteSDA(Self, 0);
     OLED_WriteSCL(Self, 1);
-    // OLED_SWI2C_Delay();
     OLED_WriteSDA(Self, 1);
 }
 
 void OLED_I2C_WaitAck(OLED_t *Self) {
     OLED_WriteSDA(Self, 1);
-    // OLED_SWI2C_Delay();
     OLED_WriteSCL(Self, 1);
-    OLED_SWI2C_Delay(); // DO NOT REMOVE
     OLED_WriteSCL(Self, 0);
-    // OLED_SWI2C_Delay();
 }
 
 void OLED_SWI2C_WriteByte(OLED_t *Self, uint8_t Byte) {
     for (uint8_t i = 0; i < 8; i++) {
         OLED_WriteSDA(Self, Byte & (0x80 >> i));
-        OLED_SWI2C_Delay(); // DO NOT REMOVE
         OLED_WriteSCL(Self, 1);
-        OLED_SWI2C_Delay(); // DO NOT REMOVE
         OLED_WriteSCL(Self, 0);
     }
     OLED_WriteSCL(Self, 1);
@@ -79,12 +106,9 @@ void OLED_SWI2C_WriteByte(OLED_t *Self, uint8_t Byte) {
 void OLED_SWI2C_WriteData(OLED_t *Self, uint8_t Data, uint16_t Length) {
     OLED_SWI2C_Start(Self);
     OLED_SWI2C_WriteByte(Self, 0x78);
-    OLED_I2C_WaitAck(Self);
     OLED_SWI2C_WriteByte(Self, 0x40);
-    OLED_I2C_WaitAck(Self);
     for (uint16_t i = 0; i < Length; i++) {
         OLED_SWI2C_WriteByte(Self, Data);
-        OLED_I2C_WaitAck(Self);
     }
     OLED_SWI2C_Stop(Self);
 }
@@ -92,12 +116,9 @@ void OLED_SWI2C_WriteData(OLED_t *Self, uint8_t Data, uint16_t Length) {
 void OLED_SWI2C_WriteDatas(OLED_t *Self, uint8_t *Datas, uint16_t Length) {
     OLED_SWI2C_Start(Self);
     OLED_SWI2C_WriteByte(Self, 0x78);
-    OLED_I2C_WaitAck(Self); // DO NOT REMOVE
     OLED_SWI2C_WriteByte(Self, 0x40);
-    OLED_I2C_WaitAck(Self); // DO NOT REMOVE
     for (uint16_t i = 0; i < Length; i++) {
         OLED_SWI2C_WriteByte(Self, Datas[i]);
-        OLED_I2C_WaitAck(Self); // DO NOT REMOVE
     }
     OLED_SWI2C_Stop(Self);
 }
@@ -105,11 +126,8 @@ void OLED_SWI2C_WriteDatas(OLED_t *Self, uint8_t *Datas, uint16_t Length) {
 void OLED_SWI2C_WriteCommand(OLED_t *Self, uint8_t Command) {
     OLED_SWI2C_Start(Self);
     OLED_SWI2C_WriteByte(Self, 0x78);
-    OLED_I2C_WaitAck(Self);
     OLED_SWI2C_WriteByte(Self, 0x00);
-    OLED_I2C_WaitAck(Self);
     OLED_SWI2C_WriteByte(Self, Command);
-    OLED_I2C_WaitAck(Self);
     OLED_SWI2C_Stop(Self);
 }
 
@@ -117,12 +135,9 @@ void OLED_SWI2C_WriteCommands(OLED_t *Self, uint8_t *Commands,
                               uint16_t Length) {
     OLED_SWI2C_Start(Self);
     OLED_SWI2C_WriteByte(Self, 0x78);
-    OLED_I2C_WaitAck(Self); // DO NOT REMOVE
     OLED_SWI2C_WriteByte(Self, 0x00);
-    OLED_I2C_WaitAck(Self); // DO NOT REMOVE
     for (uint16_t i = 0; i < Length; i++) {
         OLED_SWI2C_WriteByte(Self, Commands[i]);
-        OLED_I2C_WaitAck(Self); // DO NOT REMOVE
     }
     OLED_SWI2C_Stop(Self);
 }

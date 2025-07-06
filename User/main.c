@@ -2,8 +2,8 @@
 
 int main() {
     HAL_Init();
-    // SystemClock_Config(25, 336, 2, 4);
-    SystemClock_Config(4, 168, 2, 4);
+    // SystemClock_Config(25, 336, 2, 4); // 25MHz HSE
+    SystemClock_Config(4, 168, 2, 4); // 8MHz HSE
 
     LED_Init(&LEDRed);
     LED_Init(&LEDGreen);
@@ -38,11 +38,20 @@ int main() {
     GWGray_Init(&GWGray);
     ICM42688_Init(&ICM42688);
 
+    TextPage_Init(&SettingPage, &OLED);
+    TextMenu.Page = &SettingPage;
+    SelectioneBar_BindTextPage(&Bar, &SettingPage.LowerPages[0]);
+
     xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
+    xTaskCreate(vMenuInteractionTaskCode, "vMenuInteractionTask", 128, NULL, 1,
+                &xMenuInteractionTaskHandle);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);
+    vOLEDTimer = xTimerCreate("vOLEDTimer", pdMS_TO_TICKS(10), pdTRUE,
+                              (void *)1, vOLEDTimerCallback);
     xTimerStart(xLEDTimer, 0);
+    xTimerStart(vOLEDTimer, 0);
 
     vTaskStartScheduler();
 }

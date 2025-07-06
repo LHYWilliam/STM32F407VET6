@@ -11,6 +11,7 @@ project:
         fpu: sp
       add-path:
         - Util
+        - User
         - System
         - Hardware
         - Hardware/LCD
@@ -74,6 +75,10 @@ project:
         - file: User/interrupt.c
         - file: User/define.c
         - file: User/main.h
+        - file: User/Menu/Click.c
+        - file: User/Menu/Rotation.c
+        - file: User/Menu/Show.c
+        - file: User/Menu/Update.c
     - group: System
       files:
         - file: System/GPIO.c

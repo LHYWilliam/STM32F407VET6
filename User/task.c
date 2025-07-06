@@ -25,7 +25,7 @@ PID_t GrayPID = {
 };
 
 void vMainTaskCode(void *pvParameters) {
-    // ----------------- Trace Line Test ----------------- //
+    // ---------------- Trace Line Test ---------------- //
     // int16_t BaseSpeed = 500;
     // while (!Key_IsPressing(&Key1))
     //     ;
@@ -46,7 +46,7 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
-    // ----------------- Serial Test ----------------- //
+    // ---------------- Serial Test -------------------- //
     // for (;;) {
     //     Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
     //     Serial_Printf(&SerialBluetooth, "Hello from SerialBluetooth\n");
@@ -55,7 +55,7 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    // ---------------- Key Test ---------------- //
+    // ---------------- Key Test ----------------------- //
     // for (;;) {
     //     if (Key_IsPressing(&Key1)) {
     //         printf("Key1 is pressing\n");
@@ -72,7 +72,7 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    // ---------------- LED Test ---------------- //
+    // ---------------- LED Test ----------------------- //
     // for (;;) {
     //     if (Key_IsPressing(&Key1)) {
     //         LED_On(&LEDRed);
@@ -92,11 +92,11 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    // ---------------- Motor Test ---------------- //
+    // ---------------- Motor Test --------------------- //
     // Motor_SetSpeed(&MotorLeft, 1000);
     // Motor_SetSpeed(&MotorRight, -1000);
 
-    // ---------------- Encoder Test ---------------- //
+    // ---------------- Encoder Test ------------------- //
     // while (!Key_IsPressing(&Key1))
     //     ;
     // Motor_SetSpeed(&MotorLeft, 10000);
@@ -108,7 +108,7 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
-    // ----------------  Servo Test ---------------- //
+    // ---------------- Servo Test --------------------- //
     // for (;;) {
     //     for (uint8_t i = 0; i < 60; i++) {
     //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
@@ -126,7 +126,7 @@ void vMainTaskCode(void *pvParameters) {
     //     }
     // }
 
-    // ---------------- ICM42688 Test ---------------- //
+    // ---------------- ICM42688 Test ------------------ //
     // float YawPitchRoll[3];
     // for (;;) {
     //     ICM42688_AHRS_Update(&ICM42688);
@@ -140,14 +140,14 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
-    // ---------------- Gray PID Test ---------------- //
+    // ---------------- Gray PID Test ------------------ //
     // for (;;) {
     //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
     //     printf("%d\n", Error);
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    // ----------------- MotorSpeedPID Test ----------------- //
+    // ---------------- MotorSpeedPID Test ------------- //
     // while (!Key_IsPressing(&Key1))
     //     ;
     // int16_t TargetSpeed = 0;
@@ -167,7 +167,7 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
-    // -------- K230 Test -------- //
+    // ---------------- K230 Test ---------------------- //
     // Servo_SetAngle180(&Servo, 1, 110.);
     // Servo_SetAngle270(&Servo, 2, 135.);
     // vTaskDelay(pdMS_TO_TICKS(1000));
@@ -185,23 +185,57 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(1));
     // }
 
-    // -------- Sampler Test -------- //
+    // ---------------- Sampler Test ------------------- //
     // for (;;) {
     //     printf("%4d, %4d,  %4d\n", Sampler.Data[0], Sampler.Data[1],
     //            Sampler.Data[2]);
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    // -------- OLED Test -------- //
+    // ---------------- OLED Test ---------------------- //
     // for (;;) {
-    //     LED_Toggle(&LEDRed);
     //     OLED_Reverse(&OLED);
     //     OLED_SendBuffer(&OLED);
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
+    // ---------------- Menu Test ---------------------- //
     for (;;) {
         vTaskDelay(pdMS_TO_TICKS(1));
+    }
+}
+
+void vOLEDTimerCallback(TimerHandle_t pxTimer) {
+    LED_Toggle(&LEDGreen);
+
+    OLED_ClearBuffer(&OLED);
+
+    TextMenu.Page->UpdateCallback(NULL);
+    SelectioneBar_Update(&Bar);
+
+    TextMenu.Page->ShowCallback(NULL);
+    OLED_ShowSelectioneBar(&OLED, &Bar);
+
+    OLED_SendBuffer(&OLED);
+}
+
+void vMenuInteractionTaskCode(void *pvParameters) {
+    for (;;) {
+        LED_Toggle(&LEDBlue);
+
+        int16_t Encode = Encoder_GetCounter(&EncoderLeft);
+
+        if (Encode <= -3 || Encode >= 3) {
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
+                Encode);
+        }
+
+        // if (Key_Read(&Key1)) {
+        // TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
+        //         NULL);
+        // }
+
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
 }
 

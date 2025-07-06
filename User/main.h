@@ -13,6 +13,7 @@
 #include "ICM42688.h"
 #include "Key.h"
 #include "LED.h"
+#include "Menu.h"
 #include "Motor.h"
 #include "OLED.h"
 #include "PID.h"
@@ -56,10 +57,29 @@ extern ICM42688_t ICM42688;
 extern TaskHandle_t xMainTaskHandle;
 extern void vMainTaskCode(void *pvParameters);
 
+extern TaskHandle_t xMenuInteractionTaskHandle;
+extern void vMenuInteractionTaskCode(void *pvParameters);
+
 extern TimerHandle_t xLEDTimer;
 extern void vLEDTimerCallback(TimerHandle_t pxTimer);
 
+extern TimerHandle_t vOLEDTimer;
+extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
+
 extern void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
                                uint16_t PLLQ);
+
+extern TextMenu_t TextMenu;
+extern TextPage_t SettingPage;
+extern SelectioneBar_t Bar;
+
+extern void TextPage_BackCallback(void *pvParameters);
+extern void TextPage_EnterCallback(void *pvParameters);
+
+extern void TextPage_CursorCallback(int16_t Encoder);
+
+extern void TextPage_ShowCallback(void *pvParameters);
+
+extern void TextPage_UpdateCallback(void *pvParameters);
 
 #endif

@@ -25,6 +25,8 @@ void OLED_Init(OLED_t *Self) {
         OLED_HWSPI_Init(Self);
     }
 
+    OLED_ConfigReg(Self);
+
     OLED_Clear(Self);
 }
 
