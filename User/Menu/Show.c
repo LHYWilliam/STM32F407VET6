@@ -1,94 +1,81 @@
 #include "main.h"
 
 #define ShowTitleAndTexts(...)                                                 \
-    if (TextMenu.Page->TitleY + TextMenu.Page->TitleHeight >= 0) {             \
-        OLED_Printf(&OLED, TextMenu.Page->TitleX, TextMenu.Page->TitleY,       \
-                    TextMenu.Page->Title);                                     \
+    if (TextPage->TitleY + TextPage->TitleHeight >= 0) {                       \
+        OLED_Printf(&OLED, TextPage->TitleX, TextPage->TitleY,                 \
+                    TextPage->Title);                                          \
     }                                                                          \
                                                                                \
-    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {             \
-        if (TextMenu.Page->LowerPages[i].Y +                                   \
-                TextMenu.Page->LowerPages[i].Height <                          \
-            0) {                                                               \
+    for (uint8_t i = 0; i < TextPage->NumOfLowerPages; i++) {                  \
+        if (TextPage->LowerPages[i].Y + TextPage->LowerPages[i].Height < 0) {  \
             continue;                                                          \
         }                                                                      \
-        if (TextMenu.Page->LowerPages[i].Y > OLED.Height - 1) {                \
+        if (TextPage->LowerPages[i].Y > OLED.Height - 1) {                     \
             break;                                                             \
         }                                                                      \
                                                                                \
         __VA_ARGS__                                                            \
     }
 
-void TextPage_ShowCallback(void *pvParameters) {
-    ShowTitleAndTexts(OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
-                                  TextMenu.Page->LowerPages[i].Y, "%s",
-                                  TextMenu.Page->LowerPages[i].Title););
+void TextPage_ShowCallback(TextPage_t *TextPage) {
+    ShowTitleAndTexts(OLED_Printf(&OLED, TextPage->LowerPages[i].X,
+                                  TextPage->LowerPages[i].Y, "%s",
+                                  TextPage->LowerPages[i].Title););
 }
-void TextPage_ShowParameterCallback(void *pvParameters) {
+void TextPage_ShowParameterCallback(TextPage_t *TextPage) {
     ShowTitleAndTexts(
-        OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
-                    TextMenu.Page->LowerPages[i].Y, "%s",
-                    TextMenu.Page->LowerPages[i].Title);
+        OLED_Printf(&OLED, TextPage->LowerPages[i].X, TextPage->LowerPages[i].Y,
+                    "%s", TextPage->LowerPages[i].Title);
 
         if (i > 0) {
-            switch (TextMenu.Page->LowerPages[i].ParameterType) {
+            switch (TextPage->LowerPages[i].ParameterType) {
             case ParameterType_Int:
-                OLED_Printf(&OLED, OLED.Width / 2,
-                            TextMenu.Page->LowerPages[i].Y, "%d",
-                            *TextMenu.Page->LowerPages[i].IntParameterPtr);
+                OLED_Printf(&OLED, OLED.Width / 2, TextPage->LowerPages[i].Y,
+                            "%d", *TextPage->LowerPages[i].IntParameterPtr);
                 break;
 
             case ParameterType_Float:
-                OLED_Printf(&OLED, OLED.Width / 2,
-                            TextMenu.Page->LowerPages[i].Y, "%.2f",
-                            *TextMenu.Page->LowerPages[i].FloatParameterPtr);
+                OLED_Printf(&OLED, OLED.Width / 2, TextPage->LowerPages[i].Y,
+                            "%.2f", *TextPage->LowerPages[i].FloatParameterPtr);
                 break;
             }
         });
 }
 
-void TextPage_ShowDialogCallback(void *pvParameters) {
-    TextPage_BackCallback(NULL);
-    TextMenu.Page->ShowCallback(NULL);
-    TextPage_EnterCallback(NULL);
+void TextPage_ShowDialogCallback(TextPage_t *TextPage) {
+    TextPage->UpperPage->ShowCallback(TextPage->UpperPage);
 
-    OLED_ClearBufferArea(&OLED, TextMenu.Page->TitleX, TextMenu.Page->TitleY,
-                         TextMenu.Page->TitleWidth, TextMenu.Page->TitleHeight);
+    OLED_ClearBufferArea(&OLED, TextPage->TitleX, TextPage->TitleY,
+                         TextPage->TitleWidth, TextPage->TitleHeight);
 
-    OLED_DrawHollowRectangle(&OLED, TextMenu.Page->TitleX,
-                             TextMenu.Page->TitleY, TextMenu.Page->TitleWidth,
-                             TextMenu.Page->TitleHeight);
+    OLED_DrawHollowRectangle(&OLED, TextPage->TitleX, TextPage->TitleY,
+                             TextPage->TitleWidth, TextPage->TitleHeight);
 
-    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
-        if (TextMenu.Page->LowerPages[i].X < TextMenu.Page->TitleX ||
-            TextMenu.Page->LowerPages[i].Y < TextMenu.Page->TitleY ||
-            TextMenu.Page->LowerPages[i].X +
-                    TextMenu.Page->LowerPages[i].Width >
-                TextMenu.Page->TitleX + TextMenu.Page->TitleWidth ||
-            TextMenu.Page->LowerPages[i].Y +
-                    TextMenu.Page->LowerPages[i].Height >
-                TextMenu.Page->TitleY + TextMenu.Page->TitleHeight) {
+    for (uint8_t i = 0; i < TextPage->NumOfLowerPages; i++) {
+        if (TextPage->LowerPages[i].X < TextPage->TitleX ||
+            TextPage->LowerPages[i].Y < TextPage->TitleY ||
+            TextPage->LowerPages[i].X + TextPage->LowerPages[i].Width >
+                TextPage->TitleX + TextPage->TitleWidth ||
+            TextPage->LowerPages[i].Y + TextPage->LowerPages[i].Height >
+                TextPage->TitleY + TextPage->TitleHeight) {
             continue;
         }
 
-        OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
-                    TextMenu.Page->LowerPages[i].Y,
-                    TextMenu.Page->LowerPages[i].Title);
+        OLED_Printf(&OLED, TextPage->LowerPages[i].X, TextPage->LowerPages[i].Y,
+                    TextPage->LowerPages[i].Title);
 
-        if (i == TextMenu.Page->NumOfLowerPages - 1) {
-            switch (TextMenu.Page->ParameterType) {
+        if (i == TextPage->NumOfLowerPages - 1) {
+            switch (TextPage->ParameterType) {
             case ParameterType_Int:
                 OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
-                            TextMenu.Page->TitleY + OLED.FontHeight, "%s: %d",
-                            TextMenu.Page->Title,
-                            *TextMenu.Page->IntParameterPtr);
+                            TextPage->TitleY + OLED.FontHeight, "%s: %d",
+                            TextPage->Title, *TextPage->IntParameterPtr);
                 break;
 
             case ParameterType_Float:
                 OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
-                            TextMenu.Page->TitleY + OLED.FontHeight, "%s: %.3f",
-                            TextMenu.Page->Title,
-                            *TextMenu.Page->FloatParameterPtr);
+                            TextPage->TitleY + OLED.FontHeight, "%s: %.3f",
+                            TextPage->Title, *TextPage->FloatParameterPtr);
                 break;
             }
         }

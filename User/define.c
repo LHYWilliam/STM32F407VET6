@@ -422,15 +422,15 @@ TextPage_t ParameterPage = {
         },
 };
 
-void TextPage_BackCallback(void *pvParameters);
-void TextPage_EnterCallback(void *pvParameters);
-void TextPage_ParameterAdjustback(void *pvParameters);
+void TextPage_BackCallback(TextPage_t **TextPage);
+void TextPage_EnterCallback(TextPage_t **TextPage);
+void TextPage_ParameterAdjustback(TextPage_t **TextPage);
 
-void TextPage_CursorCallback(TextPageRotation Direction);
+void TextPage_CursorCallback(TextPage_t *TextPage, TextPageRotation Direction);
 
-void TextPage_ShowCallback(void *pvParameters);
-void TextPage_ShowParameterCallback(void *pvParameters);
-void TextPage_ShowDialogCallback(void *pvParameters);
+void TextPage_ShowCallback(TextPage_t *TextPage);
+void TextPage_ShowParameterCallback(TextPage_t *TextPage);
+void TextPage_ShowDialogCallback(TextPage_t *TextPage);
 
-void TextPage_UpdateCallback(void *pvParameters);
-void TextPage_UpdateDialogCallback(void *pvParameters);
+void TextPage_UpdateCallback(TextPage_t *TextPage);
+void TextPage_UpdateDialogCallback(TextPage_t *TextPage);

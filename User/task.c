@@ -201,10 +201,10 @@ void vOLEDTimerCallback(TimerHandle_t pxTimer) {
 
     OLED_ClearBuffer(&OLED);
 
-    TextMenu.Page->UpdateCallback(NULL);
+    TextMenu.Page->UpdateCallback(TextMenu.Page);
     SelectioneBar_Update(&Bar);
 
-    TextMenu.Page->ShowCallback(NULL);
+    TextMenu.Page->ShowCallback(TextMenu.Page);
     OLED_ShowSelectioneBar(&OLED, &Bar);
 
     OLED_SendBuffer(&OLED);
@@ -214,17 +214,18 @@ void vMenuInteractionTaskCode(void *pvParameters) {
     for (;;) {
         LED_Toggle(&LEDBlue);
 
-        if (Key_IsPressed(&Key3)) {
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
-                RotationUp);
-        } else if (Key_IsPressed(&Key4)) {
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
-                RotationDown);
-        }
-
         if (Key_IsPressed(&Key1)) {
             TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
-                NULL);
+                &TextMenu.Page);
+        }
+
+        if (Key_IsPressed(&Key3)) {
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
+                TextMenu.Page, RotationUp);
+
+        } else if (Key_IsPressed(&Key4)) {
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
+                TextMenu.Page, RotationDown);
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));

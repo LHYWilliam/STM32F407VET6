@@ -3,9 +3,11 @@
 #include "Menu.h"
 #include "OLED.h"
 
-void EmptyCallbackPtr(void *pvParameters) {}
-void EmptyCallbackInt(int16_t pvParameter) {}
-void EmptyCallbackRotation(TextPageRotation Direction) {}
+void EmptyCallbackPtr(struct TextPage *TextPage) {}
+void EmptyCallbackPtrPtr(struct TextPage **TextPage) {}
+void EmptyCallbackInt(struct TextPage *TextPage) {}
+void EmptyCallbackRotation(struct TextPage *TextPage,
+                           TextPageRotation Direction) {}
 
 void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
     if (IsChinese(Self->Title)) {
@@ -68,7 +70,7 @@ void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
             Self->LowerPages[i].ShowCallback = EmptyCallbackPtr;
         }
         if (!Self->LowerPages[i].ClickCallback) {
-            Self->LowerPages[i].ClickCallback = EmptyCallbackPtr;
+            Self->LowerPages[i].ClickCallback = EmptyCallbackPtrPtr;
         }
         if (!Self->LowerPages[i].RotationCallback) {
             Self->LowerPages[i].RotationCallback = EmptyCallbackRotation;
@@ -135,106 +137,11 @@ ErrorStatus TextPage_ReturnUpperPage(TextPage_t **Self) {
     return ERROR;
 }
 
-void ImagePage_Init(ImagePage_t *Self, OLED_t *OLED) {
-    if (!Self->ImageY) {
-        Self->ImageY = OLED->Height / 2 - Self->ImageHeight / 2;
-    }
-
-    if (IsChinese(Self->Title)) {
-        OLEDFont Font = OLED->Font;
-        OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-        Self->TitleY = Self->ImageY + Self->ImageHeight + OLED->FontHeight;
-        Self->TitleWidth =
-            strlen(Self->Title) / OLED_ChineseBytesCount * OLED->FontWidth;
-        Self->TitleHeight = OLED->FontHeight;
-        OLED_SetFont(OLED, Font);
-
-    } else {
-        Self->TitleY = Self->ImageY + Self->ImageHeight + OLED->FontHeight;
-        Self->TitleWidth = strlen(Self->Title) * OLED->FontWidth;
-        Self->TitleHeight = OLED->FontHeight;
-    }
-}
-
-void ImageMenu_Init(ImageMenu_t *Self, OLED_t *OLED) {
-    for (uint8_t i = 0; i < Self->NumOfPages; i++) {
-        if (!Self->Page[i].ImageWidth) {
-            Self->Page[i].ImageWidth = Self->ImageWidth;
-        }
-        if (!Self->Page[i].ImageHeight) {
-            Self->Page[i].ImageHeight = Self->ImageHeight;
-        }
-
-        ImagePage_Init(&Self->Page[i], OLED);
-    }
-
-    if (!Self->ShowCallback) {
-        Self->ShowCallback = EmptyCallbackPtr;
-    }
-    if (!Self->ClickCallback) {
-        Self->ShowCallback = EmptyCallbackPtr;
-    }
-    if (!Self->RotationCallback) {
-        Self->RotationCallback = EmptyCallbackInt;
-    }
-}
-
-void ImageMenu_Update(ImageMenu_t *Self, OLED_t *OLED) {
-    int16_t X =
-        Self->Page[0].ImageX - (Self->Page[Self->Cursor].ImageX +
-                                Self->Page[0].ImageWidth / 2 - OLED->Width / 2);
-    PositionUpdate(Self->Page[0].ImageX, X, 1);
-    Self->Page[0].TitleX = Self->Page[0].ImageX + Self->Page[0].ImageWidth / 2 -
-                           Self->Page[0].TitleWidth / 2;
-
-    for (uint8_t i = 1; i < Self->NumOfPages; i++) {
-        PositionUpdate(Self->Page[i].ImageX,
-                       Self->Page[i - 1].ImageX + Self->Page[i].ImageWidth +
-                           Self->Space,
-                       1);
-
-        Self->Page[i].TitleX = Self->Page[i].ImageX +
-                               Self->Page[i].ImageWidth / 2 -
-                               Self->Page[i].TitleWidth / 2;
-    }
-}
-
-ErrorStatus ImageMenu_CursorInc(ImageMenu_t *Self) {
-    Self->Cursor = (Self->Cursor + 1) % Self->NumOfPages;
-
-    return SUCCESS;
-}
-
-ErrorStatus ImageMenu_CursorDec(ImageMenu_t *Self) {
-    Self->Cursor = (Self->Cursor + Self->NumOfPages - 1) % Self->NumOfPages;
-
-    return SUCCESS;
-}
-
-ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *Self, TextMenu_t *TextMenu) {
-    TextMenu->Page = Self->Page[Self->Cursor].TextPage;
-
-    return SUCCESS;
-}
-
-ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *Self, TextMenu_t *TextMenu) {
-    TextPage_ResetSetY(TextMenu->Page);
-
-    return SUCCESS;
-}
-
 void SelectioneBar_BindTextPage(SelectioneBar_t *Self, TextPage_t *Page) {
     Self->TargetX = &Page->X;
     Self->TargetY = &Page->Y;
     Self->TargetWidth = &Page->Width;
     Self->TargetHeight = &Page->Height;
-}
-
-void SelectioneBar_BindImagePage(SelectioneBar_t *Self, ImagePage_t *Page) {
-    Self->TargetX = &Page->TitleX;
-    Self->TargetY = &Page->TitleY;
-    Self->TargetWidth = &Page->TitleWidth;
-    Self->TargetHeight = &Page->TitleHeight;
 }
 
 void SelectioneBar_Update(SelectioneBar_t *Self) {

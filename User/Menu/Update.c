@@ -1,63 +1,59 @@
 #include "main.h"
 
-void TextPage_UpdateCallback(void *pvParameters) {
-    int16_t Y = TextMenu.Page->TitleY;
+void TextPage_UpdateCallback(TextPage_t *TextPage) {
+    int16_t Y = TextPage->TitleY;
 
-    if (TextMenu.Page->Cursor == 0 || TextMenu.Page->Cursor == 1) {
+    if (TextPage->Cursor == 0 || TextPage->Cursor == 1) {
         Y = 0;
 
-    } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y < 0) {
-        Y = TextMenu.Page->TitleY -
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y;
+    } else if (TextPage->LowerPages[TextPage->Cursor].Y < 0) {
+        Y = TextPage->TitleY - TextPage->LowerPages[TextPage->Cursor].Y;
 
-    } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y +
-                   TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Height >
+    } else if (TextPage->LowerPages[TextPage->Cursor].Y +
+                   TextPage->LowerPages[TextPage->Cursor].Height >
                OLED.Height - 1) {
-        Y = TextMenu.Page->TitleY -
-            (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Y - OLED.Height +
-             TextMenu.Page->LowerPages[TextMenu.Page->Cursor].Height) -
+        Y = TextPage->TitleY -
+            (TextPage->LowerPages[TextPage->Cursor].Y - OLED.Height +
+             TextPage->LowerPages[TextPage->Cursor].Height) -
             1;
     }
 
-    PositionUpdate(TextMenu.Page->TitleY, Y, 1);
+    PositionUpdate(TextPage->TitleY, Y, 1);
 
-    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+    for (uint8_t i = 0; i < TextPage->NumOfLowerPages; i++) {
         if (i == 0) {
-            Y = Y + TextMenu.Page->TitleHeight / 4 -
-                TextMenu.Page->LowerPages[0].Height / 2 + 1;
+            Y = Y + TextPage->TitleHeight / 4 -
+                TextPage->LowerPages[0].Height / 2 + 1;
 
         } else if (i == 1) {
-            Y = TextMenu.Page->TitleY + TextMenu.Page->TitleHeight + 1;
+            Y = TextPage->TitleY + TextPage->TitleHeight + 1;
 
         } else {
-            Y = TextMenu.Page->LowerPages[i - 1].Y +
-                TextMenu.Page->LowerPages[i - 1].Height + 2;
+            Y = TextPage->LowerPages[i - 1].Y +
+                TextPage->LowerPages[i - 1].Height + 2;
         }
 
-        PositionUpdate(TextMenu.Page->LowerPages[i].Y, Y, 1);
+        PositionUpdate(TextPage->LowerPages[i].Y, Y, 1);
     }
 }
 
-void TextPage_UpdateDialogCallback(void *pvParameters) {
-    PositionUpdate(TextMenu.Page->TitleX, OLED.Width / 8, 1);
-    PositionUpdate(TextMenu.Page->TitleY, OLED.Height / 8, 1);
-    PositionUpdate(TextMenu.Page->TitleWidth, OLED.Width - OLED.Width / 4, 2);
-    PositionUpdate(TextMenu.Page->TitleHeight, OLED.Height - OLED.Height / 4,
-                   2);
+void TextPage_UpdateDialogCallback(TextPage_t *TextPage) {
+    PositionUpdate(TextPage->TitleX, OLED.Width / 8, 1);
+    PositionUpdate(TextPage->TitleY, OLED.Height / 8, 1);
+    PositionUpdate(TextPage->TitleWidth, OLED.Width - OLED.Width / 4, 2);
+    PositionUpdate(TextPage->TitleHeight, OLED.Height - OLED.Height / 4, 2);
 
-    PositionUpdate(TextMenu.Page->LowerPages[0].X, TextMenu.Page->TitleX + 4,
-                   1);
-    PositionUpdate(TextMenu.Page->LowerPages[0].Y, TextMenu.Page->TitleY + 4,
-                   1);
+    PositionUpdate(TextPage->LowerPages[0].X, TextPage->TitleX + 4, 1);
+    PositionUpdate(TextPage->LowerPages[0].Y, TextPage->TitleY + 4, 1);
 
-    int32_t X = TextMenu.Page->TitleX + 4;
-    for (uint8_t i = 1; i < TextMenu.Page->NumOfLowerPages; i++) {
-        PositionUpdate(TextMenu.Page->LowerPages[i].X, X, 1);
-        PositionUpdate(TextMenu.Page->LowerPages[i].Y,
-                       TextMenu.Page->TitleY + TextMenu.Page->TitleHeight -
-                           TextMenu.Page->LowerPages[i].TitleHeight,
+    int32_t X = TextPage->TitleX + 4;
+    for (uint8_t i = 1; i < TextPage->NumOfLowerPages; i++) {
+        PositionUpdate(TextPage->LowerPages[i].X, X, 1);
+        PositionUpdate(TextPage->LowerPages[i].Y,
+                       TextPage->TitleY + TextPage->TitleHeight -
+                           TextPage->LowerPages[i].TitleHeight,
                        1);
 
-        X += TextMenu.Page->LowerPages[i].TitleWidth + OLED.FontWidth;
+        X += TextPage->LowerPages[i].TitleWidth + OLED.FontWidth;
     }
 }

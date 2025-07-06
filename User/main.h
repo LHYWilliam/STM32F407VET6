@@ -88,17 +88,18 @@ extern TextMenu_t TextMenu;
 extern TextPage_t ParameterPage;
 extern SelectioneBar_t Bar;
 
-extern void TextPage_BackCallback(void *pvParameters);
-extern void TextPage_EnterCallback(void *pvParameters);
-extern void TextPage_ParameterAdjustback(void *pvParameters);
+extern void TextPage_BackCallback(TextPage_t **TextPage);
+extern void TextPage_EnterCallback(TextPage_t **TextPage);
+extern void TextPage_ParameterAdjustback(TextPage_t **TextPage);
 
-extern void TextPage_CursorCallback(TextPageRotation Direction);
+extern void TextPage_CursorCallback(TextPage_t *TextPage,
+                                    TextPageRotation Direction);
 
-extern void TextPage_ShowCallback(void *pvParameters);
-extern void TextPage_ShowParameterCallback(void *pvParameters);
-extern void TextPage_ShowDialogCallback(void *pvParameters);
+extern void TextPage_ShowCallback(TextPage_t *TextPage);
+extern void TextPage_ShowParameterCallback(TextPage_t *TextPage);
+extern void TextPage_ShowDialogCallback(TextPage_t *TextPage);
 
-extern void TextPage_UpdateCallback(void *pvParameters);
-extern void TextPage_UpdateDialogCallback(void *pvParameters);
+extern void TextPage_UpdateCallback(TextPage_t *TextPage);
+extern void TextPage_UpdateDialogCallback(TextPage_t *TextPage);
 
 #endif

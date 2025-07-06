@@ -1,29 +1,29 @@
 #include "main.h"
 
-void TextPage_BackCallback(void *pvParameters) {
-    if (TextPage_ReturnUpperPage(&TextMenu.Page) == SUCCESS) {
+void TextPage_BackCallback(TextPage_t **TextPage) {
+    if (TextPage_ReturnUpperPage(TextPage) == SUCCESS) {
         SelectioneBar_BindTextPage(
-            &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
+            &Bar, &(*TextPage)->LowerPages[(*TextPage)->Cursor]);
     }
 }
 
-void TextPage_EnterCallback(void *pvParameters) {
-    if (TextPage_EnterLowerPage(&TextMenu.Page) == SUCCESS) {
+void TextPage_EnterCallback(TextPage_t **TextPage) {
+    if (TextPage_EnterLowerPage(TextPage) == SUCCESS) {
         SelectioneBar_BindTextPage(
-            &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
+            &Bar, &(*TextPage)->LowerPages[(*TextPage)->Cursor]);
     }
 }
 
-void TextPage_ParameterAdjustback(void *pvParameters) {
-    switch (TextMenu.Page->ParameterType) {
+void TextPage_ParameterAdjustback(TextPage_t **TextPage) {
+    switch ((*TextPage)->ParameterType) {
     case ParameterType_Int:
-        *TextMenu.Page->IntParameterPtr +=
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].IntParameter;
+        *(*TextPage)->IntParameterPtr +=
+            (*TextPage)->LowerPages[(*TextPage)->Cursor].IntParameter;
         break;
 
     case ParameterType_Float:
-        *TextMenu.Page->FloatParameterPtr +=
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].FloatParameter;
+        *(*TextPage)->FloatParameterPtr +=
+            (*TextPage)->LowerPages[(*TextPage)->Cursor].FloatParameter;
         break;
     }
 }
@@ -56,7 +56,7 @@ void TextPage_ParameterAdjustback(void *pvParameters) {
 // }
 
 // void TextPage_ReverseSettingCallback(void *pvParameters) {
-//     TextPage_ReverseSetting(&TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
+//     TextPage_ReverseSetting(&TextPage->LowerPages[TextPage->Cursor]);
 // }
 
 void TextPage_RestartSettingCallback(void *pvParameters) {
@@ -64,14 +64,14 @@ void TextPage_RestartSettingCallback(void *pvParameters) {
 }
 
 // void TextPage_CursorSwitchEncoderSettingCallback(void *pvParameters) {
-//     if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback ==
+//     if (TextPage->LowerPages[TextPage->Cursor].RotationCallback ==
 //         TextPage_CursorCallback) {
-//         TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =
+//         TextPage->LowerPages[TextPage->Cursor].RotationCallback =
 //             TextPage_SettingEncoderCallback;
 
-//     } else if (TextMenu.Page->LowerPages[TextMenu.Page->Cursor]
+//     } else if (TextPage->LowerPages[TextPage->Cursor]
 //                    .RotationCallback == TextPage_SettingEncoderCallback) {
-//         TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback =
+//         TextPage->LowerPages[TextPage->Cursor].RotationCallback =
 //             TextPage_CursorCallback;
 //     }
 // }

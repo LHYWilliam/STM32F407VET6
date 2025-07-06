@@ -47,10 +47,10 @@ typedef struct TextPage {
         float *FloatParameterPtr;
     };
 
-    void (*ShowCallback)(void *);
-    void (*UpdateCallback)(void *);
-    void (*ClickCallback)(void *);
-    void (*RotationCallback)(TextPageRotation);
+    void (*ShowCallback)(struct TextPage *TextPage);
+    void (*UpdateCallback)(struct TextPage *TextPage);
+    void (*ClickCallback)(struct TextPage **TextPage);
+    void (*RotationCallback)(struct TextPage *TextPage, TextPageRotation);
 } TextPage_t;
 
 typedef struct {
@@ -110,16 +110,6 @@ void TextPage_ResetSetY(TextPage_t *Self);
 void TextPage_ReverseSetting(TextPage_t *Self);
 
 void TextMenu_Init(TextMenu_t *Self, OLED_t *OLED);
-
-void ImagePage_Init(ImagePage_t *Self, OLED_t *OLED);
-
-void ImageMenu_Init(ImageMenu_t *Self, OLED_t *OLED);
-void ImageMenu_Update(ImageMenu_t *Self, OLED_t *OLED);
-ErrorStatus ImageMenu_CursorInc(ImageMenu_t *Self);
-ErrorStatus ImageMenu_CursorDec(ImageMenu_t *Self);
-ErrorStatus ImageMenu_EnterLowerPage(ImageMenu_t *ImageMenu,
-                                     TextMenu_t *TextMenu);
-ErrorStatus ImageMenu_ReturnUpperPage(ImageMenu_t *Self, TextMenu_t *TextMenu);
 
 void SelectioneBar_BindTextPage(SelectioneBar_t *Self, TextPage_t *Page);
 void SelectioneBar_BindImagePage(SelectioneBar_t *Self, ImagePage_t *Page);
