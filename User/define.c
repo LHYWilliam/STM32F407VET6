@@ -258,14 +258,31 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
         .UpdateCallback = TextPage_UpdateDialogCallback,                       \
         .ClickCallback = TextPage_EnterCallback,                               \
         .RotationCallback = TextPage_CursorCallback, .ParameterType = Type,    \
-        .FloatParameter = 1, .NumOfLowerPages = 5,                             \
-        .LowerPages = (TextPage_t[]) {                                         \
+        .NumOfLowerPages = 5, .LowerPages = (TextPage_t[]) {                   \
             TextPage_Back("<"), TextPage_ParameterDoAdjustPage(),              \
                 TextPage_ParameterMultiplyPage(),                              \
                 TextPage_ParameterDividePage(),                                \
                 TextPage_ParameterPlusMinusPage()                              \
         }                                                                      \
     }
+
+#define TextPage_NavigationPageCallbak()                                       \
+    ShowCallback = TextPage_ShowCallback,                                      \
+    .UpdateCallback = TextPage_UpdateCallback,                                 \
+    .RotationCallback = TextPage_CursorCallback,                               \
+    .ClickCallback = TextPage_EnterCallback
+
+#define TextPage_MonitorPageCallbak()                                          \
+    ShowCallback = TextPage_ShowParameterCallback,                             \
+    .UpdateCallback = TextPage_UpdateCallback,                                 \
+    .RotationCallback = TextPage_CursorCallback,                               \
+    .ClickCallback = TextPage_EnterCallback
+
+#define TextPage_AdjustPageCallbak()                                           \
+    ShowCallback = TextPage_ShowParameterCallback,                             \
+    .UpdateCallback = TextPage_UpdateCallback,                                 \
+    .RotationCallback = TextPage_CursorCallback,                               \
+    .ClickCallback = TextPage_EnterCallback
 
 TextMenu_t TextMenu;
 
@@ -288,20 +305,14 @@ TextPage_t ParameterPage = {
             TextPage_Back("<"),
             (TextPage_t){
                 .Title = "Monitor",
-                .ShowCallback = TextPage_ShowCallback,
-                .UpdateCallback = TextPage_UpdateCallback,
-                .RotationCallback = TextPage_CursorCallback,
-                .ClickCallback = TextPage_EnterCallback,
+                .TextPage_NavigationPageCallbak(),
                 .NumOfLowerPages = 4,
                 .LowerPages =
                     (TextPage_t[]){
                         TextPage_Back("<"),
                         (TextPage_t){
                             .Title = "ICM42688 Angle",
-                            .ShowCallback = TextPage_ShowParameterCallback,
-                            .UpdateCallback = TextPage_UpdateCallback,
-                            .RotationCallback = TextPage_CursorCallback,
-                            .ClickCallback = TextPage_EnterCallback,
+                            .TextPage_MonitorPageCallbak(),
                             .NumOfLowerPages = 4,
                             .LowerPages =
                                 (TextPage_t[]){
@@ -316,10 +327,7 @@ TextPage_t ParameterPage = {
                         },
                         (TextPage_t){
                             .Title = "GWGray Error",
-                            .ShowCallback = TextPage_ShowParameterCallback,
-                            .UpdateCallback = TextPage_UpdateCallback,
-                            .RotationCallback = TextPage_CursorCallback,
-                            .ClickCallback = TextPage_EnterCallback,
+                            .TextPage_MonitorPageCallbak(),
                             .NumOfLowerPages = 2,
                             .LowerPages =
                                 (TextPage_t[]){
@@ -331,10 +339,7 @@ TextPage_t ParameterPage = {
 
                         (TextPage_t){
                             .Title = "Encoder Counter",
-                            .ShowCallback = TextPage_ShowParameterCallback,
-                            .UpdateCallback = TextPage_UpdateCallback,
-                            .RotationCallback = TextPage_CursorCallback,
-                            .ClickCallback = TextPage_EnterCallback,
+                            .TextPage_MonitorPageCallbak(),
                             .NumOfLowerPages = 3,
                             .LowerPages =
                                 (TextPage_t[]){
@@ -350,20 +355,14 @@ TextPage_t ParameterPage = {
 
             (TextPage_t){
                 .Title = "Adjust",
-                .ShowCallback = TextPage_ShowCallback,
-                .UpdateCallback = TextPage_UpdateCallback,
-                .RotationCallback = TextPage_CursorCallback,
-                .ClickCallback = TextPage_EnterCallback,
+                .TextPage_NavigationPageCallbak(),
                 .NumOfLowerPages = 4,
                 .LowerPages =
                     (TextPage_t[]){
                         TextPage_Back("<"),
                         (TextPage_t){
                             .Title = "MotorLeftSpeed PID",
-                            .ShowCallback = TextPage_ShowParameterCallback,
-                            .UpdateCallback = TextPage_UpdateCallback,
-                            .RotationCallback = TextPage_CursorCallback,
-                            .ClickCallback = TextPage_EnterCallback,
+                            .TextPage_AdjustPageCallbak(),
                             .NumOfLowerPages = 4,
                             .LowerPages =
                                 (TextPage_t[]){
@@ -379,10 +378,7 @@ TextPage_t ParameterPage = {
 
                         (TextPage_t){
                             .Title = "MotorRightSpeed PID",
-                            .ShowCallback = TextPage_ShowParameterCallback,
-                            .UpdateCallback = TextPage_UpdateCallback,
-                            .RotationCallback = TextPage_CursorCallback,
-                            .ClickCallback = TextPage_EnterCallback,
+                            .TextPage_AdjustPageCallbak(),
                             .NumOfLowerPages = 4,
                             .LowerPages =
                                 (TextPage_t[]){
@@ -398,10 +394,7 @@ TextPage_t ParameterPage = {
 
                         (TextPage_t){
                             .Title = "GWGrayPosition PID",
-                            .ShowCallback = TextPage_ShowParameterCallback,
-                            .UpdateCallback = TextPage_UpdateCallback,
-                            .RotationCallback = TextPage_CursorCallback,
-                            .ClickCallback = TextPage_EnterCallback,
+                            .TextPage_AdjustPageCallbak(),
                             .NumOfLowerPages = 4,
                             .LowerPages =
                                 (TextPage_t[]){

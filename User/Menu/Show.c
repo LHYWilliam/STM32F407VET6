@@ -63,6 +63,10 @@ void TextPage_ShowDialogCallback(TextPage_t *TextPage) {
 
         OLED_Printf(&OLED, TextPage->LowerPages[i].X, TextPage->LowerPages[i].Y,
                     TextPage->LowerPages[i].Title);
+        OLED_DrawHollowRectangle(&OLED, TextPage->LowerPages[i].X - 2,
+                                 TextPage->LowerPages[i].Y - 2,
+                                 TextPage->LowerPages[i].Width + 4,
+                                 TextPage->LowerPages[i].Height + 4);
 
         if (i == TextPage->NumOfLowerPages - 1) {
             switch (TextPage->ParameterType) {

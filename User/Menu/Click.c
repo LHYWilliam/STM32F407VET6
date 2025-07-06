@@ -17,10 +17,20 @@ void TextPage_EnterCallback(TextPage_t **TextPage) {
 void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
     case ParameterType_Int:
+        if ((*TextPage)->IntParameter == 0) {
+            (*TextPage)->IntParameter = 1;
+            return;
+        }
+
         *(*TextPage)->IntParameterPtr += (*TextPage)->IntParameter;
         break;
 
     case ParameterType_Float:
+        if ((*TextPage)->FloatParameter == 0) {
+            (*TextPage)->FloatParameter = 1;
+            return;
+        }
+
         *(*TextPage)->FloatParameterPtr += (*TextPage)->FloatParameter;
         break;
     }
@@ -41,17 +51,7 @@ void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage) {
 void TextPage_ParameterDivideCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
     case ParameterType_Int:
-        if ((*TextPage)->IntParameter < 10 && (*TextPage)->IntParameter > -10) {
-            if ((*TextPage)->IntParameter > 0) {
-                (*TextPage)->IntParameter = 1;
-
-            } else {
-                (*TextPage)->IntParameter = -1;
-            }
-
-        } else {
-            (*TextPage)->IntParameter /= 10;
-        }
+        (*TextPage)->IntParameter /= 10;
         break;
 
     case ParameterType_Float:
