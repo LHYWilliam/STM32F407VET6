@@ -106,8 +106,7 @@ ErrorStatus TextPage_CursorInc(TextPage_t *Self);
 ErrorStatus TextPage_CursorDec(TextPage_t *Self);
 ErrorStatus TextPage_EnterLowerPage(TextPage_t **Self);
 ErrorStatus TextPage_ReturnUpperPage(TextPage_t **Self);
-void TextPage_ResetSetY(TextPage_t *Self);
-void TextPage_ReverseSetting(TextPage_t *Self);
+void TextPage_Reset(TextPage_t *Self);
 
 void TextMenu_Init(TextMenu_t *Self, OLED_t *OLED);
 

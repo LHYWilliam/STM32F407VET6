@@ -5,56 +5,25 @@
 
 void EmptyCallbackPtr(struct TextPage *TextPage) {}
 void EmptyCallbackPtrPtr(struct TextPage **TextPage) {}
-void EmptyCallbackInt(struct TextPage *TextPage) {}
 void EmptyCallbackRotation(struct TextPage *TextPage,
                            TextPageRotation Direction) {}
 
 void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
-    if (IsChinese(Self->Title)) {
-        OLEDFont Font = OLED->Font;
-        OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-        if (!Self->TitleX) {
-            Self->TitleX = OLED->Width / 2 - strlen(Self->Title) /
-                                                 OLED_ChineseBytesCount *
-                                                 OLED->FontWidth / 2;
-        }
-        if (!Self->TitleWidth) {
-            Self->TitleWidth =
-                strlen(Self->Title) / OLED_ChineseBytesCount * OLED->FontWidth;
-        }
-        if (!Self->TitleHeight) {
-            Self->TitleHeight = OLED->FontHeight * 2;
-        }
-        OLED_SetFont(OLED, Font);
-
-    } else {
-        if (!Self->TitleX) {
-            Self->TitleX =
-                OLED->Width / 2 - strlen(Self->Title) * OLED->FontWidth / 2;
-        }
-        if (!Self->TitleWidth) {
-            Self->TitleWidth = strlen(Self->Title) * OLED->FontWidth;
-        }
-        if (!Self->TitleHeight) {
-            Self->TitleHeight = OLED->FontHeight * 2;
-        }
+    if (Self->TitleX == 0) {
+        Self->TitleX =
+            OLED->Width / 2 - strlen(Self->Title) * OLED->FontWidth / 2;
+    }
+    if (Self->TitleWidth == 0) {
+        Self->TitleWidth = strlen(Self->Title) * OLED->FontWidth;
+    }
+    if (Self->TitleHeight == 0) {
+        Self->TitleHeight = OLED->FontHeight * 2;
     }
 
     for (uint8_t i = 0; i < Self->NumOfLowerPages; i++) {
-        if (IsChinese(Self->LowerPages[i].Title)) {
-            OLEDFont Font = OLED->Font;
-            OLED_SetFont(OLED, OLEDFont_Chinese12X12);
-            Self->LowerPages[i].Width = strlen(Self->LowerPages[i].Title) /
-                                        OLED_ChineseBytesCount *
-                                        OLED->FontWidth;
-            Self->LowerPages[i].Height = OLED->FontHeight;
-            OLED_SetFont(OLED, Font);
-
-        } else {
-            Self->LowerPages[i].Width =
-                strlen(Self->LowerPages[i].Title) * OLED->FontWidth;
-            Self->LowerPages[i].Height = OLED->FontHeight;
-        }
+        Self->LowerPages[i].Width =
+            strlen(Self->LowerPages[i].Title) * OLED->FontWidth;
+        Self->LowerPages[i].Height = OLED->FontHeight;
 
         if (i == 0) {
             Self->LowerPages[i].UpperPage = Self->UpperPage;
@@ -63,16 +32,16 @@ void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
             Self->LowerPages[i].UpperPage = Self;
         }
 
-        if (!Self->LowerPages[i].UpdateCallback) {
+        if (Self->LowerPages[i].UpdateCallback == NULL) {
             Self->LowerPages[i].UpdateCallback = EmptyCallbackPtr;
         }
-        if (!Self->LowerPages[i].ShowCallback) {
+        if (Self->LowerPages[i].ShowCallback == NULL) {
             Self->LowerPages[i].ShowCallback = EmptyCallbackPtr;
         }
-        if (!Self->LowerPages[i].ClickCallback) {
+        if (Self->LowerPages[i].ClickCallback == NULL) {
             Self->LowerPages[i].ClickCallback = EmptyCallbackPtrPtr;
         }
-        if (!Self->LowerPages[i].RotationCallback) {
+        if (Self->LowerPages[i].RotationCallback == NULL) {
             Self->LowerPages[i].RotationCallback = EmptyCallbackRotation;
         }
 
@@ -80,7 +49,7 @@ void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
     }
 }
 
-void TextPage_ResetSetY(TextPage_t *Self) {
+void TextPage_Reset(TextPage_t *Self) {
     for (uint8_t i = Self->Cursor; i < Self->NumOfLowerPages; i++) {
         Self->LowerPages[i].Y = 0;
     }
@@ -91,7 +60,7 @@ void TextPage_ResetSetY(TextPage_t *Self) {
 }
 
 void TextMenu_Init(TextMenu_t *Self, OLED_t *OLED) {
-    if (Self->Page) {
+    if (Self->Page != NULL) {
         TextPage_Init(Self->Page, OLED);
     }
 }
@@ -118,7 +87,7 @@ ErrorStatus TextPage_CursorDec(TextPage_t *Self) {
 }
 
 ErrorStatus TextPage_EnterLowerPage(TextPage_t **Self) {
-    if ((*Self)->LowerPages[(*Self)->Cursor].NumOfLowerPages) {
+    if ((*Self)->LowerPages[(*Self)->Cursor].NumOfLowerPages != 0) {
         *Self = &(*Self)->LowerPages[(*Self)->Cursor];
 
         return SUCCESS;
@@ -128,7 +97,7 @@ ErrorStatus TextPage_EnterLowerPage(TextPage_t **Self) {
 }
 
 ErrorStatus TextPage_ReturnUpperPage(TextPage_t **Self) {
-    if ((*Self)->UpperPage) {
+    if ((*Self)->UpperPage != NULL) {
         *Self = (*Self)->UpperPage;
 
         return SUCCESS;

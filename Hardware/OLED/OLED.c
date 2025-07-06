@@ -266,44 +266,12 @@ void OLED_ShowChar(OLED_t *Self, int16_t X, int16_t Y, char Char) {
 }
 
 void OLED_ShowString(OLED_t *Self, int16_t X, int16_t Y, const char *String) {
-    uint8_t ChineseFontLength =
-        strlen(OLED_FontChinese12x12_Index) / OLED_ChineseBytesCount;
-
     for (uint8_t i = 0; String[i];) {
 
-        if (IsChinese(String + i)) {
-            uint8_t Index = 0;
-            while (strncmp((char *)&String[i],
-                           &OLED_FontChinese12x12_Index[Index *
-                                                        OLED_ChineseBytesCount],
-                           OLED_ChineseBytesCount) != 0 &&
-                   ++Index < ChineseFontLength) {
-            }
+        OLED_ShowChar(Self, X, Y, String[i]);
+        X += Self->FontWidth;
 
-            if (Index == ChineseFontLength) {
-                OLEDFont Font = Self->Font;
-                OLED_SetFont(Self, OLEDFont_8X16);
-                OLED_ShowChar(Self, X, Y, '?');
-                X += Self->FontWidth;
-                OLED_SetFont(Self, Font);
-
-            } else {
-                OLEDFont Font = Self->Font;
-                OLED_SetFont(Self, OLEDFont_Chinese12X12);
-                OLED_ShowImage(Self, X, Y, Self->FontWidth, Self->FontHeight,
-                               OLED_FontChinese12x12[Index]);
-                X += Self->FontWidth;
-                OLED_SetFont(Self, Font);
-            }
-
-            i += OLED_ChineseBytesCount;
-
-        } else {
-            OLED_ShowChar(Self, X, Y, String[i]);
-            X += Self->FontWidth;
-
-            i += 1;
-        }
+        i += 1;
     }
 }
 

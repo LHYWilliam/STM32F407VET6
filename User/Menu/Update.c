@@ -40,8 +40,10 @@ void TextPage_UpdateCallback(TextPage_t *TextPage) {
 void TextPage_UpdateDialogCallback(TextPage_t *TextPage) {
     PositionUpdate(TextPage->TitleX, OLED.Width / 8, 1);
     PositionUpdate(TextPage->TitleY, OLED.Height / 8, 1);
-    PositionUpdate(TextPage->TitleWidth, OLED.Width - OLED.Width / 4, 2);
-    PositionUpdate(TextPage->TitleHeight, OLED.Height - OLED.Height / 4, 2);
+    PositionUpdate(TextPage->TitleWidth, OLED.Width - OLED.Width / 4 - 1,
+                   2); // -1 For Border
+    PositionUpdate(TextPage->TitleHeight, OLED.Height - OLED.Height / 4 - 1,
+                   2); // -1 For Border
 
     PositionUpdate(TextPage->LowerPages[0].X, TextPage->TitleX + 4, 1);
     PositionUpdate(TextPage->LowerPages[0].Y, TextPage->TitleY + 4, 1);
@@ -53,6 +55,6 @@ void TextPage_UpdateDialogCallback(TextPage_t *TextPage) {
             TextPage->LowerPages[i].Y,
             TextPage->TitleY + TextPage->TitleHeight - OLED.FontHeight - 4, 1);
 
-        X += TextPage->LowerPages[i].TitleWidth + OLED.FontWidth;
+        X += TextPage->LowerPages[i].Width + OLED.FontWidth;
     }
 }

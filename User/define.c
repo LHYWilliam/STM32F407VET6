@@ -254,7 +254,8 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
 
 #define TextPage_ParameterAdjustPage(title, Type)                              \
     (TextPage_t) {                                                             \
-        .Title = title, .ShowCallback = TextPage_ShowDialogCallback,           \
+        .Title = title, .TitleX = 128 / 2, .TitleY = 64 / 2, .TitleWidth = 1,  \
+        .TitleHeight = 1, .ShowCallback = TextPage_ShowDialogCallback,         \
         .UpdateCallback = TextPage_UpdateDialogCallback,                       \
         .ClickCallback = TextPage_EnterCallback,                               \
         .RotationCallback = TextPage_CursorCallback, .ParameterType = Type,    \
