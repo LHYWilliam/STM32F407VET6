@@ -38,9 +38,13 @@ int main() {
     GWGray_Init(&GWGray);
     ICM42688_Init(&ICM42688);
 
-    TextPage_Init(&SettingPage, &OLED);
-    TextMenu.Page = &SettingPage;
-    SelectioneBar_BindTextPage(&Bar, &SettingPage.LowerPages[0]);
+    ICM42688Page = &ParameterPage.LowerPages[1].LowerPages[1];
+    EncoderPage = &ParameterPage.LowerPages[1].LowerPages[2];
+    GWGrayPage = &ParameterPage.LowerPages[1].LowerPages[3];
+
+    TextPage_Init(&ParameterPage, &OLED);
+    TextMenu.Page = &ParameterPage;
+    SelectioneBar_BindTextPage(&Bar, &ParameterPage.LowerPages[0]);
 
     xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
     xTaskCreate(vMenuInteractionTaskCode, "vMenuInteractionTask", 128, NULL, 1,

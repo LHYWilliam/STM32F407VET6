@@ -24,6 +24,28 @@ void TextPage_ShowCallback(void *pvParameters) {
                                   TextMenu.Page->LowerPages[i].Y, "%s",
                                   TextMenu.Page->LowerPages[i].Title););
 }
+void TextPage_ShowParameterCallback(void *pvParameters) {
+    ShowTitleAndTexts(
+        OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
+                    TextMenu.Page->LowerPages[i].Y, "%s",
+                    TextMenu.Page->LowerPages[i].Title);
+
+        if (i > 0) {
+            switch (TextMenu.Page->LowerPages[i].ParameterType) {
+            case ParameterType_Int:
+                OLED_Printf(&OLED, OLED.Width / 2,
+                            TextMenu.Page->LowerPages[i].Y, "%d",
+                            TextMenu.Page->LowerPages[i].IntParameter);
+                break;
+
+            case ParameterType_Float:
+                OLED_Printf(&OLED, OLED.Width / 2,
+                            TextMenu.Page->LowerPages[i].Y, "%.2f",
+                            TextMenu.Page->LowerPages[i].FloatParameter);
+                break;
+            }
+        });
+}
 
 // void TextPage_ShowSettingCallback(void *pvParameters) {
 //     ShowTitleAndTexts(

@@ -11,6 +11,7 @@
 #include "Encoder.h"
 #include "GWGray.h"
 #include "ICM42688.h"
+#include "ICM42688_AHRS.h"
 #include "Key.h"
 #include "LED.h"
 #include "Menu.h"
@@ -69,16 +70,21 @@ extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
 extern void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
                                uint16_t PLLQ);
 
+extern TextPage_t *ICM42688Page;
+extern TextPage_t *EncoderPage;
+extern TextPage_t *GWGrayPage;
+
 extern TextMenu_t TextMenu;
-extern TextPage_t SettingPage;
+extern TextPage_t ParameterPage;
 extern SelectioneBar_t Bar;
 
 extern void TextPage_BackCallback(void *pvParameters);
 extern void TextPage_EnterCallback(void *pvParameters);
 
-extern void TextPage_CursorCallback(int16_t Encoder);
+extern void TextPage_CursorCallback(TextPageRotation Direction);
 
 extern void TextPage_ShowCallback(void *pvParameters);
+extern void TextPage_ShowParameterCallback(void *pvParameters);
 
 extern void TextPage_UpdateCallback(void *pvParameters);
 

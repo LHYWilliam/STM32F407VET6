@@ -194,67 +194,116 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
 
 #define TextPage_Back(title)                                                   \
     (TextPage_t) {                                                             \
-        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
+        .Title = title, .ClickCallback = TextPage_BackCallback,                \
+        .RotationCallback = TextPage_CursorCallback,                           \
     }
 
 TextMenu_t TextMenu;
 
 SelectioneBar_t Bar;
 
-TextPage_t SettingPage = {
-    .Title = "Setting",
+TextPage_t *ICM42688Page;
+TextPage_t *EncoderPage;
+TextPage_t *GWGrayPage;
+
+TextPage_t ParameterPage = {
+    .Title = "Parameter",
     .ShowCallback = TextPage_ShowCallback,
     .UpdateCallback = TextPage_UpdateCallback,
-    .NumOfLowerPages = 13,
+    .NumOfLowerPages = 4,
     .LowerPages =
         (TextPage_t[]){
             TextPage_Back("<"),
             (TextPage_t){
-                .Title = "1. SADSADASDASD",
+                .Title = "Monitor",
+                .ShowCallback = TextPage_ShowCallback,
+                .UpdateCallback = TextPage_UpdateCallback,
+                .RotationCallback = TextPage_CursorCallback,
+                .ClickCallback = TextPage_EnterCallback,
+                .NumOfLowerPages = 4,
+                .LowerPages =
+                    (TextPage_t[]){
+                        TextPage_Back("<"),
+                        (TextPage_t){
+                            .Title = "ICM42688 Angle",
+                            .ShowCallback = TextPage_ShowParameterCallback,
+                            .UpdateCallback = TextPage_UpdateCallback,
+                            .RotationCallback = TextPage_CursorCallback,
+                            .ClickCallback = TextPage_EnterCallback,
+                            .NumOfLowerPages = 4,
+                            .LowerPages =
+                                (TextPage_t[]){
+                                    TextPage_Back("<"),
+                                    (TextPage_t){
+                                        .Title = "Yaw",
+                                        .RotationCallback =
+                                            TextPage_CursorCallback,
+                                        .ParameterType = ParameterType_Float,
+                                    },
+                                    (TextPage_t){
+                                        .Title = "Pitch",
+                                        .RotationCallback =
+                                            TextPage_CursorCallback,
+                                        .ParameterType = ParameterType_Float,
+                                    },
+                                    (TextPage_t){
+                                        .Title = "Roll",
+                                        .RotationCallback =
+                                            TextPage_CursorCallback,
+                                        .ParameterType = ParameterType_Float,
+                                    },
+                                },
+                        },
+                        (TextPage_t){
+                            .Title = "Encoder Counter",
+                            .ShowCallback = TextPage_ShowParameterCallback,
+                            .UpdateCallback = TextPage_UpdateCallback,
+                            .RotationCallback = TextPage_CursorCallback,
+                            .ClickCallback = TextPage_EnterCallback,
+                            .NumOfLowerPages = 3,
+                            .LowerPages =
+                                (TextPage_t[]){
+                                    TextPage_Back("<"),
+                                    (TextPage_t){
+                                        .Title = "Left",
+                                        .RotationCallback =
+                                            TextPage_CursorCallback,
+                                        .ParameterType = ParameterType_Int,
+                                    },
+                                    (TextPage_t){
+                                        .Title = "Right",
+                                        .RotationCallback =
+                                            TextPage_CursorCallback,
+                                        .ParameterType = ParameterType_Int,
+                                    },
+                                },
+                        },
+                        (TextPage_t){
+                            .Title = "GWGray Error",
+                            .ShowCallback = TextPage_ShowParameterCallback,
+                            .UpdateCallback = TextPage_UpdateCallback,
+                            .RotationCallback = TextPage_CursorCallback,
+                            .ClickCallback = TextPage_EnterCallback,
+                            .NumOfLowerPages = 2,
+                            .LowerPages =
+                                (TextPage_t[]){
+                                    TextPage_Back("<"),
+                                    (TextPage_t){
+                                        .Title = "Error",
+                                        .RotationCallback =
+                                            TextPage_CursorCallback,
+                                        .ParameterType = ParameterType_Int,
+                                    },
+                                },
+                        },
+                    },
+            },
+            (TextPage_t){
+                .Title = "Adjust",
                 .RotationCallback = TextPage_CursorCallback,
             },
             (TextPage_t){
-                .Title = "2. dsfdsafsd ",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "3. adsfasdf asdf",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "4. dsafawefasfsd",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "5. fdhsrtgfdv",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "6. fvfrefdfd",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "7. SADSADASDASD",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "8. dsfdsafsd ",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "9. adsfasdf asdf",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "10. dsafawefasfsd",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "11. fdhsrtgfdv",
-                .RotationCallback = TextPage_CursorCallback,
-            },
-            (TextPage_t){
-                .Title = "12. fvfrefdfd",
+                .Title = "Chart",
                 .RotationCallback = TextPage_CursorCallback,
             },
         },
@@ -263,8 +312,9 @@ TextPage_t SettingPage = {
 void TextPage_BackCallback(void *pvParameters);
 void TextPage_EnterCallback(void *pvParameters);
 
-void TextPage_CursorCallback(int16_t Encoder);
+void TextPage_CursorCallback(TextPageRotation Direction);
 
 void TextPage_ShowCallback(void *pvParameters);
+void TextPage_ShowParameterCallback(void *pvParameters);
 
 void TextPage_UpdateCallback(void *pvParameters);

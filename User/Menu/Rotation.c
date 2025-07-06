@@ -1,17 +1,20 @@
 #include "main.h"
 
-void TextPage_CursorCallback(int16_t Encoder) {
-    if (Encoder >= 3) {
-        if (TextPage_CursorInc(TextMenu.Page) == SUCCESS) {
-            SelectioneBar_BindTextPage(
-                &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
-        }
-
-    } else if (Encoder <= -3) {
+void TextPage_CursorCallback(TextPageRotation Direction) {
+    switch (Direction) {
+    case RotationUp:
         if (TextPage_CursorDec(TextMenu.Page) == SUCCESS) {
             SelectioneBar_BindTextPage(
                 &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
         }
+        break;
+
+    case RotationDown:
+        if (TextPage_CursorInc(TextMenu.Page) == SUCCESS) {
+            SelectioneBar_BindTextPage(
+                &Bar, &TextMenu.Page->LowerPages[TextMenu.Page->Cursor]);
+        }
+        break;
     }
 }
 

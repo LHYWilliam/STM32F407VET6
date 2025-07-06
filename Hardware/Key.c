@@ -1,3 +1,5 @@
+#include "Time.h"
+
 #include "Key.h"
 
 void Key_Init(Key_t *Self) {
@@ -14,6 +16,19 @@ void Key_Init(Key_t *Self) {
 
 uint8_t Key_IsPressing(Key_t *Self) {
     return GPIO_ReadInput(Self->IDR) != Self->Mode;
+}
+
+uint8_t Key_IsPressed(Key_t *Self) {
+    if (Key_IsPressing(Self)) {
+        Time_Delayms(10);
+        while (Key_IsPressing(Self)) {
+        }
+
+        Time_Delayms(10);
+        return 1;
+    }
+
+    return 0;
 }
 
 // KeyEvent Key_Read(Key_t *Self) {

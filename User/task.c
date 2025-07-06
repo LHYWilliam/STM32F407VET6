@@ -201,7 +201,26 @@ void vMainTaskCode(void *pvParameters) {
 
     // ---------------- Menu Test ---------------------- //
     for (;;) {
-        vTaskDelay(pdMS_TO_TICKS(1));
+        ICM42688_AHRS_Update(&ICM42688);
+
+        if (ICM42688.CalibrationFinished == RESET) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            continue;
+        }
+
+        ICM42688Page->LowerPages[1].FloatParameter = ICM42688.Angles[0];
+        ICM42688Page->LowerPages[2].FloatParameter = ICM42688.Angles[1];
+        ICM42688Page->LowerPages[3].FloatParameter = ICM42688.Angles[2];
+
+        EncoderPage->LowerPages[1].IntParameter =
+            Encoder_GetCounter(&EncoderLeft);
+        EncoderPage->LowerPages[2].IntParameter =
+            Encoder_GetCounter(&EncoderRight);
+
+        GWGrayPage->LowerPages[1].IntParameter =
+            GWGray_CaculateAnalogError(&GWGray);
+
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
@@ -223,17 +242,18 @@ void vMenuInteractionTaskCode(void *pvParameters) {
     for (;;) {
         LED_Toggle(&LEDBlue);
 
-        int16_t Encode = Encoder_GetCounter(&EncoderLeft);
-
-        if (Encode <= -3 || Encode >= 3) {
+        if (Key_IsPressed(&Key3)) {
             TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
-                Encode);
+                RotationUp);
+        } else if (Key_IsPressed(&Key4)) {
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
+                RotationDown);
         }
 
-        // if (Key_Read(&Key1)) {
-        // TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
-        //         NULL);
-        // }
+        if (Key_IsPressed(&Key1)) {
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
+                NULL);
+        }
 
         vTaskDelay(pdMS_TO_TICKS(100));
     }

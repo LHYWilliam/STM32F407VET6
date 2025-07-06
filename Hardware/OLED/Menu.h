@@ -9,6 +9,16 @@
 #define PositionUpdate(now, target, step)                                      \
     ((now) += ((now) < (target) ? step : (now) > (target) ? -step : 0))
 
+typedef enum {
+    RotationUp,
+    RotationDown,
+} TextPageRotation;
+
+typedef enum {
+    ParameterType_Int,
+    ParameterType_Float,
+} TextPageParameterType;
+
 typedef struct TextPage {
     char Title[32];
 
@@ -27,12 +37,18 @@ typedef struct TextPage {
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;
 
+    TextPageParameterType ParameterType;
+    union {
+        int32_t IntParameter;
+        float FloatParameter;
+    };
+
     int16_t Setting;
 
     void (*ShowCallback)(void *);
     void (*UpdateCallback)(void *);
     void (*ClickCallback)(void *);
-    void (*RotationCallback)(int16_t);
+    void (*RotationCallback)(TextPageRotation);
 } TextPage_t;
 
 typedef struct {

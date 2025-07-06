@@ -5,6 +5,7 @@
 
 void EmptyCallbackPtr(void *pvParameters) {}
 void EmptyCallbackInt(int16_t pvParameter) {}
+void EmptyCallbackRotation(TextPageRotation Direction) {}
 
 void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
     if (IsChinese(Self->Title)) {
@@ -70,7 +71,7 @@ void TextPage_Init(TextPage_t *Self, OLED_t *OLED) {
             Self->LowerPages[i].ClickCallback = EmptyCallbackPtr;
         }
         if (!Self->LowerPages[i].RotationCallback) {
-            Self->LowerPages[i].RotationCallback = EmptyCallbackInt;
+            Self->LowerPages[i].RotationCallback = EmptyCallbackRotation;
         }
 
         TextPage_Init(&Self->LowerPages[i], OLED);

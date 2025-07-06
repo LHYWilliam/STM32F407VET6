@@ -50,6 +50,7 @@ typedef struct {
 
 void Key_Init(Key_t *Self);
 uint8_t Key_IsPressing(Key_t *Self);
+uint8_t Key_IsPressed(Key_t *Self);
 // KeyEvent Key_Read(Key_t *Self);
 // KeyState Key_GetState(Key_t *Self);
 // void Key_Update(Key_t *Self, uint32_t ms);
