@@ -14,6 +14,20 @@ void TextPage_EnterCallback(void *pvParameters) {
     }
 }
 
+void TextPage_ParameterAdjustback(void *pvParameters) {
+    switch (TextMenu.Page->ParameterType) {
+    case ParameterType_Int:
+        *TextMenu.Page->IntParameterPtr +=
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].IntParameter;
+        break;
+
+    case ParameterType_Float:
+        *TextMenu.Page->FloatParameterPtr +=
+            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].FloatParameter;
+        break;
+    }
+}
+
 // void TextPage_SaveSettingCallback(void *pvParameters) {
 //     uint8_t Setting[32];
 //     for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {

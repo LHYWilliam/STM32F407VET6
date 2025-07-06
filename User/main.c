@@ -1,5 +1,8 @@
 #include "main.h"
 
+extern int32_t GWGrayPositionError;
+extern int32_t EncoderLeftCounter, EncoderRightCounter;
+
 int main() {
     HAL_Init();
     // SystemClock_Config(25, 336, 2, 4); // 25MHz HSE
@@ -38,9 +41,42 @@ int main() {
     GWGray_Init(&GWGray);
     ICM42688_Init(&ICM42688);
 
-    ICM42688Page = &ParameterPage.LowerPages[1].LowerPages[1];
-    EncoderPage = &ParameterPage.LowerPages[1].LowerPages[2];
-    GWGrayPage = &ParameterPage.LowerPages[1].LowerPages[3];
+    ICM42688MonitorPage = &ParameterPage.LowerPages[1].LowerPages[1];
+    GWGrayMonitorPage = &ParameterPage.LowerPages[1].LowerPages[2];
+    EncoderMonitorPage = &ParameterPage.LowerPages[1].LowerPages[3];
+    MotorLeftSpeedPIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[1];
+    MotorRightSpeedPIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[2];
+    GWGrayPositionPIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[3];
+
+    ICM42688MonitorPage->LowerPages[1].FloatParameterPtr = &ICM42688.Angles[0];
+    ICM42688MonitorPage->LowerPages[2].FloatParameterPtr = &ICM42688.Angles[1];
+    ICM42688MonitorPage->LowerPages[3].FloatParameterPtr = &ICM42688.Angles[2];
+
+    GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GWGrayPositionError;
+
+    EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
+    EncoderMonitorPage->LowerPages[2].IntParameterPtr = &EncoderRightCounter;
+
+    MotorLeftSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &MotorLeftSpeedPID.Kp;
+    MotorLeftSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &MotorLeftSpeedPID.Ki;
+    MotorLeftSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &MotorLeftSpeedPID.Kd;
+
+    MotorRightSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &MotorRightSpeedPID.Kp;
+    MotorRightSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &MotorRightSpeedPID.Ki;
+    MotorRightSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &MotorRightSpeedPID.Kd;
+
+    GWGrayPositionPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &GrayPositionPID.Kp;
+    GWGrayPositionPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &GrayPositionPID.Ki;
+    GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &GrayPositionPID.Kd;
 
     TextPage_Init(&ParameterPage, &OLED);
     TextMenu.Page = &ParameterPage;

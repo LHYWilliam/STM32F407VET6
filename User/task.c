@@ -1,28 +1,7 @@
 #include "main.h"
 
-const float EncoderLeftToPWM = 10000. / 183.;
-const float EncoderRightToPWM = 10000. / 194.;
-
-PID_t MotorLeftSpeedPID = {
-    .Kp = 2,
-    .Ki = 12,
-    .IMax = 10000,
-};
-
-// .Kd = 0.001,
-
-PID_t MotorRightSpeedPID = {
-    .Kp = 2,
-    .Ki = 12,
-    .IMax = 10000,
-
-};
-
-PID_t GrayPID = {
-    .Kp = -3,
-    .Ki = -1,
-    .IMax = 512,
-};
+int32_t GWGrayPositionError;
+int32_t EncoderLeftCounter, EncoderRightCounter;
 
 void vMainTaskCode(void *pvParameters) {
     // ---------------- Trace Line Test ---------------- //
@@ -208,17 +187,10 @@ void vMainTaskCode(void *pvParameters) {
             continue;
         }
 
-        ICM42688Page->LowerPages[1].FloatParameter = ICM42688.Angles[0];
-        ICM42688Page->LowerPages[2].FloatParameter = ICM42688.Angles[1];
-        ICM42688Page->LowerPages[3].FloatParameter = ICM42688.Angles[2];
+        EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
+        EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
 
-        EncoderPage->LowerPages[1].IntParameter =
-            Encoder_GetCounter(&EncoderLeft);
-        EncoderPage->LowerPages[2].IntParameter =
-            Encoder_GetCounter(&EncoderRight);
-
-        GWGrayPage->LowerPages[1].IntParameter =
-            GWGray_CaculateAnalogError(&GWGray);
+        GWGrayPositionError = GWGray_CaculateAnalogError(&GWGray);
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }

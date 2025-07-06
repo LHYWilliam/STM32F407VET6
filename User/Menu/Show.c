@@ -35,13 +35,13 @@ void TextPage_ShowParameterCallback(void *pvParameters) {
             case ParameterType_Int:
                 OLED_Printf(&OLED, OLED.Width / 2,
                             TextMenu.Page->LowerPages[i].Y, "%d",
-                            TextMenu.Page->LowerPages[i].IntParameter);
+                            *TextMenu.Page->LowerPages[i].IntParameterPtr);
                 break;
 
             case ParameterType_Float:
                 OLED_Printf(&OLED, OLED.Width / 2,
                             TextMenu.Page->LowerPages[i].Y, "%.2f",
-                            TextMenu.Page->LowerPages[i].FloatParameter);
+                            *TextMenu.Page->LowerPages[i].FloatParameterPtr);
                 break;
             }
         });
@@ -80,14 +80,15 @@ void TextPage_ShowDialogCallback(void *pvParameters) {
             case ParameterType_Int:
                 OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
                             TextMenu.Page->TitleY + OLED.FontHeight, "%s: %d",
-                            TextMenu.Page->Title, TextMenu.Page->IntParameter);
+                            TextMenu.Page->Title,
+                            *TextMenu.Page->IntParameterPtr);
                 break;
 
             case ParameterType_Float:
                 OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
                             TextMenu.Page->TitleY + OLED.FontHeight, "%s: %.3f",
                             TextMenu.Page->Title,
-                            TextMenu.Page->FloatParameter);
+                            *TextMenu.Page->FloatParameterPtr);
                 break;
             }
         }

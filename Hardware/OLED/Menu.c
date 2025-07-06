@@ -88,10 +88,6 @@ void TextPage_ResetSetY(TextPage_t *Self) {
     }
 }
 
-void TextPage_ReverseSetting(TextPage_t *Self) {
-    Self->Setting = !Self->Setting;
-}
-
 void TextMenu_Init(TextMenu_t *Self, OLED_t *OLED) {
     if (Self->Page) {
         TextPage_Init(Self->Page, OLED);

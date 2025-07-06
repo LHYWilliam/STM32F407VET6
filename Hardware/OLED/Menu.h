@@ -42,8 +42,10 @@ typedef struct TextPage {
         int32_t IntParameter;
         float FloatParameter;
     };
-
-    int16_t Setting;
+    union {
+        int32_t *IntParameterPtr;
+        float *FloatParameterPtr;
+    };
 
     void (*ShowCallback)(void *);
     void (*UpdateCallback)(void *);
