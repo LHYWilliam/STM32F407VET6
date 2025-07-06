@@ -194,8 +194,37 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
 
 #define TextPage_Back(title)                                                   \
     (TextPage_t) {                                                             \
-        .Title = title, .ClickCallback = TextPage_BackCallback,                \
-        .RotationCallback = TextPage_CursorCallback,                           \
+        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
+        .ClickCallback = TextPage_BackCallback,                                \
+    }
+
+#define TextPage_ParameterMonitorPage(title, Type)                             \
+    (TextPage_t) {                                                             \
+        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
+        .ParameterType = Type,                                                 \
+    }
+
+#define TextPage_IntParameterAdjustOption(title, Step)                         \
+    (TextPage_t) {                                                             \
+        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
+        .ParameterType = ParameterType_Int, .IntParameter = Step               \
+    }
+
+#define TextPage_FloatParameterAdjustOption(title, Step)                       \
+    (TextPage_t) {                                                             \
+        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
+        .ParameterType = ParameterType_Float, .FloatParameter = Step           \
+    }
+
+#define TextPage_ParameterAdjustPage(title, Type, Num, ...)                    \
+    (TextPage_t) {                                                             \
+        .Title = title, .ShowCallback = TextPage_ShowDialogCallback,           \
+        .UpdateCallback = TextPage_UpdateDialogCallback,                       \
+        .ClickCallback = TextPage_EnterCallback,                               \
+        .RotationCallback = TextPage_CursorCallback, .ParameterType = Type,    \
+        .NumOfLowerPages = Num, .LowerPages = (TextPage_t[]) {                 \
+            TextPage_Back("<"), __VA_ARGS__                                    \
+        }                                                                      \
     }
 
 TextMenu_t TextMenu;
@@ -234,24 +263,12 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    (TextPage_t){
-                                        .Title = "Yaw",
-                                        .RotationCallback =
-                                            TextPage_CursorCallback,
-                                        .ParameterType = ParameterType_Float,
-                                    },
-                                    (TextPage_t){
-                                        .Title = "Pitch",
-                                        .RotationCallback =
-                                            TextPage_CursorCallback,
-                                        .ParameterType = ParameterType_Float,
-                                    },
-                                    (TextPage_t){
-                                        .Title = "Roll",
-                                        .RotationCallback =
-                                            TextPage_CursorCallback,
-                                        .ParameterType = ParameterType_Float,
-                                    },
+                                    TextPage_ParameterMonitorPage(
+                                        "Yaw", ParameterType_Float),
+                                    TextPage_ParameterMonitorPage(
+                                        "Pitch", ParameterType_Float),
+                                    TextPage_ParameterMonitorPage(
+                                        "Roll", ParameterType_Float),
                                 },
                         },
                         (TextPage_t){
@@ -264,18 +281,10 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    (TextPage_t){
-                                        .Title = "Left",
-                                        .RotationCallback =
-                                            TextPage_CursorCallback,
-                                        .ParameterType = ParameterType_Int,
-                                    },
-                                    (TextPage_t){
-                                        .Title = "Right",
-                                        .RotationCallback =
-                                            TextPage_CursorCallback,
-                                        .ParameterType = ParameterType_Int,
-                                    },
+                                    TextPage_ParameterMonitorPage(
+                                        "Left", ParameterType_Int),
+                                    TextPage_ParameterMonitorPage(
+                                        "Right", ParameterType_Int),
                                 },
                         },
                         (TextPage_t){
@@ -288,19 +297,71 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    (TextPage_t){
-                                        .Title = "Error",
-                                        .RotationCallback =
-                                            TextPage_CursorCallback,
-                                        .ParameterType = ParameterType_Int,
-                                    },
+                                    TextPage_ParameterMonitorPage(
+                                        "Error", ParameterType_Int),
                                 },
                         },
                     },
             },
             (TextPage_t){
                 .Title = "Adjust",
+                .ShowCallback = TextPage_ShowCallback,
+                .UpdateCallback = TextPage_UpdateCallback,
                 .RotationCallback = TextPage_CursorCallback,
+                .ClickCallback = TextPage_EnterCallback,
+                .NumOfLowerPages = 3,
+                .LowerPages =
+                    (TextPage_t[]){
+                        TextPage_Back("<"),
+                        (TextPage_t){
+                            .Title = "MotorSpeed PID",
+                            .ShowCallback = TextPage_ShowParameterCallback,
+                            .UpdateCallback = TextPage_UpdateCallback,
+                            .RotationCallback = TextPage_CursorCallback,
+                            .ClickCallback = TextPage_EnterCallback,
+                            .NumOfLowerPages = 4,
+                            .LowerPages =
+                                (TextPage_t[]){
+                                    TextPage_Back("<"),
+                                    TextPage_ParameterAdjustPage(
+                                        "kp", ParameterType_Float, 1),
+                                    TextPage_ParameterAdjustPage(
+                                        "Ti", ParameterType_Float, 1),
+                                    TextPage_ParameterAdjustPage(
+                                        "Td", ParameterType_Float, 1),
+                                },
+                        },
+                        (TextPage_t){
+                            .Title = "GWGrayPosition PID",
+                            .ShowCallback = TextPage_ShowParameterCallback,
+                            .UpdateCallback = TextPage_UpdateCallback,
+                            .RotationCallback = TextPage_CursorCallback,
+                            .ClickCallback = TextPage_EnterCallback,
+                            .NumOfLowerPages = 4,
+                            .LowerPages =
+                                (TextPage_t[]){
+                                    TextPage_Back("<"),
+                                    TextPage_ParameterAdjustPage(
+                                        "kp", ParameterType_Float, 3,
+                                        TextPage_FloatParameterAdjustOption(
+                                            "-0.1", -0.1),
+                                        TextPage_FloatParameterAdjustOption(
+                                            "+0.1", 0.1)),
+                                    TextPage_ParameterAdjustPage(
+                                        "Ti", ParameterType_Float, 3,
+                                        TextPage_FloatParameterAdjustOption(
+                                            "-1", -1),
+                                        TextPage_FloatParameterAdjustOption(
+                                            "+1", 1)),
+                                    TextPage_ParameterAdjustPage(
+                                        "Td", ParameterType_Float, 3,
+                                        TextPage_FloatParameterAdjustOption(
+                                            "-10", -10),
+                                        TextPage_FloatParameterAdjustOption(
+                                            "+10", 10)),
+                                },
+                        },
+                    },
             },
             (TextPage_t){
                 .Title = "Chart",
@@ -316,5 +377,7 @@ void TextPage_CursorCallback(TextPageRotation Direction);
 
 void TextPage_ShowCallback(void *pvParameters);
 void TextPage_ShowParameterCallback(void *pvParameters);
+void TextPage_ShowDialogCallback(void *pvParameters);
 
 void TextPage_UpdateCallback(void *pvParameters);
+void TextPage_UpdateDialogCallback(void *pvParameters);

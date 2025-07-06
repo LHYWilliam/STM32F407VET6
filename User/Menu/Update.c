@@ -38,22 +38,26 @@ void TextPage_UpdateCallback(void *pvParameters) {
     }
 }
 
-// void TextPage_UpdateDialogCallback(void *pvParameters) {
-//     PositionUpdate(TextMenu.Page->TitleX, OLED.Width / 8, 1);
-//     PositionUpdate(TextMenu.Page->TitleY, OLED.Height / 8, 1);
-//     PositionUpdate(TextMenu.Page->TitleWidth, OLED.Width - OLED.Width / 4 -
-//     1,
-//                    2); // -1 for border
-//     PositionUpdate(TextMenu.Page->TitleHeight,
-//                    OLED.Height - OLED.Height / 4 - 1, 2); // -1 for border
+void TextPage_UpdateDialogCallback(void *pvParameters) {
+    PositionUpdate(TextMenu.Page->TitleX, OLED.Width / 8, 1);
+    PositionUpdate(TextMenu.Page->TitleY, OLED.Height / 8, 1);
+    PositionUpdate(TextMenu.Page->TitleWidth, OLED.Width - OLED.Width / 4, 2);
+    PositionUpdate(TextMenu.Page->TitleHeight, OLED.Height - OLED.Height / 4,
+                   2);
 
-//     for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
-//         PositionUpdate(
-//             TextMenu.Page->LowerPages[i].X,
-//             OLED.Width / 2 - TextMenu.Page->LowerPages[i].TitleWidth / 2, 1);
-//         PositionUpdate(TextMenu.Page->LowerPages[i].Y,
-//                        TextMenu.Page->TitleY + TextMenu.Page->TitleHeight -
-//                            OLED.FontHeight * 2,
-//                        1);
-//     }
-// }
+    PositionUpdate(TextMenu.Page->LowerPages[0].X, TextMenu.Page->TitleX + 4,
+                   1);
+    PositionUpdate(TextMenu.Page->LowerPages[0].Y, TextMenu.Page->TitleY + 4,
+                   1);
+
+    int32_t X = TextMenu.Page->TitleX + 4;
+    for (uint8_t i = 1; i < TextMenu.Page->NumOfLowerPages; i++) {
+        PositionUpdate(TextMenu.Page->LowerPages[i].X, X, 1);
+        PositionUpdate(TextMenu.Page->LowerPages[i].Y,
+                       TextMenu.Page->TitleY + TextMenu.Page->TitleHeight -
+                           TextMenu.Page->LowerPages[i].TitleHeight,
+                       1);
+
+        X += TextMenu.Page->LowerPages[i].TitleWidth + OLED.FontWidth;
+    }
+}

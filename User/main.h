@@ -85,7 +85,9 @@ extern void TextPage_CursorCallback(TextPageRotation Direction);
 
 extern void TextPage_ShowCallback(void *pvParameters);
 extern void TextPage_ShowParameterCallback(void *pvParameters);
+extern void TextPage_ShowDialogCallback(void *pvParameters);
 
 extern void TextPage_UpdateCallback(void *pvParameters);
+extern void TextPage_UpdateDialogCallback(void *pvParameters);
 
 #endif

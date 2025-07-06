@@ -47,78 +47,49 @@ void TextPage_ShowParameterCallback(void *pvParameters) {
         });
 }
 
-// void TextPage_ShowSettingCallback(void *pvParameters) {
-//     ShowTitleAndTexts(
-//         OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
-//                     TextMenu.Page->LowerPages[i].Y, "%s",
-//                     TextMenu.Page->LowerPages[i].Title);
+void TextPage_ShowDialogCallback(void *pvParameters) {
+    TextPage_BackCallback(NULL);
+    TextMenu.Page->ShowCallback(NULL);
+    TextPage_EnterCallback(NULL);
 
-//         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-//             TextPage_ReverseSettingCallback) {
-//             OLED_ShowImage(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
-//                            TextMenu.Page->LowerPages[i].Y, 8, 8,
-//                            SettingImage[TextMenu.Page->LowerPages[i].Setting]);
-//         }
+    OLED_ClearBufferArea(&OLED, TextMenu.Page->TitleX, TextMenu.Page->TitleY,
+                         TextMenu.Page->TitleWidth, TextMenu.Page->TitleHeight);
 
-//         if (TextMenu.Page->LowerPages[i].ClickCallback ==
-//             TextPage_CursorSwitchEncoderSettingCallback) {
-//             OLED_Printf(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 - 8,
-//                         TextMenu.Page->LowerPages[i].Y, "%d",
-//                         TextMenu.Page->LowerPages[i].Setting);
+    OLED_DrawHollowRectangle(&OLED, TextMenu.Page->TitleX,
+                             TextMenu.Page->TitleY, TextMenu.Page->TitleWidth,
+                             TextMenu.Page->TitleHeight);
 
-//             if (TextMenu.Page->LowerPages[i].RotationCallback ==
-//                 TextPage_SettingEncoderCallback) {
-//                 uint8_t number;
-//                 if (TextMenu.Page->LowerPages[i].Setting == 0) {
-//                     number = 1;
-//                 } else {
-//                     number = (uint8_t)log10(
-//                                  abs(TextMenu.Page->LowerPages[i].Setting)) +
-//                              1;
-//                 }
-//                 number += TextMenu.Page->LowerPages[i].Setting < 0 ? 1 : 0;
+    for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
+        if (TextMenu.Page->LowerPages[i].X < TextMenu.Page->TitleX ||
+            TextMenu.Page->LowerPages[i].Y < TextMenu.Page->TitleY ||
+            TextMenu.Page->LowerPages[i].X +
+                    TextMenu.Page->LowerPages[i].Width >
+                TextMenu.Page->TitleX + TextMenu.Page->TitleWidth ||
+            TextMenu.Page->LowerPages[i].Y +
+                    TextMenu.Page->LowerPages[i].Height >
+                TextMenu.Page->TitleY + TextMenu.Page->TitleHeight) {
+            continue;
+        }
 
-//                 OLED_DrawHLine(&OLED, OLED.Width - 1 - OLED.FontWidth * 6 -
-//                 8,
-//                                TextMenu.Page->LowerPages[i].Y +
-//                                OLED.FontHeight, OLED.FontWidth * number, 1);
-//             }
-//         });
-// }
+        OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
+                    TextMenu.Page->LowerPages[i].Y,
+                    TextMenu.Page->LowerPages[i].Title);
 
-// void TextPage_ShowDialogCallback(void *pvParameters) {
-//     TextPage_BackCallback(NULL);
-//     TextMenu.Page->ShowCallback(NULL);
-//     TextPage_EnterCallback(NULL);
+        if (i == TextMenu.Page->NumOfLowerPages - 1) {
+            switch (TextMenu.Page->ParameterType) {
+            case ParameterType_Int:
+                OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
+                            TextMenu.Page->TitleY + OLED.FontHeight, "%s: %d",
+                            TextMenu.Page->Title, TextMenu.Page->IntParameter);
+                break;
 
-//     OLED_ClearBufferArea(&OLED, TextMenu.Page->TitleX, TextMenu.Page->TitleY,
-//                          TextMenu.Page->TitleWidth,
-//                          TextMenu.Page->TitleHeight);
-
-//     OLED_DrawHollowRectangle(&OLED, TextMenu.Page->TitleX,
-//                              TextMenu.Page->TitleY,
-//                              TextMenu.Page->TitleWidth,
-//                              TextMenu.Page->TitleHeight);
-
-//     for (uint8_t i = 0; i < TextMenu.Page->NumOfLowerPages; i++) {
-//         if (TextMenu.Page->LowerPages[i].X < TextMenu.Page->TitleX ||
-//             TextMenu.Page->LowerPages[i].Y < TextMenu.Page->TitleY ||
-//             TextMenu.Page->LowerPages[i].X +
-//                     TextMenu.Page->LowerPages[i].Width >
-//                 TextMenu.Page->TitleX + TextMenu.Page->TitleWidth ||
-//             TextMenu.Page->LowerPages[i].Y +
-//                     TextMenu.Page->LowerPages[i].Height >
-//                 TextMenu.Page->TitleY + TextMenu.Page->TitleHeight) {
-//             continue;
-//         }
-
-//         OLED_Printf(&OLED, TextMenu.Page->LowerPages[i].X,
-//                     TextMenu.Page->LowerPages[i].Y,
-//                     TextMenu.Page->LowerPages[i].Title);
-
-//         if (i == TextMenu.Page->NumOfLowerPages - 1) {
-//             OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
-//                         TextMenu.Page->TitleY + OLED.FontHeight, "Success");
-//         }
-//     }
-// }
+            case ParameterType_Float:
+                OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
+                            TextMenu.Page->TitleY + OLED.FontHeight, "%s: %.3f",
+                            TextMenu.Page->Title,
+                            TextMenu.Page->FloatParameter);
+                break;
+            }
+        }
+    }
+}
