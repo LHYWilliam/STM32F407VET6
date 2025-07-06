@@ -90,7 +90,10 @@ extern SelectioneBar_t Bar;
 
 extern void TextPage_BackCallback(TextPage_t **TextPage);
 extern void TextPage_EnterCallback(TextPage_t **TextPage);
-extern void TextPage_ParameterAdjustback(TextPage_t **TextPage);
+extern void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage);
+extern void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage);
+extern void TextPage_ParameterDivideCallback(TextPage_t **TextPage);
+extern void TextPage_ParameterPlusMinusCallback(TextPage_t **TextPage);
 
 extern void TextPage_CursorCallback(TextPage_t *TextPage,
                                     TextPageRotation Direction);

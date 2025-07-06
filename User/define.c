@@ -228,28 +228,42 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
         .ParameterType = Type,                                                 \
     }
 
-#define TextPage_IntParameterAdjustOption(title, Step)                         \
+#define TextPage_ParameterDoAdjustPage()                                       \
     (TextPage_t) {                                                             \
-        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
-        .ClickCallback = TextPage_ParameterAdjustback,                         \
-        .ParameterType = ParameterType_Int, .IntParameter = Step               \
+        .Title = "*", .RotationCallback = TextPage_CursorCallback,             \
+        .ClickCallback = TextPage_ParameterDoAdjustCallback,                   \
     }
 
-#define TextPage_FloatParameterAdjustOption(title, Step)                       \
+#define TextPage_ParameterMultiplyPage()                                       \
     (TextPage_t) {                                                             \
-        .Title = title, .RotationCallback = TextPage_CursorCallback,           \
-        .ClickCallback = TextPage_ParameterAdjustback,                         \
-        .ParameterType = ParameterType_Float, .FloatParameter = Step           \
+        .Title = "x10", .RotationCallback = TextPage_CursorCallback,           \
+        .ClickCallback = TextPage_ParameterMultiplyCallback,                   \
     }
 
-#define TextPage_ParameterAdjustPage(title, Type, Num, ...)                    \
+#define TextPage_ParameterDividePage()                                         \
+    (TextPage_t) {                                                             \
+        .Title = "/10", .RotationCallback = TextPage_CursorCallback,           \
+        .ClickCallback = TextPage_ParameterDivideCallback,                     \
+    }
+
+#define TextPage_ParameterPlusMinusPage()                                      \
+    (TextPage_t) {                                                             \
+        .Title = "+/-", .RotationCallback = TextPage_CursorCallback,           \
+        .ClickCallback = TextPage_ParameterPlusMinusCallback,                  \
+    }
+
+#define TextPage_ParameterAdjustPage(title, Type)                              \
     (TextPage_t) {                                                             \
         .Title = title, .ShowCallback = TextPage_ShowDialogCallback,           \
         .UpdateCallback = TextPage_UpdateDialogCallback,                       \
         .ClickCallback = TextPage_EnterCallback,                               \
         .RotationCallback = TextPage_CursorCallback, .ParameterType = Type,    \
-        .NumOfLowerPages = Num, .LowerPages = (TextPage_t[]) {                 \
-            TextPage_Back("<"), __VA_ARGS__                                    \
+        .FloatParameter = 1, .NumOfLowerPages = 5,                             \
+        .LowerPages = (TextPage_t[]) {                                         \
+            TextPage_Back("<"), TextPage_ParameterDoAdjustPage(),              \
+                TextPage_ParameterMultiplyPage(),                              \
+                TextPage_ParameterDividePage(),                                \
+                TextPage_ParameterPlusMinusPage()                              \
         }                                                                      \
     }
 
@@ -355,11 +369,11 @@ TextPage_t ParameterPage = {
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
                                     TextPage_ParameterAdjustPage(
-                                        "Kp", ParameterType_Float, 1),
+                                        "Kp", ParameterType_Float),
                                     TextPage_ParameterAdjustPage(
-                                        "Ki", ParameterType_Float, 1),
+                                        "Ki", ParameterType_Float),
                                     TextPage_ParameterAdjustPage(
-                                        "Kd", ParameterType_Float, 1),
+                                        "Kd", ParameterType_Float),
                                 },
                         },
 
@@ -374,11 +388,11 @@ TextPage_t ParameterPage = {
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
                                     TextPage_ParameterAdjustPage(
-                                        "Kp", ParameterType_Float, 1),
+                                        "Kp", ParameterType_Float),
                                     TextPage_ParameterAdjustPage(
-                                        "Ki", ParameterType_Float, 1),
+                                        "Ki", ParameterType_Float),
                                     TextPage_ParameterAdjustPage(
-                                        "Kd", ParameterType_Float, 1),
+                                        "Kd", ParameterType_Float),
                                 },
                         },
 
@@ -393,23 +407,11 @@ TextPage_t ParameterPage = {
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
                                     TextPage_ParameterAdjustPage(
-                                        "Kp", ParameterType_Float, 3,
-                                        TextPage_FloatParameterAdjustOption(
-                                            "-0.1", -0.1),
-                                        TextPage_FloatParameterAdjustOption(
-                                            "+0.1", 0.1)),
+                                        "Kp", ParameterType_Float),
                                     TextPage_ParameterAdjustPage(
-                                        "Ki", ParameterType_Float, 3,
-                                        TextPage_FloatParameterAdjustOption(
-                                            "-1", -1),
-                                        TextPage_FloatParameterAdjustOption(
-                                            "+1", 1)),
+                                        "Ki", ParameterType_Float),
                                     TextPage_ParameterAdjustPage(
-                                        "Kd", ParameterType_Float, 3,
-                                        TextPage_FloatParameterAdjustOption(
-                                            "-10", -10),
-                                        TextPage_FloatParameterAdjustOption(
-                                            "+10", 10)),
+                                        "Kd", ParameterType_Float),
                                 },
                         },
                     },
@@ -424,7 +426,10 @@ TextPage_t ParameterPage = {
 
 void TextPage_BackCallback(TextPage_t **TextPage);
 void TextPage_EnterCallback(TextPage_t **TextPage);
-void TextPage_ParameterAdjustback(TextPage_t **TextPage);
+void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage);
+void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage);
+void TextPage_ParameterDivideCallback(TextPage_t **TextPage);
+void TextPage_ParameterPlusMinusCallback(TextPage_t **TextPage);
 
 void TextPage_CursorCallback(TextPage_t *TextPage, TextPageRotation Direction);
 

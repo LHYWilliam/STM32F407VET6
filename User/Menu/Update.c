@@ -49,10 +49,9 @@ void TextPage_UpdateDialogCallback(TextPage_t *TextPage) {
     int32_t X = TextPage->TitleX + 4;
     for (uint8_t i = 1; i < TextPage->NumOfLowerPages; i++) {
         PositionUpdate(TextPage->LowerPages[i].X, X, 1);
-        PositionUpdate(TextPage->LowerPages[i].Y,
-                       TextPage->TitleY + TextPage->TitleHeight -
-                           TextPage->LowerPages[i].TitleHeight,
-                       1);
+        PositionUpdate(
+            TextPage->LowerPages[i].Y,
+            TextPage->TitleY + TextPage->TitleHeight - OLED.FontHeight - 4, 1);
 
         X += TextPage->LowerPages[i].TitleWidth + OLED.FontWidth;
     }

@@ -67,15 +67,33 @@ void TextPage_ShowDialogCallback(TextPage_t *TextPage) {
         if (i == TextPage->NumOfLowerPages - 1) {
             switch (TextPage->ParameterType) {
             case ParameterType_Int:
-                OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
+                OLED_Printf(&OLED,
+                            TextPage->LowerPages[0].X +
+                                TextPage->LowerPages[0].TitleWidth +
+                                OLED.FontWidth,
                             TextPage->TitleY + OLED.FontHeight, "%s: %d",
                             TextPage->Title, *TextPage->IntParameterPtr);
+                OLED_Printf(&OLED,
+                            TextPage->LowerPages[0].X +
+                                TextPage->LowerPages[0].TitleWidth +
+                                OLED.FontWidth,
+                            TextPage->TitleY + OLED.FontHeight * 3, "Step: %d",
+                            TextPage->IntParameter);
                 break;
 
             case ParameterType_Float:
-                OLED_Printf(&OLED, OLED.Width / 2 - 7 / 2 * OLED.FontWidth,
-                            TextPage->TitleY + OLED.FontHeight, "%s: %.3f",
+                OLED_Printf(&OLED,
+                            TextPage->LowerPages[0].X +
+                                TextPage->LowerPages[0].TitleWidth +
+                                OLED.FontWidth,
+                            TextPage->TitleY + OLED.FontHeight, "%s: %g",
                             TextPage->Title, *TextPage->FloatParameterPtr);
+                OLED_Printf(&OLED,
+                            TextPage->LowerPages[0].X +
+                                TextPage->LowerPages[0].TitleWidth +
+                                OLED.FontWidth,
+                            TextPage->TitleY + OLED.FontHeight * 3, "Step: %+g",
+                            TextPage->FloatParameter);
                 break;
             }
         }

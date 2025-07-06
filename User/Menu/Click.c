@@ -14,16 +14,60 @@ void TextPage_EnterCallback(TextPage_t **TextPage) {
     }
 }
 
-void TextPage_ParameterAdjustback(TextPage_t **TextPage) {
+void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
     case ParameterType_Int:
-        *(*TextPage)->IntParameterPtr +=
-            (*TextPage)->LowerPages[(*TextPage)->Cursor].IntParameter;
+        *(*TextPage)->IntParameterPtr += (*TextPage)->IntParameter;
         break;
 
     case ParameterType_Float:
-        *(*TextPage)->FloatParameterPtr +=
-            (*TextPage)->LowerPages[(*TextPage)->Cursor].FloatParameter;
+        *(*TextPage)->FloatParameterPtr += (*TextPage)->FloatParameter;
+        break;
+    }
+}
+
+void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage) {
+    switch ((*TextPage)->ParameterType) {
+    case ParameterType_Int:
+        (*TextPage)->IntParameter *= 10;
+        break;
+
+    case ParameterType_Float:
+        (*TextPage)->FloatParameter *= 10;
+        break;
+    }
+}
+
+void TextPage_ParameterDivideCallback(TextPage_t **TextPage) {
+    switch ((*TextPage)->ParameterType) {
+    case ParameterType_Int:
+        if ((*TextPage)->IntParameter < 10 && (*TextPage)->IntParameter > -10) {
+            if ((*TextPage)->IntParameter > 0) {
+                (*TextPage)->IntParameter = 1;
+
+            } else {
+                (*TextPage)->IntParameter = -1;
+            }
+
+        } else {
+            (*TextPage)->IntParameter /= 10;
+        }
+        break;
+
+    case ParameterType_Float:
+        (*TextPage)->FloatParameter /= 10;
+        break;
+    }
+}
+
+void TextPage_ParameterPlusMinusCallback(TextPage_t **TextPage) {
+    switch ((*TextPage)->ParameterType) {
+    case ParameterType_Int:
+        (*TextPage)->IntParameter = -(*TextPage)->IntParameter;
+        break;
+
+    case ParameterType_Float:
+        (*TextPage)->FloatParameter = -(*TextPage)->FloatParameter;
         break;
     }
 }
