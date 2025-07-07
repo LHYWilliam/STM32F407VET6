@@ -65,8 +65,8 @@ Serial_t SerialK230 = {
 
 Serial_t SerialJY61P = {
     .USART = UART4,
-    .TX = PC11,
-    .RX = PC10,
+    .TX = PC10,
+    .RX = PC11,
     .Baudrate = 115200,
 };
 

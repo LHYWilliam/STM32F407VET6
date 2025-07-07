@@ -49,40 +49,41 @@ Key_Init(&Key1);
 # Serial
 * main.c
 ```
-Serial_t Serial = {
+Serial_t SerialBoard = {
     .USART = USART1,
-    .TX = A9,
-    .RX = A10,
+    .TX = PA9,
+    .RX = PA10,
     .Baudrate = 115200,
+    .Default = ENABLE,
     .RxIT = ENABLE,
     .RxITSize = 1,
-    .Priority = 8,
+    .Priority = 1,
 };
 
-Serial_Init(&Serial);
+Serial_Init(&SerialBoard);
 ```
 
 * msp.c
 ```
 void HAL_UART_MspInit(UART_HandleTypeDef *huart) {
-    if (huart->Instance == Serial.USART) {
-        __HAL_RCC_USARTx_CLK_ENABLE(Serial.USART);
+    if (huart->Instance == SerialBoard.USART) {
+        __HAL_RCC_USARTx_CLK_ENABLE(SerialBoard.USART);
 
-        GPIO_t TRX = {
+        GPIO_t GPIO = {
             .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AF7_USARTx(Serial.USART),
+            .Alternate = GPIO_AFx_USARTy(SerialBoard.USART),
         };
-        if (*Serial.TX) {
-            GPIO_InitPin(&RTX, Serial.TX);
+        if (*SerialBoard.TX) {
+            GPIO_InitPin(&GPIO, SerialBoard.TX);
         }
-        if (*Serial.RX) {
-            GPIO_InitPin(&RTX, Serial.RX);
+        if (*SerialBoard.RX) {
+            GPIO_InitPin(&GPIO, SerialBoard.RX);
         }
 
-        if (Serial.RxIT) {
-            HAL_NVIC_EnableIRQ(USARTx_IRQn(Serial.USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Serial.USART), Serial.Priority, 0);
-        }
+        if (SerialBoard.RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(SerialBoard.USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(SerialBoard.USART),
+                                SerialBoard.Priority, 0);
     }
 }
 ```

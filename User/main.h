@@ -8,6 +8,8 @@
 #include "task.h"
 #include "timers.h"
 
+#include <stdio.h>
+
 #include "Encoder.h"
 #include "GWGray.h"
 #include "ICM42688.h"

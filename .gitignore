@@ -148,3 +148,6 @@ out
 # GUI-Guider
 LVGL/custom
 LVGL/generated
+
+# Jlink
+JlinkLog.txt
