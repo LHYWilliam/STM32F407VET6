@@ -99,3 +99,18 @@ void TextPage_ShowDialogCallback(TextPage_t *TextPage) {
         }
     }
 }
+
+void TextPage_ShowOptionCallback(TextPage_t *TextPage) {
+    ShowTitleAndTexts(
+        OLED_Printf(&OLED, TextPage->LowerPages[i].X, TextPage->LowerPages[i].Y,
+                    "%s", TextPage->LowerPages[i].Title);
+        if (i > 0) {
+            OLED_DrawHollowRectangle(&OLED, OLED.Width - 16,
+                                     TextMenu.Page->LowerPages[i].Y, 8, 8);
+            if (*TextPage->IntParameterPtr == i) {
+                OLED_DrawSolidRectangle(&OLED, OLED.Width - 16 + 2,
+                                        TextMenu.Page->LowerPages[i].Y + 2, 4,
+                                        4);
+            }
+        });
+}

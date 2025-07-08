@@ -57,13 +57,6 @@ extern OLED_t OLED;
 extern GWGray_t GWGray;
 extern ICM42688_t ICM42688;
 
-extern const float EncoderLeftToPWM;
-extern const float EncoderRightToPWM;
-
-extern PID_t MotorLeftSpeedPID;
-extern PID_t MotorRightSpeedPID;
-extern PID_t GrayPositionPID;
-
 extern TaskHandle_t xMainTaskHandle;
 extern void vMainTaskCode(void *pvParameters);
 
@@ -89,6 +82,7 @@ extern void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage);
 extern void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage);
 extern void TextPage_ParameterDivideCallback(TextPage_t **TextPage);
 extern void TextPage_ParameterPlusMinusCallback(TextPage_t **TextPage);
+extern void TextPage_ChooseOptionCallback(TextPage_t **TextPage);
 
 extern void TextPage_CursorCallback(TextPage_t *TextPage,
                                     TextPageRotation Direction);
@@ -96,6 +90,7 @@ extern void TextPage_CursorCallback(TextPage_t *TextPage,
 extern void TextPage_ShowCallback(TextPage_t *TextPage);
 extern void TextPage_ShowParameterCallback(TextPage_t *TextPage);
 extern void TextPage_ShowDialogCallback(TextPage_t *TextPage);
+extern void TextPage_ShowOptionCallback(TextPage_t *TextPage);
 
 extern void TextPage_UpdateCallback(TextPage_t *TextPage);
 extern void TextPage_UpdateDialogCallback(TextPage_t *TextPage);

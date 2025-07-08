@@ -1,5 +1,29 @@
 #include "main.h"
 
+const float EncoderLeftToPWM = 10000. / 183.;
+const float EncoderRightToPWM = 10000. / 194.;
+
+PID_t MotorLeftSpeedPID = {
+    .Kp = 2,
+    .Ki = 12,
+    .IMax = 10000,
+};
+
+// .Kd = 0.001,
+
+PID_t MotorRightSpeedPID = {
+    .Kp = 2,
+    .Ki = 12,
+    .IMax = 10000,
+
+};
+
+PID_t GrayPositionPID = {
+    .Kp = -3,
+    .Ki = -1,
+    .IMax = 512,
+};
+
 int32_t GWGrayPositionError;
 int32_t EncoderLeftCounter, EncoderRightCounter;
 
@@ -9,11 +33,56 @@ typedef enum {
 } CarStatus_t;
 CarStatus_t CarStatus = Stop;
 
+int32_t Option;
 FunctionalState OLEDFlushStatus = ENABLE;
 
 static int32_t AdvanceSpeed = 1000;
 
 void vMainTaskCode(void *pvParameters) {
+    TextPage_t *ICM42688MonitorPage =
+        &ParameterPage.LowerPages[1].LowerPages[1];
+    TextPage_t *GWGrayMonitorPage = &ParameterPage.LowerPages[1].LowerPages[2];
+    TextPage_t *EncoderMonitorPage = &ParameterPage.LowerPages[1].LowerPages[3];
+    TextPage_t *MotorLeftSpeedPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[1];
+    TextPage_t *MotorRightSpeedPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[2];
+    TextPage_t *GWGrayPositionPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[3];
+    TextPage_t *OptionPage = &ParameterPage.LowerPages[4];
+
+    ICM42688MonitorPage->LowerPages[1].FloatParameterPtr = &ICM42688.Angles[0];
+    ICM42688MonitorPage->LowerPages[2].FloatParameterPtr = &ICM42688.Angles[1];
+    ICM42688MonitorPage->LowerPages[3].FloatParameterPtr = &ICM42688.Angles[2];
+
+    GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GWGrayPositionError;
+
+    EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
+    EncoderMonitorPage->LowerPages[2].IntParameterPtr = &EncoderRightCounter;
+
+    MotorLeftSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &MotorLeftSpeedPID.Kp;
+    MotorLeftSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &MotorLeftSpeedPID.Ki;
+    MotorLeftSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &MotorLeftSpeedPID.Kd;
+
+    MotorRightSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &MotorRightSpeedPID.Kp;
+    MotorRightSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &MotorRightSpeedPID.Ki;
+    MotorRightSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &MotorRightSpeedPID.Kd;
+
+    GWGrayPositionPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &GrayPositionPID.Kp;
+    GWGrayPositionPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &GrayPositionPID.Ki;
+    GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &GrayPositionPID.Kd;
+
+    OptionPage->IntParameterPtr = &Option;
+
     // ---------------- Trace Line Test ---------------- //
     // int16_t BaseSpeed = 500;
     // while (!Key_IsPressing(&Key1))

@@ -72,6 +72,18 @@ void TextPage_ParameterPlusMinusCallback(TextPage_t **TextPage) {
     }
 }
 
+void TextPage_ChooseOptionCallback(TextPage_t **TextPage) {
+    if (*((*TextPage)->IntParameterPtr) == 0) {
+        *((*TextPage)->IntParameterPtr) = (*TextPage)->Cursor;
+
+    } else if (*((*TextPage)->IntParameterPtr) == (*TextPage)->Cursor) {
+        *((*TextPage)->IntParameterPtr) = 0;
+    } else {
+
+        *((*TextPage)->IntParameterPtr) = (*TextPage)->Cursor;
+    }
+}
+
 // void TextPage_SaveSettingCallback(void *pvParameters) {
 //     uint8_t Setting[32];
 //     for (uint8_t i = 1; i < SettingPage.NumOfLowerPages; i++) {

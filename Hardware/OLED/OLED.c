@@ -181,6 +181,11 @@ void OLED_DrawHollowRectangle(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
     OLED_DrawVLine(Self, X + Width - 1, Y, Height, 1);
 }
 
+void OLED_DrawSolidRectangle(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
+                             uint8_t Height) {
+    OLED_FillArea(Self, X, Y, Width, Height);
+}
+
 void OLED_ShowChart(OLED_t *Self, int16_t X, int16_t Y, uint8_t Width,
                     uint8_t Height, uint16_t *Data, uint16_t Length,
                     int16_t Index) {
