@@ -24,19 +24,22 @@ PID_t GrayPositionPID = {
     .IMax = 512,
 };
 
-int32_t GWGrayPositionError;
+int32_t DiffSpeed;
 int32_t EncoderLeftCounter, EncoderRightCounter;
 
 typedef enum {
+    None,
     Stop,
+    Advance,
+    Round,
     Trace,
 } CarStatus_t;
-CarStatus_t CarStatus = Stop;
 
-int32_t Option;
+int32_t CarStatus;
 FunctionalState OLEDFlushStatus = ENABLE;
 
-static int32_t AdvanceSpeed = 1000;
+const int32_t AdvanceSpeed = 1000;
+const int32_t RoundSpeed = 512;
 
 void vMainTaskCode(void *pvParameters) {
     TextPage_t *ICM42688MonitorPage =
@@ -55,7 +58,7 @@ void vMainTaskCode(void *pvParameters) {
     ICM42688MonitorPage->LowerPages[2].FloatParameterPtr = &ICM42688.Angles[1];
     ICM42688MonitorPage->LowerPages[3].FloatParameterPtr = &ICM42688.Angles[2];
 
-    GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GWGrayPositionError;
+    GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &DiffSpeed;
 
     EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
     EncoderMonitorPage->LowerPages[2].IntParameterPtr = &EncoderRightCounter;
@@ -81,7 +84,7 @@ void vMainTaskCode(void *pvParameters) {
     GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
         &GrayPositionPID.Kd;
 
-    OptionPage->IntParameterPtr = &Option;
+    OptionPage->IntParameterPtr = &CarStatus;
 
     // ---------------- Trace Line Test ---------------- //
     // int16_t BaseSpeed = 500;
@@ -277,21 +280,40 @@ void vMainTaskCode(void *pvParameters) {
         switch (CarStatus) {
         case Stop:
             BaseSpeed = 0;
-            GWGrayPositionError = 0;
+            DiffSpeed = 0;
+            break;
+
+        case Advance:
+            BaseSpeed = AdvanceSpeed;
+            DiffSpeed = 0;
+            break;
+
+        case Round:
+            BaseSpeed = 0;
+            DiffSpeed = RoundSpeed;
             break;
 
         case Trace:
-            BaseSpeed = AdvanceSpeed;
-            GWGrayPositionError = GWGray_CaculateAnalogError(&GWGray);
+            DiffSpeed = GWGray_CaculateAnalogError(&GWGray);
+
+            if (DiffSpeed == 0xFFFF) {
+                BaseSpeed = 0;
+                DiffSpeed = 0;
+
+                CarStatus = Stop;
+            } else {
+                BaseSpeed = AdvanceSpeed;
+                DiffSpeed = PID_Caculate(&GrayPositionPID, DiffSpeed);
+            }
             break;
         }
 
         int16_t LeftOut = PID_Caculate(
-            &MotorLeftSpeedPID, BaseSpeed + GWGrayPositionError -
-                                    EncoderLeftCounter * EncoderLeftToPWM);
+            &MotorLeftSpeedPID,
+            BaseSpeed + DiffSpeed - EncoderLeftCounter * EncoderLeftToPWM);
         int16_t RightOut = PID_Caculate(
-            &MotorRightSpeedPID, BaseSpeed - GWGrayPositionError -
-                                     EncoderRightCounter * EncoderRightToPWM);
+            &MotorRightSpeedPID,
+            BaseSpeed - DiffSpeed - EncoderRightCounter * EncoderRightToPWM);
         Motor_SetSpeed(&MotorLeft, LeftOut);
         Motor_SetSpeed(&MotorRight, RightOut);
 

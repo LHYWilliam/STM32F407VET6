@@ -89,6 +89,6 @@ typedef struct {
 ErrorStatus GWGray_Init(GWGray_t *Self);
 void GWGray_ReadDigital(GWGray_t *Self, uint8_t *Data);
 void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data);
-int16_t GWGray_CaculateAnalogError(GWGray_t *Self);
+int32_t GWGray_CaculateAnalogError(GWGray_t *Self);
 
 #endif

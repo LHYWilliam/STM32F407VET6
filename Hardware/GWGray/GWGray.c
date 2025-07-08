@@ -41,7 +41,7 @@ void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data) {
 #define OnCenterGroup(Index) (3 <= (Index) && (Index) <= 4)
 #define OnRightGroup(Index)  (5 <= (Index) && (Index) <= 7)
 
-int16_t GWGray_CaculateAnalogError(GWGray_t *Self) {
+int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
     uint8_t DigitalData[8], AnalogData[8];
     GWGray_ReadDigital(Self, DigitalData);
     GWGray_ReadAnalog(Self, AnalogData);
@@ -58,7 +58,7 @@ int16_t GWGray_CaculateAnalogError(GWGray_t *Self) {
     }
 
     if (OnLineIndex == 8) {
-        return 0;
+        return 0xFFFF;
     }
 
     uint8_t LeftAnalog, RightAnalog;

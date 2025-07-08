@@ -400,11 +400,13 @@ TextPage_t ParameterPage = {
             (TextPage_t){
                 .Title = "Option",
                 .TextPage_OptiontPageConfig(),
-                .NumOfLowerPages = 3,
+                .NumOfLowerPages = 5,
                 .LowerPages =
                     (TextPage_t[]){
                         TextPage_Back("<"),
                         TextPage_OptionPage("Stop"),
+                        TextPage_OptionPage("Advance"),
+                        TextPage_OptionPage("Round"),
                         TextPage_OptionPage("Trace"),
                     },
             },
