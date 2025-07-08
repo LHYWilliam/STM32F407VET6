@@ -3,6 +3,16 @@
 int32_t GWGrayPositionError;
 int32_t EncoderLeftCounter, EncoderRightCounter;
 
+typedef enum {
+    Stop,
+    Trace,
+} CarStatus_t;
+CarStatus_t CarStatus = Stop;
+
+FunctionalState OLEDFlushStatus = ENABLE;
+
+static int32_t AdvanceSpeed = 1000;
+
 void vMainTaskCode(void *pvParameters) {
     // ---------------- Trace Line Test ---------------- //
     // int16_t BaseSpeed = 500;
@@ -194,45 +204,84 @@ void vMainTaskCode(void *pvParameters) {
         EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
         EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
 
-        GWGrayPositionError = GWGray_CaculateAnalogError(&GWGray);
+        int16_t BaseSpeed = 0;
+        switch (CarStatus) {
+        case Stop:
+            BaseSpeed = 0;
+            GWGrayPositionError = 0;
+            break;
+
+        case Trace:
+            BaseSpeed = AdvanceSpeed;
+            GWGrayPositionError = GWGray_CaculateAnalogError(&GWGray);
+            break;
+        }
+
+        int16_t LeftOut = PID_Caculate(
+            &MotorLeftSpeedPID, BaseSpeed + GWGrayPositionError -
+                                    EncoderLeftCounter * EncoderLeftToPWM);
+        int16_t RightOut = PID_Caculate(
+            &MotorRightSpeedPID, BaseSpeed - GWGrayPositionError -
+                                     EncoderRightCounter * EncoderRightToPWM);
+        Motor_SetSpeed(&MotorLeft, LeftOut);
+        Motor_SetSpeed(&MotorRight, RightOut);
 
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 
-void vOLEDTimerCallback(TimerHandle_t pxTimer) {
-    LED_Toggle(&LEDGreen);
-
-    OLED_ClearBuffer(&OLED);
-
-    TextMenu.Page->UpdateCallback(TextMenu.Page);
-    SelectioneBar_Update(&Bar);
-
-    TextMenu.Page->ShowCallback(TextMenu.Page);
-    OLED_ShowSelectioneBar(&OLED, &Bar);
-
-    OLED_SendBuffer(&OLED);
-}
-
-void vMenuInteractionTaskCode(void *pvParameters) {
+void vInteractionTaskCode(void *pvParameters) {
     for (;;) {
         LED_Toggle(&LEDBlue);
 
-        if (Key_IsPressed(&Key1)) {
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
-                &TextMenu.Page);
+        if (Key_IsPressed(&Key4)) {
+            OLEDFlushStatus = !OLEDFlushStatus;
         }
 
-        if (Key_IsPressed(&Key3)) {
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
-                TextMenu.Page, RotationUp);
+        if (OLEDFlushStatus == ENABLE) {
+            if (Key_IsPressed(&Key1)) {
+                TextMenu.Page->LowerPages[TextMenu.Page->Cursor].ClickCallback(
+                    &TextMenu.Page);
+            }
+            if (Key_IsPressed(&Key2)) {
+                TextMenu.Page->LowerPages[TextMenu.Page->Cursor]
+                    .RotationCallback(TextMenu.Page, RotationUp);
 
-        } else if (Key_IsPressed(&Key4)) {
-            TextMenu.Page->LowerPages[TextMenu.Page->Cursor].RotationCallback(
-                TextMenu.Page, RotationDown);
+            } else if (Key_IsPressed(&Key3)) {
+                TextMenu.Page->LowerPages[TextMenu.Page->Cursor]
+                    .RotationCallback(TextMenu.Page, RotationDown);
+            }
         }
 
         vTaskDelay(pdMS_TO_TICKS(100));
+    }
+}
+
+void vOLEDTaskCode(void *pvParameters) {
+    for (;;) {
+        if (OLEDFlushStatus == DISABLE) {
+            OLED_ClearBuffer(&OLED);
+            OLED_Printf(&OLED, OLED.Width / 2 - OLED.FontWidth * 6,
+                        OLED.Height / 2 - OLED.FontHeight / 2, "Flush Disable");
+            OLED_SendBuffer(&OLED);
+
+            vTaskDelay(pdMS_TO_TICKS(100));
+            continue;
+        }
+
+        LED_Toggle(&LEDGreen);
+
+        OLED_ClearBuffer(&OLED);
+
+        TextMenu.Page->UpdateCallback(TextMenu.Page);
+        SelectioneBar_Update(&Bar);
+
+        TextMenu.Page->ShowCallback(TextMenu.Page);
+        OLED_ShowSelectioneBar(&OLED, &Bar);
+
+        OLED_SendBuffer(&OLED);
+
+        vTaskDelay(pdMS_TO_TICKS(10));
     }
 }
 

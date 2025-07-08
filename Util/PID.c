@@ -4,7 +4,7 @@
 
 float RC = 1 / (2 * 3.14 * 20);
 
-int16_t PID_Caculate(PID_t *Self, float Error) {
+int32_t PID_Caculate(PID_t *Self, float Error) {
     float Output = 0;
     uint32_t Now = Time_Getms();
     float dt = (float)(Now - Self->LastTime) / 1000;

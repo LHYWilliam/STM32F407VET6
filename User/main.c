@@ -41,12 +41,16 @@ int main() {
     GWGray_Init(&GWGray);
     ICM42688_Init(&ICM42688);
 
-    ICM42688MonitorPage = &ParameterPage.LowerPages[1].LowerPages[1];
-    GWGrayMonitorPage = &ParameterPage.LowerPages[1].LowerPages[2];
-    EncoderMonitorPage = &ParameterPage.LowerPages[1].LowerPages[3];
-    MotorLeftSpeedPIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[1];
-    MotorRightSpeedPIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[2];
-    GWGrayPositionPIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[3];
+    TextPage_t *ICM42688MonitorPage =
+        &ParameterPage.LowerPages[1].LowerPages[1];
+    TextPage_t *GWGrayMonitorPage = &ParameterPage.LowerPages[1].LowerPages[2];
+    TextPage_t *EncoderMonitorPage = &ParameterPage.LowerPages[1].LowerPages[3];
+    TextPage_t *MotorLeftSpeedPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[1];
+    TextPage_t *MotorRightSpeedPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[2];
+    TextPage_t *GWGrayPositionPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[3];
 
     ICM42688MonitorPage->LowerPages[1].FloatParameterPtr = &ICM42688.Angles[0];
     ICM42688MonitorPage->LowerPages[2].FloatParameterPtr = &ICM42688.Angles[1];
@@ -82,16 +86,14 @@ int main() {
     TextMenu.Page = &ParameterPage;
     SelectioneBar_BindTextPage(&Bar, &ParameterPage.LowerPages[0]);
 
-    xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 1, &xMainTaskHandle);
-    xTaskCreate(vMenuInteractionTaskCode, "vMenuInteractionTask", 128, NULL, 1,
-                &xMenuInteractionTaskHandle);
+    xTaskCreate(vMainTaskCode, "vMainTask", 128, NULL, 3, &xMainTaskHandle);
+    xTaskCreate(vInteractionTaskCode, "vInteractionTask", 128, NULL, 1,
+                &xInteractionTaskHandle);
+    xTaskCreate(vOLEDTaskCode, "vOLEDTask", 128, NULL, 2, &xOLEDTaskHandle);
 
     xLEDTimer = xTimerCreate("xLEDTimer", pdMS_TO_TICKS(200), pdTRUE, (void *)0,
                              vLEDTimerCallback);
-    vOLEDTimer = xTimerCreate("vOLEDTimer", pdMS_TO_TICKS(10), pdTRUE,
-                              (void *)1, vOLEDTimerCallback);
     xTimerStart(xLEDTimer, 0);
-    xTimerStart(vOLEDTimer, 0);
 
     vTaskStartScheduler();
 }

@@ -67,24 +67,17 @@ extern PID_t GrayPositionPID;
 extern TaskHandle_t xMainTaskHandle;
 extern void vMainTaskCode(void *pvParameters);
 
-extern TaskHandle_t xMenuInteractionTaskHandle;
-extern void vMenuInteractionTaskCode(void *pvParameters);
+extern TaskHandle_t xInteractionTaskHandle;
+extern void vInteractionTaskCode(void *pvParameters);
+
+extern TaskHandle_t xOLEDTaskHandle;
+extern void vOLEDTaskCode(void *pvParameters);
 
 extern TimerHandle_t xLEDTimer;
 extern void vLEDTimerCallback(TimerHandle_t pxTimer);
 
-extern TimerHandle_t vOLEDTimer;
-extern void vOLEDTimerCallback(TimerHandle_t pxTimer);
-
 extern void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
                                uint16_t PLLQ);
-
-extern TextPage_t *ICM42688MonitorPage;
-extern TextPage_t *EncoderMonitorPage;
-extern TextPage_t *GWGrayMonitorPage;
-extern TextPage_t *MotorLeftSpeedPIDAdjustPage;
-extern TextPage_t *MotorRightSpeedPIDAdjustPage;
-extern TextPage_t *GWGrayPositionPIDAdjustPage;
 
 extern TextMenu_t TextMenu;
 extern TextPage_t ParameterPage;

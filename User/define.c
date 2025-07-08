@@ -204,14 +204,14 @@ PID_t GrayPositionPID = {
 TaskHandle_t xMainTaskHandle;
 void vMainTaskCode(void *pvParameters);
 
-TaskHandle_t xMenuInteractionTaskHandle;
-void vMenuInteractionTaskCode(void *pvParameters);
+TaskHandle_t xInteractionTaskHandle;
+void vInteractionTaskCode(void *pvParameters);
+
+TaskHandle_t xOLEDTaskHandle;
+void vOLEDTaskCode(void *pvParameters);
 
 TimerHandle_t xLEDTimer;
 void vLEDTimerCallback(TimerHandle_t pxTimer);
-
-TimerHandle_t vOLEDTimer;
-void vOLEDTimerCallback(TimerHandle_t pxTimer);
 
 void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
                         uint16_t PLLQ);
@@ -288,13 +288,6 @@ void SystemClock_Config(uint16_t PLLM, uint16_t PLLN, uint16_t PLLP,
 TextMenu_t TextMenu;
 
 SelectioneBar_t Bar;
-
-TextPage_t *ICM42688MonitorPage;
-TextPage_t *EncoderMonitorPage;
-TextPage_t *GWGrayMonitorPage;
-TextPage_t *MotorLeftSpeedPIDAdjustPage;
-TextPage_t *MotorRightSpeedPIDAdjustPage;
-TextPage_t *GWGrayPositionPIDAdjustPage;
 
 TextPage_t ParameterPage = {
     .Title = "Parameter",
