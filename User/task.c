@@ -72,6 +72,8 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     // ---------------- Motor Test --------------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
     // Motor_SetSpeed(&MotorLeft, 1000);
     // Motor_SetSpeed(&MotorRight, -1000);
 
@@ -88,6 +90,8 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     // ---------------- Servo Test --------------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
     // for (;;) {
     //     for (uint8_t i = 0; i < 60; i++) {
     //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
@@ -123,7 +127,7 @@ void vMainTaskCode(void *pvParameters) {
     // for (;;) {
     //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
     //     printf("%d\n", Error);
-    //     vTaskDelay(pdMS_TO_TICKS(100));
+    //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
     // ---------------- MotorSpeedPID Test ------------- //

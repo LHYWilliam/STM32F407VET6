@@ -11,6 +11,20 @@ void PWM_Init(PWM_t *Self) {
                             ? HAL_TIM_Base_Init
                             : HAL_TIM_PWM_Init,
     };
+
+    {
+        __HAL_RCC_TIMx_CLK_ENABLE(Self->TIMx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_TIMy(Self->TIMx),
+        };
+
+        for (uint8_t i = 0; Self->Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, Self->GPIOxPiny[i]);
+        }
+    }
+
     TIM_Init(&TIM);
 
     if (Self->TIMx == TIM1 || Self->TIMx == TIM8) {

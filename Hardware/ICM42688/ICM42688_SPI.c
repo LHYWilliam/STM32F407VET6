@@ -20,6 +20,27 @@ void ICM42688_HWSPI_Init(ICM42688_t *Self) {
         .Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE,
         .Init.CRCPolynomial = 7,
     };
+
+    {
+        __HAL_RCC_SPIx_CLK_ENABLE(Self->SPIx);
+
+        GPIO_t GPIO;
+
+        GPIO.Mode = GPIO_MODE_AF_PP;
+        GPIO.Alternate = GPIO_AF5_SPI2;
+        GPIO.Pull = GPIO_PULLUP;
+        Self->SCLK_ODR = GPIO_InitPin(&GPIO, Self->SCLK);
+        GPIO_InitPin(&GPIO, Self->MISO);
+        Self->MOSI_ODR = GPIO_InitPin(&GPIO, Self->MOSI);
+
+        GPIO.Mode = GPIO_MODE_OUTPUT_PP;
+        Self->CS_ODR = GPIO_InitPin(&GPIO, Self->CS);
+
+        GPIO_Write(Self->SCLK_ODR, 1);
+        GPIO_Write(Self->MOSI_ODR, 1);
+        GPIO_Write(Self->CS_ODR, 1);
+    }
+
     HAL_SPI_Init(&Self->Handel);
 
     __HAL_SPI_ENABLE(&Self->Handel);

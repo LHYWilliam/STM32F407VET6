@@ -24,6 +24,17 @@ void ADC_Init(ADC_t *Self) {
             },
     };
 
+    {
+        __HAL_RCC_ADCx_CLK_ENABLE(Self->ADCx);
+
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_ANALOG,
+        };
+        for (uint8_t i = 0; Self->Channel[i]; i++) {
+            GPIO_InitPin(&GPIO, Self->GPIOxPiny[i]);
+        }
+    }
+
     HAL_ADC_Init(&Self->Handler);
 
     if (Self->Trigger) {

@@ -1,32 +1,37 @@
 #include "DMA.h"
 
-void DMA_Init(DMA_t *self) {
-    if (self->Direction == DMA_MEMORY_TO_MEMORY) {
-        __HAL_RCC_DMAx_CLK_ENABLE(self->DMAx);
+void DMA_Init(DMA_t *Self) {
+    if (Self->Direction == DMA_MEMORY_TO_MEMORY) {
+        __HAL_RCC_DMAx_CLK_ENABLE(Self->DMAx);
     }
 
-    self->Handler = (DMA_HandleTypeDef){
-        .Instance = DMAx_Streamy(self->DMAx, self->Stream),
+    Self->Handler = (DMA_HandleTypeDef){
+        .Instance = DMAx_Streamy(Self->DMAx, Self->Stream),
         .Init =
             {
-                .Channel = DMA_Channelx(self->Channel),
+                .Channel = DMA_Channelx(Self->Channel),
 
                 .PeriphInc =
-                    self->PeriphInc ? DMA_PINC_ENABLE : DMA_PINC_DISABLE,
-                .PeriphDataAlignment = DMA_PDATAALIGN_SIZE(self->PeriphSize),
+                    Self->PeriphInc ? DMA_PINC_ENABLE : DMA_PINC_DISABLE,
+                .PeriphDataAlignment = DMA_PDATAALIGN_SIZE(Self->PeriphSize),
 
-                .MemInc = self->MemInc ? DMA_MINC_ENABLE : DMA_MINC_DISABLE,
-                .MemDataAlignment = DMA_MDATAALIGN_SIZE(self->MemSize),
+                .MemInc = Self->MemInc ? DMA_MINC_ENABLE : DMA_MINC_DISABLE,
+                .MemDataAlignment = DMA_MDATAALIGN_SIZE(Self->MemSize),
 
-                .Mode = self->Mode,
-                .Direction = self->Direction,
+                .Mode = Self->Mode,
+                .Direction = Self->Direction,
                 .Priority = DMA_PRIORITY_HIGH,
             },
     };
-    HAL_DMA_Init(&self->Handler);
 
-    if (self->Interrupt) {
-        HAL_NVIC_SetPriority(DMAx_Streamy_IRQn(self->DMAx, self->Stream), 8, 0);
-        HAL_NVIC_EnableIRQ(DMAx_Streamy_IRQn(self->DMAx, self->Stream));
+    {
+        __HAL_RCC_DMAx_CLK_ENABLE(Self->DMAx);
+    }
+
+    HAL_DMA_Init(&Self->Handler);
+
+    if (Self->Interrupt) {
+        HAL_NVIC_SetPriority(DMAx_Streamy_IRQn(Self->DMAx, Self->Stream), 8, 0);
+        HAL_NVIC_EnableIRQ(DMAx_Streamy_IRQn(Self->DMAx, Self->Stream));
     }
 }

@@ -10,6 +10,16 @@ void Timer_Init(Timer_t *Self) {
         .Handler = &Self->Handler,
         .HAL_TIM_Init = HAL_TIM_Base_Init,
     };
+
+    {
+        __HAL_RCC_TIMx_CLK_ENABLE(Self->TIMx);
+
+        if (Self->Interrupt) {
+            HAL_NVIC_SetPriority(TIMx_IRQN(Self->TIMx), Self->Priority, 0);
+            HAL_NVIC_EnableIRQ(TIMx_IRQN(Self->TIMx));
+        }
+    }
+
     TIM_Init(&TIM);
 
     if (Self->Trigger) {

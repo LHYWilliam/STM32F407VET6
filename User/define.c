@@ -96,13 +96,13 @@ Motor_t MotorRight = {
 };
 
 Encoder_t EncoderLeft = {
-    .TIM = TIM4,
+    .TIMx = TIM4,
     .Channel = {1, 2},
     .GPIOxPiny = {PB6, PB7},
 };
 
 Encoder_t EncoderRight = {
-    .TIM = TIM3,
+    .TIMx = TIM3,
     .Channel = {1, 2},
     .GPIOxPiny = {PB4, PB5},
 };

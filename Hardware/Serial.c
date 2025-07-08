@@ -22,22 +22,24 @@ void Serial_Init(Serial_t *Self) {
             },
     };
 
-    __HAL_RCC_USARTx_CLK_ENABLE(Self->USART);
+    {
+        __HAL_RCC_USARTx_CLK_ENABLE(Self->USART);
 
-    GPIO_t GPIO = {
-        .Mode = GPIO_MODE_AF_PP,
-        .Alternate = GPIO_AFx_USARTy(Self->USART),
-    };
-    if (*Self->TX) {
-        GPIO_InitPin(&GPIO, Self->TX);
-    }
-    if (*Self->RX) {
-        GPIO_InitPin(&GPIO, Self->RX);
-    }
+        GPIO_t GPIO = {
+            .Mode = GPIO_MODE_AF_PP,
+            .Alternate = GPIO_AFx_USARTy(Self->USART),
+        };
+        if (*Self->TX) {
+            GPIO_InitPin(&GPIO, Self->TX);
+        }
+        if (*Self->RX) {
+            GPIO_InitPin(&GPIO, Self->RX);
+        }
 
-    if (Self->RxIT) {
-        HAL_NVIC_EnableIRQ(USARTx_IRQn(Self->USART));
-        HAL_NVIC_SetPriority(USARTx_IRQn(Self->USART), Self->Priority, 0);
+        if (Self->RxIT) {
+            HAL_NVIC_EnableIRQ(USARTx_IRQn(Self->USART));
+            HAL_NVIC_SetPriority(USARTx_IRQn(Self->USART), Self->Priority, 0);
+        }
     }
 
     HAL_UART_Init(&Self->Handler);

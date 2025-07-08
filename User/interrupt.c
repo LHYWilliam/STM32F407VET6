@@ -8,6 +8,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == SerialBoard.USART) {
         // Serial_SendBytes(&SerialBoard, SerialBoard.RXBuffer, 1);
         // Serial_RXITStart(&SerialBoard, 1);
+        // return;
 
         if (SerialBoard.RecieveFlag == SET) {
             Serial_RXITStart(&SerialBoard, 1);

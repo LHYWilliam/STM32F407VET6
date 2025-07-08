@@ -6,6 +6,12 @@ void Sampler_Init(Sampler_t *Self) {
         ;
     Self->ADC.NbrOfConversion = i;
 
+    if (Self->Timer.TIMx) {
+        Self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(Self->Timer.TIMx);
+    }
+
+    ADC_Init(&Self->ADC);
+
     if (Self->DMA.DMAx) {
         Self->DMA.PeriphInc = DISABLE;
         Self->DMA.PeriphSize = 32;
@@ -13,16 +19,17 @@ void Sampler_Init(Sampler_t *Self) {
         Self->DMA.MemSize = 32;
         Self->DMA.Mode = DMA_CIRCULAR;
         Self->DMA.Direction = DMA_PERIPH_TO_MEMORY;
+
+        DMA_Init(&Self->DMA);
+
+        {
+            __HAL_LINKDMA(&Self->ADC.Handler, DMA_Handle, Self->DMA.Handler);
+        }
     }
 
     if (Self->Timer.TIMx) {
         Self->Timer.Trigger = TIM_TRGO_UPDATE;
-        Self->ADC.Trigger = ADC_EXTERNALTRIGCONV_Tx_TRGO(Self->Timer.TIMx);
-    }
 
-    ADC_Init(&Self->ADC);
-
-    if (Self->Timer.TIMx) {
         Timer_Init(&Self->Timer);
     }
 

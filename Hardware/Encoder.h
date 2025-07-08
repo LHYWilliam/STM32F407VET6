@@ -7,7 +7,7 @@
 #include "GPIO.h"
 
 typedef struct {
-    TIM_TypeDef *TIM;
+    TIM_TypeDef *TIMx;
     uint8_t Channel[2];
     GPIOxPiny_t GPIOxPiny[2];
 
