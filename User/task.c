@@ -19,7 +19,7 @@ PID_t MotorRightSpeedPID = {
 };
 
 PID_t GrayPositionPID = {
-    .Kp = -3,
+    .Kp = -6,
     .Ki = -1,
     .IMax = 512,
 };

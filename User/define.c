@@ -50,7 +50,7 @@ Serial_t SerialBluetooth = {
     .USART = USART2,
     .TX = PD5,
     .RX = PD6,
-    .Baudrate = 9600,
+    .Baudrate = 115200,
     .RxIT = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
@@ -299,12 +299,11 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    TextPage_ParameterMonitorPage(
-                                        "Yaw", ParameterType_Float),
-                                    TextPage_ParameterMonitorPage(
-                                        "Pitch", ParameterType_Float),
-                                    TextPage_ParameterMonitorPage(
-                                        "Roll", ParameterType_Float),
+                                    TextPage_ParameterMonitorPage("Yaw", Float),
+                                    TextPage_ParameterMonitorPage("Pitch",
+                                                                  Float),
+                                    TextPage_ParameterMonitorPage("Roll",
+                                                                  Float),
                                 },
                         },
                         (TextPage_t){
@@ -314,8 +313,7 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    TextPage_ParameterMonitorPage(
-                                        "Error", ParameterType_Int),
+                                    TextPage_ParameterMonitorPage("Error", Int),
                                 },
                         },
 
@@ -326,10 +324,8 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    TextPage_ParameterMonitorPage(
-                                        "Left", ParameterType_Int),
-                                    TextPage_ParameterMonitorPage(
-                                        "Right", ParameterType_Int),
+                                    TextPage_ParameterMonitorPage("Left", Int),
+                                    TextPage_ParameterMonitorPage("Right", Int),
                                 },
                         },
                     },
@@ -349,12 +345,9 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    TextPage_ParameterAdjustPage(
-                                        "Kp", ParameterType_Float),
-                                    TextPage_ParameterAdjustPage(
-                                        "Ki", ParameterType_Float),
-                                    TextPage_ParameterAdjustPage(
-                                        "Kd", ParameterType_Float),
+                                    TextPage_ParameterAdjustPage("Kp", Float),
+                                    TextPage_ParameterAdjustPage("Ki", Float),
+                                    TextPage_ParameterAdjustPage("Kd", Float),
                                 },
                         },
 
@@ -365,12 +358,9 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    TextPage_ParameterAdjustPage(
-                                        "Kp", ParameterType_Float),
-                                    TextPage_ParameterAdjustPage(
-                                        "Ki", ParameterType_Float),
-                                    TextPage_ParameterAdjustPage(
-                                        "Kd", ParameterType_Float),
+                                    TextPage_ParameterAdjustPage("Kp", Float),
+                                    TextPage_ParameterAdjustPage("Ki", Float),
+                                    TextPage_ParameterAdjustPage("Kd", Float),
                                 },
                         },
 
@@ -381,12 +371,9 @@ TextPage_t ParameterPage = {
                             .LowerPages =
                                 (TextPage_t[]){
                                     TextPage_Back("<"),
-                                    TextPage_ParameterAdjustPage(
-                                        "Kp", ParameterType_Float),
-                                    TextPage_ParameterAdjustPage(
-                                        "Ki", ParameterType_Float),
-                                    TextPage_ParameterAdjustPage(
-                                        "Kd", ParameterType_Float),
+                                    TextPage_ParameterAdjustPage("Kp", Float),
+                                    TextPage_ParameterAdjustPage("Ki", Float),
+                                    TextPage_ParameterAdjustPage("Kd", Float),
                                 },
                         },
                     },

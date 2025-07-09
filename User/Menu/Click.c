@@ -16,7 +16,7 @@ void TextPage_EnterCallback(TextPage_t **TextPage) {
 
 void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
-    case ParameterType_Int:
+    case Int:
         if ((*TextPage)->IntParameter == 0) {
             (*TextPage)->IntParameter = 1;
             return;
@@ -25,7 +25,7 @@ void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage) {
         *(*TextPage)->IntParameterPtr += (*TextPage)->IntParameter;
         break;
 
-    case ParameterType_Float:
+    case Float:
         if ((*TextPage)->FloatParameter == 0) {
             (*TextPage)->FloatParameter = 1;
             return;
@@ -38,11 +38,11 @@ void TextPage_ParameterDoAdjustCallback(TextPage_t **TextPage) {
 
 void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
-    case ParameterType_Int:
+    case Int:
         (*TextPage)->IntParameter *= 10;
         break;
 
-    case ParameterType_Float:
+    case Float:
         (*TextPage)->FloatParameter *= 10;
         break;
     }
@@ -50,11 +50,11 @@ void TextPage_ParameterMultiplyCallback(TextPage_t **TextPage) {
 
 void TextPage_ParameterDivideCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
-    case ParameterType_Int:
+    case Int:
         (*TextPage)->IntParameter /= 10;
         break;
 
-    case ParameterType_Float:
+    case Float:
         (*TextPage)->FloatParameter /= 10;
         break;
     }
@@ -62,11 +62,11 @@ void TextPage_ParameterDivideCallback(TextPage_t **TextPage) {
 
 void TextPage_ParameterPlusMinusCallback(TextPage_t **TextPage) {
     switch ((*TextPage)->ParameterType) {
-    case ParameterType_Int:
+    case Int:
         (*TextPage)->IntParameter = -(*TextPage)->IntParameter;
         break;
 
-    case ParameterType_Float:
+    case Float:
         (*TextPage)->FloatParameter = -(*TextPage)->FloatParameter;
         break;
     }
@@ -83,6 +83,10 @@ void TextPage_ChooseOptionCallback(TextPage_t **TextPage) {
         *((*TextPage)->IntParameterPtr) = (*TextPage)->Cursor;
     }
 }
+
+// void TextPage_RestartSettingCallback(void *pvParameters) {
+//     __NVIC_SystemReset();
+// }
 
 // void TextPage_SaveSettingCallback(void *pvParameters) {
 //     uint8_t Setting[32];
@@ -109,25 +113,4 @@ void TextPage_ChooseOptionCallback(TextPage_t **TextPage) {
 //     SettingLoad(pvParameters);
 
 //     TextPage_EnterCallback(NULL);
-// }
-
-// void TextPage_ReverseSettingCallback(void *pvParameters) {
-//     TextPage_ReverseSetting(&TextPage->LowerPages[TextPage->Cursor]);
-// }
-
-void TextPage_RestartSettingCallback(void *pvParameters) {
-    __NVIC_SystemReset();
-}
-
-// void TextPage_CursorSwitchEncoderSettingCallback(void *pvParameters) {
-//     if (TextPage->LowerPages[TextPage->Cursor].RotationCallback ==
-//         TextPage_CursorCallback) {
-//         TextPage->LowerPages[TextPage->Cursor].RotationCallback =
-//             TextPage_SettingEncoderCallback;
-
-//     } else if (TextPage->LowerPages[TextPage->Cursor]
-//                    .RotationCallback == TextPage_SettingEncoderCallback) {
-//         TextPage->LowerPages[TextPage->Cursor].RotationCallback =
-//             TextPage_CursorCallback;
-//     }
 // }

@@ -15,9 +15,9 @@ typedef enum {
 } TextPageRotation;
 
 typedef enum {
-    ParameterType_Int,
-    ParameterType_Float,
-} TextPageParameterType;
+    Int,
+    Float,
+} ParameterType;
 
 typedef struct TextPage {
     char Title[32];
@@ -37,7 +37,7 @@ typedef struct TextPage {
     struct TextPage *LowerPages;
     struct TextPage *UpperPage;
 
-    TextPageParameterType ParameterType;
+    ParameterType ParameterType;
     union {
         int32_t IntParameter;
         float FloatParameter;

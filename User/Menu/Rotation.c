@@ -17,12 +17,3 @@ void TextPage_CursorCallback(TextPage_t *TextPage, TextPageRotation Direction) {
         break;
     }
 }
-
-// void TextPage_SettingEncoderCallback(int16_t Encoder) {
-//     if (Encoder >= 3) {
-//         TextPage->LowerPages[TextPage->Cursor].Setting++;
-
-//     } else if (Encoder <= -3) {
-//         TextPage->LowerPages[TextPage->Cursor].Setting--;
-//     }
-// }
