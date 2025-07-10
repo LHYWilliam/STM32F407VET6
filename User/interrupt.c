@@ -10,80 +10,26 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         // Serial_RXITStart(&SerialBoard, 1);
         // return;
 
-        if (SerialBoard.RecieveFlag == SET) {
+        if (SerialBoard.PackRecieved == SET) {
             Serial_RXITStart(&SerialBoard, 1);
             return;
         }
 
-        SerialBoard.ByteData = SerialBoard.RXBuffer[0];
-
-        switch (SerialBoard.PackType) {
-        case Serial_None:
-            if (SerialBoard.ByteData == 0xFF) {
-                SerialBoard.PackType = Serial_HexPack;
-
-            } else {
-                Serial_Clear(&SerialBoard);
-            }
-            break;
-
-        case Serial_HexPack:
-            if (SerialBoard.ByteData == 0xFE &&
-                SerialBoard.RecieveByteCount == 2) {
-                SerialBoard.RecieveFlag = SET;
-
-            } else {
-                SerialBoard.HexData[SerialBoard.RecieveByteCount++] =
-                    SerialBoard.ByteData;
-            }
-
-            if (SerialBoard.RecieveByteCount > 2) {
-                Serial_Clear(&SerialBoard);
-            }
-            break;
-
-        default:
-            Serial_Clear(&SerialBoard);
-            break;
-        }
+        Serial_Parse(&SerialBoard, SerialBoard.RXBuffer[0]);
 
         Serial_RXITStart(&SerialBoard, 1);
 
     } else if (huart->Instance == SerialBluetooth.USART) {
-        SerialBluetooth.ByteData = SerialBluetooth.RXBuffer[0];
+        // Serial_SendBytes(&SerialBluetooth, SerialBluetooth.RXBuffer, 1);
+        // Serial_RXITStart(&SerialBluetooth, 1);
+        // return;
 
-        if (SerialBluetooth.RecieveFlag == SET) {
+        if (SerialBluetooth.PackRecieved == SET) {
             Serial_RXITStart(&SerialBluetooth, 1);
             return;
         }
 
-        switch (SerialBluetooth.PackType) {
-        case Serial_None:
-            if (SerialBluetooth.ByteData == 0xFF) {
-                SerialBluetooth.PackType = Serial_HexPack;
-            } else {
-                Serial_Clear(&SerialBluetooth);
-            }
-            break;
-
-        case Serial_HexPack:
-            if (SerialBluetooth.ByteData == 0xFE &&
-                SerialBluetooth.RecieveByteCount == 4) {
-                SerialBluetooth.RecieveFlag = SET;
-            } else {
-                SerialBluetooth.HexData[SerialBluetooth.RecieveByteCount++] =
-                    SerialBluetooth.ByteData;
-            }
-
-            if (SerialBluetooth.RecieveByteCount > 4) {
-                Serial_Clear(&SerialBluetooth);
-            }
-            break;
-
-        default:
-            Serial_Clear(&SerialBluetooth);
-            break;
-        }
+        Serial_Parse(&SerialBluetooth, SerialBluetooth.RXBuffer[0]);
 
         Serial_RXITStart(&SerialBluetooth, 1);
     }

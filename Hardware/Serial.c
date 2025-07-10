@@ -71,10 +71,40 @@ void Serial_Printf(Serial_t *Self, char *Format, ...) {
                       strlen((char *)Self->TXBuffer), HAL_MAX_DELAY);
 }
 
+void Serial_Parse(Serial_t *Self, uint8_t RxData) {
+    switch (Self->PackType) {
+    case Serial_None:
+        if (RxData == 0xFE) {
+            Self->PackType = Serial_HexPack;
+
+        } else {
+            Serial_Clear(Self);
+        }
+        break;
+
+    case Serial_HexPack:
+        if (RxData == 0xEF && Self->ParsedCount == Self->PackLength) {
+            Self->PackRecieved = SET;
+
+        } else {
+            Self->HexPack[Self->ParsedCount++] = RxData;
+        }
+
+        if (Self->ParsedCount > Self->PackLength) {
+            Serial_Clear(Self);
+        }
+        break;
+
+    default:
+        Serial_Clear(Self);
+        break;
+    }
+}
+
 void Serial_Clear(Serial_t *Self) {
-    Self->RecieveByteCount = 0;
+    Self->ParsedCount = 0;
+    Self->PackRecieved = RESET;
     Self->PackType = Serial_None;
-    Self->RecieveFlag = RESET;
 }
 
 int fputc(int ch, FILE *f) {

@@ -38,8 +38,8 @@ typedef enum {
 int32_t CarStatus;
 FunctionalState OLEDFlushStatus = ENABLE;
 
-const int32_t AdvanceSpeed = 1000;
-const int32_t RoundSpeed = 512;
+int32_t AdvanceSpeed = 1024;
+int32_t RoundSpeed = 512;
 
 void vMainTaskCode(void *pvParameters) {
     TextPage_t *ICM42688MonitorPage =
@@ -275,6 +275,17 @@ void vMainTaskCode(void *pvParameters) {
 
         EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
         EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
+
+        // if (SerialBoard.PackRecieved == SET) {
+        //     AdvanceSpeed = SerialBoard.HexPack[0] << 8 |
+        //     SerialBoard.HexPack[1]; Serial_Clear(&SerialBoard);
+        // }
+
+        // if (SerialBluetooth.PackRecieved == SET) {
+        //     AdvanceSpeed =
+        //         SerialBluetooth.HexPack[0] << 8 | SerialBluetooth.HexPack[1];
+        //     Serial_Clear(&SerialBluetooth);
+        // }
 
         int16_t BaseSpeed = 0;
         switch (CarStatus) {

@@ -44,6 +44,7 @@ Serial_t SerialBoard = {
     .RxIT = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
+    .PackLength = 2,
 };
 
 Serial_t SerialBluetooth = {
@@ -54,6 +55,7 @@ Serial_t SerialBluetooth = {
     .RxIT = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
+    .PackLength = 2,
 };
 
 Serial_t SerialK230 = {

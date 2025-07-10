@@ -33,12 +33,11 @@
      : (x) == UART4  ? UART4_IRQn                                              \
                      : NULL)
 
-#define TXBUFFER_SIZE 128
-#define RXBUFFER_SIZE 128
+#define BUFFER_SIZE 128
+#define BUFFER_SIZE 128
 
 typedef enum {
     Serial_None,
-    Serial_Byte,
     Serial_HexPack,
     Serial_StringPack,
 } Serial_PackType;
@@ -47,23 +46,23 @@ typedef struct {
     USART_TypeDef *USART;
     GPIOxPiny_t RX;
     GPIOxPiny_t TX;
-
     uint32_t Baudrate;
 
     uint8_t RxIT;
     uint8_t RxITSize;
     uint8_t Priority;
 
-    uint8_t TXBuffer[TXBUFFER_SIZE];
-    uint8_t RXBuffer[RXBUFFER_SIZE];
+    uint8_t PackLength;
 
-    uint8_t RecieveByteCount;
-    uint8_t RecieveFlag;
+    FunctionalState Default;
+
+    uint8_t ParsedCount;
+    FlagStatus PackRecieved;
     Serial_PackType PackType;
-    uint8_t ByteData;
-    uint8_t HexData[32];
+    uint8_t HexPack[BUFFER_SIZE];
 
-    uint8_t Default;
+    uint8_t TXBuffer[BUFFER_SIZE];
+    uint8_t RXBuffer[BUFFER_SIZE];
 
     UART_HandleTypeDef Handler;
 } Serial_t;
@@ -72,6 +71,7 @@ void Serial_Init(Serial_t *Self);
 void Serial_RXITStart(Serial_t *Self, uint8_t Size);
 void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length);
 void Serial_Printf(Serial_t *Self, char *Format, ...);
+void Serial_Parse(Serial_t *Self, uint8_t RxData);
 void Serial_Clear(Serial_t *Self);
 
 #endif
