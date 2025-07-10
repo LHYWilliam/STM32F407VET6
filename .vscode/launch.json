@@ -1,18 +1,67 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
         {
             "name": "Arm Debugger",
             "type": "arm-debugger",
             "request": "launch",
-            "serialNumber": "${command:device-manager.getSerialNumber}",
             "programs": "${command:cmsis-csolution.getBinaryFiles}",
-            "cmsisPack": "${command:cmsis-csolution.getTargetPack}",
-            "deviceName": "${command:cmsis-csolution.getDeviceName}",
-            "processorName": "${command:cmsis-csolution.getProcessorName}"
+            "cmsisPack": "Keil::STM32F4xx_DFP@2.17.1",
+            "deviceName": "STM32F407VETx",
+            "processorName": "${command:cmsis-csolution.getProcessorName}",
+            "connectionType": "CMSIS-DAP",
+            "debugPortMode": "auto",
+            "connectionAddress": "000100011a5a5bb60000000000049b21a5a5a5a597969908"
+        },
+        {
+            "name": "CMSIS_DAP@pyOCD (launch)",
+            "type": "gdbtarget",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/",
+            "program": "out/STM32F407VET6/STM32F407VET6/STM32F407VET6.axf",
+            "gdb": "arm-none-eabi-gdb",
+            "preLaunchTask": "CMSIS Load",
+            "initCommands": [
+                "monitor reset halt",
+                "tbreak main"
+            ],
+            "customResetCommands": [
+                "monitor reset halt"
+            ],
+            "target": {
+                "server": "pyocd",
+                "serverParameters": [
+                    "--probe",
+                    "cmsisdap:",
+                    "--connect",
+                    "attach"
+                ],
+                "port": "3333"
+            },
+            "cmsis": {
+                "cbuildRunFile": "${command:cmsis-csolution.getCbuildRunFile}",
+                "updateConfiguration": "auto"
+            }
+        },
+        {
+            "name": "CMSIS_DAP@pyOCD (attach)",
+            "type": "gdbtarget",
+            "request": "attach",
+            "cwd": "${workspaceFolder}/",
+            "program": "out/STM32F407VET6/STM32F407VET6/STM32F407VET6.axf",
+            "gdb": "arm-none-eabi-gdb",
+            "initCommands": [
+                ""
+            ],
+            "customResetCommands": [
+                "monitor reset halt"
+            ],
+            "target": {
+                "port": "3333"
+            },
+            "cmsis": {
+                "updateConfiguration": "auto"
+            }
         }
     ]
 }
