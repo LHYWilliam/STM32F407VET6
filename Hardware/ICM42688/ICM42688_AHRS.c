@@ -14,7 +14,7 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self);
 void ICM42688_AHRS_CalculateAngle(ICM42688_t *Self);
 
 void ICM42688_AHRS_Init(ICM42688_t *Self) {
-    if (Self->Kp < 0.1f) {
+    if (Self->Kp == 0.f) {
         Self->Kp = 0.5f;
         Self->Ki = 0.001f;
     }
@@ -117,11 +117,7 @@ void ICM42688_AHRS_CalculateQ(ICM42688_t *Self) {
     float q3q3 = Self->q[3] * Self->q[3];
 
     Self->Now = Time_Getms();
-    if (Self->Now < Self->LastUpdate) {
-        halfT = ((float)(Self->Now + (0xffff - Self->LastUpdate)) / 2000.0f);
-    } else {
-        halfT = ((float)(Self->Now - Self->LastUpdate) / 2000.0f);
-    }
+    halfT = ((float)(Self->Now - Self->LastUpdate) / 2000.0f);
     Self->LastUpdate = Self->Now;
 
     if (ax != 0.0f || ay != 0.0f || az != 0.0f) {

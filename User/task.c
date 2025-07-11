@@ -264,7 +264,10 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
-    // ---------------- Menu Test ---------------------- //
+    TickType_t xLastWakeTime;
+    const TickType_t xFrequency = pdMS_TO_TICKS(10);
+
+    xLastWakeTime = xTaskGetTickCount();
     for (;;) {
         ICM42688_AHRS_Update(&ICM42688);
 
@@ -328,7 +331,7 @@ void vMainTaskCode(void *pvParameters) {
         Motor_SetSpeed(&MotorLeft, LeftOut);
         Motor_SetSpeed(&MotorRight, RightOut);
 
-        vTaskDelay(pdMS_TO_TICKS(10));
+        vTaskDelayUntil(&xLastWakeTime, xFrequency);
     }
 }
 

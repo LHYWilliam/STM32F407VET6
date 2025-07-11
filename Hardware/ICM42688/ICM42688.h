@@ -1,5 +1,5 @@
-#ifndef __BSP_ICM42688_H__
-#define __BSP_ICM42688_H__
+#ifndef ICM42688_H
+#define ICM42688_H
 
 #include "RTE_Components.h"
 #include CMSIS_device_header
@@ -10,20 +10,7 @@
 #define ICM42688_DRIVE_CONFIG         0x13
 #define ICM42688_INT_CONFIG           0x14
 #define ICM42688_FIFO_CONFIG          0x16
-#define ICM42688_TEMP_DATA1           0x1D
-#define ICM42688_TEMP_DATA0           0x1E
-#define ICM42688_ACCEL_DATA_X1        0x1F
-#define ICM42688_ACCEL_DATA_X0        0x20
-#define ICM42688_ACCEL_DATA_Y1        0x21
-#define ICM42688_ACCEL_DATA_Y0        0x22
-#define ICM42688_ACCEL_DATA_Z1        0x23
-#define ICM42688_ACCEL_DATA_Z0        0x24
-#define ICM42688_GYRO_DATA_X1         0x25
-#define ICM42688_GYRO_DATA_X0         0x26
-#define ICM42688_GYRO_DATA_Y1         0x27
-#define ICM42688_GYRO_DATA_Y0         0x28
-#define ICM42688_GYRO_DATA_Z1         0x29
-#define ICM42688_GYRO_DATA_Z0         0x2A
+
 #define ICM42688_TMST_FSYNCH          0x2B
 #define ICM42688_TMST_FSYNCL          0x2C
 #define ICM42688_INT_STATUS           0x2D
@@ -106,11 +93,13 @@
 #define ICM42688_ACCEL_WOM_X_THR      0x4A
 #define ICM42688_ACCEL_WOM_Y_THR      0x4B
 #define ICM42688_ACCEL_WOM_Z_THR      0x4C
+
 #define ICM42688_INT_SOURCE6          0x4D
 #define ICM42688_INT_SOURCE7          0x4E
 #define ICM42688_INT_SOURCE8          0x4F
 #define ICM42688_INT_SOURCE9          0x50
 #define ICM42688_INT_SOURCE10         0x51
+
 #define ICM42688_OFFSET_USER0         0x77
 #define ICM42688_OFFSET_USER1         0x78
 #define ICM42688_OFFSET_USER2         0x79
@@ -121,59 +110,82 @@
 #define ICM42688_OFFSET_USER7         0x7E
 #define ICM42688_OFFSET_USER8         0x7F
 
-#define ICM42688_ADDRESS              0xD2
+// 温度数据寄存器
+#define ICM42688_TEMP_DATA1           0x1D
+#define ICM42688_TEMP_DATA0           0x1E
 
-#define AFS_2G                        0x03
-#define AFS_4G                        0x02
-#define AFS_8G                        0x01
-#define AFS_16G                       0x00
+// 加速度计数据寄存器
+#define ICM42688_ACCEL_DATA_X1        0x1F
+#define ICM42688_ACCEL_DATA_X0        0x20
+#define ICM42688_ACCEL_DATA_Y1        0x21
+#define ICM42688_ACCEL_DATA_Y0        0x22
+#define ICM42688_ACCEL_DATA_Z1        0x23
+#define ICM42688_ACCEL_DATA_Z0        0x24
 
-#define GFS_2000DPS                   0x00
-#define GFS_1000DPS                   0x01
-#define GFS_500DPS                    0x02
-#define GFS_250DPS                    0x03
-#define GFS_125DPS                    0x04
-#define GFS_62_5DPS                   0x05
-#define GFS_31_25DPS                  0x06
-#define GFS_15_125DPS                 0x07
+// 陀螺仪数据寄存器
+#define ICM42688_GYRO_DATA_X1         0x25
+#define ICM42688_GYRO_DATA_X0         0x26
+#define ICM42688_GYRO_DATA_Y1         0x27
+#define ICM42688_GYRO_DATA_Y0         0x28
+#define ICM42688_GYRO_DATA_Z1         0x29
+#define ICM42688_GYRO_DATA_Z0         0x2A
 
-#define AODR_8000Hz                   0x03
-#define AODR_4000Hz                   0x04
-#define AODR_2000Hz                   0x05
-#define AODR_1000Hz                   0x06
-#define AODR_200Hz                    0x07
-#define AODR_100Hz                    0x08
-#define AODR_50Hz                     0x09
-#define AODR_25Hz                     0x0A
-#define AODR_12_5Hz                   0x0B
-#define AODR_6_25Hz                   0x0C
-#define AODR_3_125Hz                  0x0D
-#define AODR_1_5625Hz                 0x0E
-#define AODR_500Hz                    0x0F
+// // 加速计量程
+typedef enum {
+    ICM42688Acc_16G = 0x00, // 默认
+    ICM42688Acc_8G = 0x01,
+    ICM42688Acc_4G = 0x02,
+    ICM42688Acc_2G = 0x03,
+} ICM42688_AccRange;
 
-#define GODR_8000Hz                   0x03
-#define GODR_4000Hz                   0x04
-#define GODR_2000Hz                   0x05
-#define GODR_1000Hz                   0x06
-#define GODR_200Hz                    0x07
-#define GODR_100Hz                    0x08
-#define GODR_50Hz                     0x09
-#define GODR_25Hz                     0x0A
-#define GODR_12_5Hz                   0x0B
-#define GODR_500Hz                    0x0F
+// 加速度计输出速率
+typedef enum {
+    ICM42688Acc_8000Hz = 0x03,
+    ICM42688Acc_4000Hz = 0x04,
+    ICM42688Acc_2000Hz = 0x05,
+    ICM42688Acc_1000Hz = 0x06, // 默认
+    ICM42688Acc_200Hz = 0x07,
+    ICM42688Acc_100Hz = 0x08,
+    ICM42688Acc_50Hz = 0x09,
+    ICM42688Acc_25Hz = 0x0A,
+    ICM42688Acc_12_5Hz = 0x0B,
+    ICM42688Acc_6_25Hz = 0x0C,
+    ICM42688Acc_3_125Hz = 0x0D,
+    ICM42688Acc_1_5625Hz = 0x0E,
+    ICM42688Acc_500Hz = 0x0F,
+} ICM42688_AccFreq;
 
-#define ICM42688_ID                   0x47
+// 陀螺仪量程
+typedef enum {
+    ICM42688Gyro_2000DPS = 0x00, // 默认
+    ICM42688Gyro_1000DPS = 0x01,
+    ICM42688Gyro_500DPS = 0x02,
+    ICM42688Gyro_250DPS = 0x03,
+    ICM42688Gyro_125DPS = 0x04,
+    ICM42688Gyro_62_5DPS = 0x05,
+    ICM42688Gyro_31_25DPS = 0x06,
+    ICM42688Gyro_15_125DPS = 0x07,
+} ICM42688_GyroRange;
 
-#define __HAL_RCC_SPIx_CLK_ENABLE(x)                                           \
-    do {                                                                       \
-        if ((x) == SPI1) {                                                     \
-            __HAL_RCC_SPI1_CLK_ENABLE();                                       \
-        } else if ((x) == SPI2) {                                              \
-            __HAL_RCC_SPI2_CLK_ENABLE();                                       \
-        } else if ((x) == SPI3) {                                              \
-            __HAL_RCC_SPI3_CLK_ENABLE();                                       \
-        }                                                                      \
-    } while (0)
+// 陀螺仪输出速率
+typedef enum {
+    ICM42688Gyro_8000Hz = 0x03,
+    ICM42688Gyro_4000Hz = 0x04,
+    ICM42688Gyro_2000Hz = 0x05,
+    ICM42688Gyro_1000Hz = 0x06, // 默认
+    ICM42688Gyro_200Hz = 0x07,
+    ICM42688Gyro_100Hz = 0x08,
+    ICM42688Gyro_50Hz = 0x09,
+    ICM42688Gyro_25Hz = 0x0A,
+    ICM42688Gyro_12_5Hz = 0x0B,
+    ICM42688Gyro_500Hz = 0x0F,
+} ICM42688_GyroFreq;
+
+// 传感器ID
+#define ICM42688_ID      0x47
+
+// 传感器I2C从机地址
+#define ICM42688_ADDRESS 0xD2
 
 typedef struct ICM42688_t {
     GPIOxPiny_t SCLK;
@@ -187,6 +199,11 @@ typedef struct ICM42688_t {
 
     SPI_TypeDef *SPIx;
     FunctionalState SPI;
+
+    ICM42688_AccRange AccRange;
+    ICM42688_GyroRange GyroRange;
+    ICM42688_AccFreq AccFreq;
+    ICM42688_GyroFreq GyroFreq;
 
     float Kp;
     float Ki;

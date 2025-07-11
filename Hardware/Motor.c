@@ -14,13 +14,7 @@ void Motor_Init(Motor_t *Self) {
     Self->_PWM->Channel[i] = Self->Channel;
     strcpy(Self->_PWM->GPIOxPiny[i], Self->PWM);
 
-    if (Self->TIMx == TIM1 || Self->TIMx == TIM8) {
-        Self->_PWM->Prescaler = 168 - 1;
-
-    } else {
-        Self->_PWM->Prescaler = 84 - 1;
-    }
-
+    Self->_PWM->Prescaler = 1 - 1;
     Self->_PWM->Period = Self->Range - 1;
 
     GPIO_t GPIO;

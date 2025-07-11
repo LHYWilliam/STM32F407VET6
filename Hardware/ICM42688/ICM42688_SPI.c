@@ -2,51 +2,8 @@
 
 #include "ICM42688_SPI.h"
 
-uint8_t ICM42688_HWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte);
 uint8_t ICM42688_SWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte);
-
-void ICM42688_HWSPI_Init(ICM42688_t *Self) {
-    Self->Handel = (SPI_HandleTypeDef){
-        .Instance = Self->SPIx,
-        .Init.Mode = SPI_MODE_MASTER,
-        .Init.Direction = SPI_DIRECTION_2LINES,
-        .Init.DataSize = SPI_DATASIZE_8BIT,
-        .Init.CLKPolarity = SPI_POLARITY_HIGH,
-        .Init.CLKPhase = SPI_PHASE_2EDGE,
-        .Init.NSS = SPI_NSS_SOFT,
-        .Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256,
-        .Init.FirstBit = SPI_FIRSTBIT_MSB,
-        .Init.TIMode = SPI_TIMODE_DISABLE,
-        .Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE,
-        .Init.CRCPolynomial = 7,
-    };
-
-    {
-        __HAL_RCC_SPIx_CLK_ENABLE(Self->SPIx);
-
-        GPIO_t GPIO;
-
-        GPIO.Mode = GPIO_MODE_AF_PP;
-        GPIO.Alternate = GPIO_AF5_SPI2;
-        GPIO.Pull = GPIO_PULLUP;
-        Self->SCLK_ODR = GPIO_InitPin(&GPIO, Self->SCLK);
-        GPIO_InitPin(&GPIO, Self->MISO);
-        Self->MOSI_ODR = GPIO_InitPin(&GPIO, Self->MOSI);
-
-        GPIO.Mode = GPIO_MODE_OUTPUT_PP;
-        Self->CS_ODR = GPIO_InitPin(&GPIO, Self->CS);
-
-        GPIO_Write(Self->SCLK_ODR, 1);
-        GPIO_Write(Self->MOSI_ODR, 1);
-        GPIO_Write(Self->CS_ODR, 1);
-    }
-
-    HAL_SPI_Init(&Self->Handel);
-
-    __HAL_SPI_ENABLE(&Self->Handel);
-
-    Self->SPI_ReadWriteByte = ICM42688_HWSPI_ReadWriteByte;
-}
+uint8_t ICM42688_HWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte);
 
 void ICM42688_SWSPI_Init(ICM42688_t *Self) {
     GPIO_t GPIO;
@@ -66,16 +23,48 @@ void ICM42688_SWSPI_Init(ICM42688_t *Self) {
     Self->SPI_ReadWriteByte = ICM42688_SWSPI_ReadWriteByte;
 }
 
+void ICM42688_HWSPI_Init(ICM42688_t *Self) {
+    GPIO_t GPIO;
+
+    GPIO.Mode = GPIO_MODE_AF_PP;
+    GPIO.Alternate = GPIO_AF5_SPI2;
+    GPIO.Pull = GPIO_PULLUP;
+    Self->SCLK_ODR = GPIO_InitPin(&GPIO, Self->SCLK);
+    GPIO_InitPin(&GPIO, Self->MISO);
+    Self->MOSI_ODR = GPIO_InitPin(&GPIO, Self->MOSI);
+
+    GPIO.Mode = GPIO_MODE_OUTPUT_PP;
+    Self->CS_ODR = GPIO_InitPin(&GPIO, Self->CS);
+
+    GPIO_Write(Self->SCLK_ODR, 1);
+    GPIO_Write(Self->MOSI_ODR, 1);
+    GPIO_Write(Self->CS_ODR, 1);
+
+    Self->Handel = (SPI_HandleTypeDef){
+        .Instance = Self->SPIx,
+        .Init.Mode = SPI_MODE_MASTER,
+        .Init.Direction = SPI_DIRECTION_2LINES,
+        .Init.DataSize = SPI_DATASIZE_8BIT,
+        .Init.CLKPolarity = SPI_POLARITY_HIGH,
+        .Init.CLKPhase = SPI_PHASE_2EDGE,
+        .Init.NSS = SPI_NSS_SOFT,
+        .Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256,
+        .Init.FirstBit = SPI_FIRSTBIT_MSB,
+        .Init.TIMode = SPI_TIMODE_DISABLE,
+        .Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE,
+        .Init.CRCPolynomial = 7,
+    };
+
+    __HAL_RCC_SPIx_CLK_ENABLE(Self->SPIx);
+    HAL_SPI_Init(&Self->Handel);
+    __HAL_SPI_ENABLE(&Self->Handel);
+
+    Self->SPI_ReadWriteByte = ICM42688_HWSPI_ReadWriteByte;
+}
+
 void ICM42688_SPI_Start(ICM42688_t *Self) { GPIO_Write(Self->CS_ODR, 0); }
 
 void ICM42688_SPI_Stop(ICM42688_t *Self) { GPIO_Write(Self->CS_ODR, 1); }
-
-uint8_t ICM42688_HWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte) {
-    uint8_t RxByte;
-    HAL_SPI_TransmitReceive(&Self->Handel, &TxByte, &RxByte, 1, HAL_MAX_DELAY);
-
-    return RxByte;
-}
 
 uint8_t ICM42688_SWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte) {
     uint8_t RxByte = 0x00;
@@ -93,6 +82,13 @@ uint8_t ICM42688_SWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte) {
 
         GPIO_Write(Self->SCLK_ODR, 0);
     }
+
+    return RxByte;
+}
+
+uint8_t ICM42688_HWSPI_ReadWriteByte(ICM42688_t *Self, uint8_t TxByte) {
+    uint8_t RxByte;
+    HAL_SPI_TransmitReceive(&Self->Handel, &TxByte, &RxByte, 1, HAL_MAX_DELAY);
 
     return RxByte;
 }

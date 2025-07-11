@@ -172,11 +172,15 @@ GWGray_t GWGray = {
 };
 
 ICM42688_t ICM42688 = {
-    .SPIx = SPI2,
     .SCLK = PB10,
     .MISO = PC2,
     .MOSI = PC3,
     .CS = PC1,
+    .SPIx = SPI2,
+    .AccRange = ICM42688Acc_4G,
+    .GyroRange = ICM42688Gyro_1000DPS,
+    .AccFreq = ICM42688Acc_100Hz,
+    .GyroFreq = ICM42688Gyro_100Hz,
 };
 
 TaskHandle_t xMainTaskHandle;
