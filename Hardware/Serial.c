@@ -9,7 +9,7 @@ Serial_t *DefaultSerial;
 void Serial_Init(Serial_t *Self) {
     GPIO_t GPIO = {
         .Mode = GPIO_MODE_AF_PP,
-        .Alternate = GPIO_AFx_USARTy(Self->USART),
+        .Alternate = GPIO_AFx_USARTy(Self->USARTx),
     };
     if (*Self->TX) {
         GPIO_InitPin(&GPIO, Self->TX);
@@ -19,13 +19,10 @@ void Serial_Init(Serial_t *Self) {
     }
 
     Self->Handler = (UART_HandleTypeDef){
-        .Instance = Self->USART,
+        .Instance = Self->USARTx,
         .Init =
             {
                 .BaudRate = Self->Baudrate,
-                .WordLength = UART_WORDLENGTH_8B,
-                .Parity = UART_PARITY_NONE,
-                .StopBits = UART_STOPBITS_1,
                 .Mode = *Self->RX && *Self->TX ? UART_MODE_TX_RX
                                                : (*Self->RX   ? UART_MODE_RX
                                                   : *Self->TX ? UART_MODE_TX
@@ -33,16 +30,32 @@ void Serial_Init(Serial_t *Self) {
             },
     };
 
-    if (Self->RxIT) {
-        HAL_NVIC_EnableIRQ(USARTx_IRQn(Self->USART));
-        HAL_NVIC_SetPriority(USARTx_IRQn(Self->USART), Self->Priority, 0);
+    if (Self->DMA.DMAx) {
+        Self->DMA.PeriphSize = 8;
+        Self->DMA.PeriphInc = DISABLE;
+        Self->DMA.MemSize = 8;
+        Self->DMA.MemInc = ENABLE;
+        Self->DMA.Mode = DMA_NORMAL;
+        Self->DMA.Direction = DMA_PERIPH_TO_MEMORY;
+
+        DMA_Init(&Self->DMA);
+
+        __HAL_LINKDMA(&Self->Handler, hdmarx, Self->DMA.Handler);
     }
 
-    __HAL_RCC_USARTx_CLK_ENABLE(Self->USART);
+    if (Self->Interrupt) {
+        HAL_NVIC_SetPriority(USARTx_IRQn(Self->USARTx), Self->Priority, 0);
+        HAL_NVIC_EnableIRQ(USARTx_IRQn(Self->USARTx));
+    }
+
+    __HAL_RCC_USARTx_CLK_ENABLE(Self->USARTx);
     HAL_UART_Init(&Self->Handler);
 
-    if (Self->RxIT) {
+    if (Self->RxITSize) {
         Serial_RXITStart(Self);
+
+    } else if (Self->IdleDMA) {
+        Serial_IdleDMAStart(Self);
     }
 
     if (Self->Default) {
@@ -51,7 +64,11 @@ void Serial_Init(Serial_t *Self) {
 }
 
 void Serial_RXITStart(Serial_t *Self) {
-    HAL_UART_Receive_IT(&Self->Handler, Self->RXBuffer, Self->RxITSize);
+    HAL_UART_Receive_IT(&Self->Handler, Self->RxBuffer, Self->RxITSize);
+}
+
+void Serial_IdleDMAStart(Serial_t *Self) {
+    HAL_UARTEx_ReceiveToIdle_DMA(&Self->Handler, Self->RxBuffer, BUFFER_SIZE);
 }
 
 void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length) {
@@ -61,11 +78,11 @@ void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length) {
 void Serial_Printf(Serial_t *Self, char *Format, ...) {
     va_list arg;
     va_start(arg, Format);
-    vsprintf((char *)Self->TXBuffer, Format, arg);
+    vsprintf((char *)Self->TxBuffer, Format, arg);
     va_end(arg);
 
-    HAL_UART_Transmit(&Self->Handler, Self->TXBuffer,
-                      strlen((char *)Self->TXBuffer), HAL_MAX_DELAY);
+    HAL_UART_Transmit(&Self->Handler, Self->TxBuffer,
+                      strlen((char *)Self->TxBuffer), HAL_MAX_DELAY);
 }
 
 void Serial_Parse(Serial_t *Self, uint8_t RxData) {
@@ -111,10 +128,6 @@ void Serial_Parse(Serial_t *Self, uint8_t RxData) {
         if (Self->ParsedCount > BUFFER_SIZE) {
             Serial_Clear(Self);
         }
-        break;
-
-    default:
-        Serial_Clear(Self);
         break;
     }
 }

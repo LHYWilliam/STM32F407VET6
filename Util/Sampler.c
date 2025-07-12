@@ -22,9 +22,7 @@ void Sampler_Init(Sampler_t *Self) {
 
         DMA_Init(&Self->DMA);
 
-        {
-            __HAL_LINKDMA(&Self->ADC.Handler, DMA_Handle, Self->DMA.Handler);
-        }
+        __HAL_LINKDMA(&Self->ADC.Handler, DMA_Handle, Self->DMA.Handler);
     }
 
     if (Self->Timer.TIMx) {

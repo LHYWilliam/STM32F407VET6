@@ -1,10 +1,6 @@
 #include "DMA.h"
 
 void DMA_Init(DMA_t *Self) {
-    if (Self->Direction == DMA_MEMORY_TO_MEMORY) {
-        __HAL_RCC_DMAx_CLK_ENABLE(Self->DMAx);
-    }
-
     Self->Handler = (DMA_HandleTypeDef){
         .Instance = DMAx_Streamy(Self->DMAx, Self->Stream),
         .Init =
@@ -24,10 +20,7 @@ void DMA_Init(DMA_t *Self) {
             },
     };
 
-    {
-        __HAL_RCC_DMAx_CLK_ENABLE(Self->DMAx);
-    }
-
+    __HAL_RCC_DMAx_CLK_ENABLE(Self->DMAx);
     HAL_DMA_Init(&Self->Handler);
 
     if (Self->Interrupt) {

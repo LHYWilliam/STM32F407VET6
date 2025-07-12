@@ -1,6 +1,5 @@
 #include <stdarg.h>
 #include <stdio.h>
-#include <string.h>
 
 #include "Time.h"
 
@@ -23,6 +22,13 @@ void OLED_Init(OLED_t *Self) {
 
     } else if (Self->SPIx) {
         OLED_HWSPI_Init(Self);
+    }
+
+    if (Self->Width == 0) {
+        Self->Width = 128;
+    }
+    if (Self->Height == 0) {
+        Self->Height = 64;
     }
 
     OLED_ConfigReg(Self);

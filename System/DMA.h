@@ -79,15 +79,15 @@ typedef struct {
     uint8_t Channel;
     uint8_t Stream;
 
-    uint8_t PeriphInc;
     uint8_t PeriphSize;
+    FunctionalState PeriphInc;
 
-    uint8_t MemInc;
     uint8_t MemSize;
+    FunctionalState MemInc;
 
     uint32_t Mode;
-    uint8_t Interrupt;
     uint32_t Direction;
+    FunctionalState Interrupt;
 
     DMA_HandleTypeDef Handler;
 } DMA_t;

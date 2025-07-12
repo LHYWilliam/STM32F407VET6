@@ -35,38 +35,56 @@ Key_t Key4 = {
     .Mode = KeyMode_PullUp,
 };
 
+// Serial_t SerialBoard = {
+//     .USARTx = USART1,
+//     .TX = PA9,
+//     .RX = PA10,
+//     .Baudrate = 115200,
+//     .Default = ENABLE,
+//     .Interrupt = ENABLE,
+//     .RxITSize = 1,
+//     .Priority = 1,
+//     .PackLength = 2,
+// };
+
 Serial_t SerialBoard = {
-    .USART = USART1,
+    .USARTx = USART1,
     .TX = PA9,
     .RX = PA10,
     .Baudrate = 115200,
-    .Default = ENABLE,
-    .RxIT = ENABLE,
-    .RxITSize = 1,
+    .Interrupt = ENABLE,
+    .IdleDMA = ENABLE,
     .Priority = 1,
+    .DMA =
+        {
+            .DMAx = DMA2,
+            .Stream = 2,
+            .Channel = 4,
+        },
     .PackLength = 2,
+    .Default = ENABLE,
 };
 
 Serial_t SerialBluetooth = {
-    .USART = USART2,
+    .USARTx = USART2,
     .TX = PD5,
     .RX = PD6,
     .Baudrate = 115200,
-    .RxIT = ENABLE,
+    .Interrupt = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
     .PackLength = 2,
 };
 
 Serial_t SerialK230 = {
-    .USART = USART3,
+    .USARTx = USART3,
     .TX = PD8,
     .RX = PD9,
     .Baudrate = 115200,
 };
 
 Serial_t SerialJY61P = {
-    .USART = UART4,
+    .USARTx = UART4,
     .TX = PC10,
     .RX = PC11,
     .Baudrate = 115200,
@@ -160,8 +178,6 @@ Sampler_t Sampler = {
 OLED_t OLED = {
     .SCL = PD14,
     .SDA = PD15,
-    .Width = 128,
-    .Height = 64,
     .I2C = ENABLE,
 };
 

@@ -2,36 +2,53 @@
 
 void USART1_IRQHandler() {
     HAL_UART_IRQHandler(&SerialBoard.Handler);
-    Serial_RXITStart(&SerialBoard);
+
+    if (SerialBoard.RxITSize) {
+        Serial_RXITStart(&SerialBoard);
+
+    } else if (SerialBoard.IdleDMA) {
+        Serial_IdleDMAStart(&SerialBoard);
+    }
 }
 
 void USART2_IRQHandler() {
     HAL_UART_IRQHandler(&SerialBluetooth.Handler);
-    Serial_RXITStart(&SerialBluetooth);
+
+    if (SerialBluetooth.RxITSize) {
+        Serial_RXITStart(&SerialBluetooth);
+
+    } else if (SerialBluetooth.IdleDMA) {
+        Serial_IdleDMAStart(&SerialBluetooth);
+    }
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    if (huart->Instance == SerialBoard.USART) {
-        // Serial_SendBytes(&SerialBoard, SerialBoard.RXBuffer, 1);
-        // Serial_RXITStart(&SerialBoard, 1);
-        // return;
-
+    if (huart->Instance == SerialBoard.USARTx) {
         if (SerialBoard.PackRecieved == SET) {
             return;
         }
 
-        Serial_Parse(&SerialBoard, SerialBoard.RXBuffer[0]);
+        Serial_Parse(&SerialBoard, SerialBoard.RxBuffer[0]);
 
-    } else if (huart->Instance == SerialBluetooth.USART) {
-        // Serial_SendBytes(&SerialBluetooth, SerialBluetooth.RXBuffer, 1);
-        // Serial_RXITStart(&SerialBluetooth, 1);
-        // return;
-
+    } else if (huart->Instance == SerialBluetooth.USARTx) {
         if (SerialBluetooth.PackRecieved == SET) {
             return;
         }
 
-        Serial_Parse(&SerialBluetooth, SerialBluetooth.RXBuffer[0]);
+        Serial_Parse(&SerialBluetooth, SerialBluetooth.RxBuffer[0]);
+    }
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+    if (huart->Instance == SerialBoard.USARTx) {
+        for (uint8_t i = 0; i < Size; i++) {
+            Serial_Parse(&SerialBoard, SerialBoard.RxBuffer[i]);
+        }
+
+    } else if (huart->Instance == SerialBluetooth.USARTx) {
+        for (uint8_t i = 0; i < Size; i++) {
+            Serial_Parse(&SerialBluetooth, SerialBluetooth.RxBuffer[i]);
+        }
     }
 }
 

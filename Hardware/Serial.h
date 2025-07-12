@@ -4,6 +4,7 @@
 #include "RTE_Components.h"
 #include CMSIS_device_header
 
+#include "DMA.h"
 #include "GPIO.h"
 
 #define __HAL_RCC_USARTx_CLK_ENABLE(x)                                         \
@@ -41,26 +42,29 @@ typedef enum {
 } Serial_PackType;
 
 typedef struct {
-    USART_TypeDef *USART;
+    USART_TypeDef *USARTx;
     GPIOxPiny_t RX;
     GPIOxPiny_t TX;
     uint32_t Baudrate;
 
-    uint8_t RxIT;
+    FunctionalState Interrupt;
+    FunctionalState IdleDMA;
     uint8_t RxITSize;
     uint8_t Priority;
 
+    DMA_t DMA;
+
     uint8_t PackLength;
+
+    FunctionalState Default;
 
     uint8_t ParsedCount;
     FlagStatus PackRecieved;
     Serial_PackType PackType;
     FlagStatus FoundPackHead;
 
-    FunctionalState Default;
-
-    uint8_t TXBuffer[BUFFER_SIZE];
-    uint8_t RXBuffer[BUFFER_SIZE];
+    uint8_t TxBuffer[BUFFER_SIZE];
+    uint8_t RxBuffer[BUFFER_SIZE];
     uint8_t HexPack[BUFFER_SIZE];
     uint8_t StringPack[BUFFER_SIZE];
 
@@ -69,6 +73,7 @@ typedef struct {
 
 void Serial_Init(Serial_t *Self);
 void Serial_RXITStart(Serial_t *Self);
+void Serial_IdleDMAStart(Serial_t *Self);
 void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length);
 void Serial_Printf(Serial_t *Self, char *Format, ...);
 void Serial_Parse(Serial_t *Self, uint8_t RxData);
