@@ -42,49 +42,57 @@ int32_t AdvanceSpeed = 1024;
 int32_t RoundSpeed = 512;
 
 void vMainTaskCode(void *pvParameters) {
-    TextPage_t *ICM42688MonitorPage =
-        &ParameterPage.LowerPages[1].LowerPages[1];
-    TextPage_t *GWGrayMonitorPage = &ParameterPage.LowerPages[1].LowerPages[2];
-    TextPage_t *EncoderMonitorPage = &ParameterPage.LowerPages[1].LowerPages[3];
-    TextPage_t *MotorLeftSpeedPIDAdjustPage =
-        &ParameterPage.LowerPages[2].LowerPages[1];
-    TextPage_t *MotorRightSpeedPIDAdjustPage =
-        &ParameterPage.LowerPages[2].LowerPages[2];
-    TextPage_t *GWGrayPositionPIDAdjustPage =
-        &ParameterPage.LowerPages[2].LowerPages[3];
-    TextPage_t *OptionPage = &ParameterPage.LowerPages[4];
+    {
+        TextPage_t *ICM42688MonitorPage =
+            &ParameterPage.LowerPages[1].LowerPages[1];
+        TextPage_t *GWGrayMonitorPage =
+            &ParameterPage.LowerPages[1].LowerPages[2];
+        TextPage_t *EncoderMonitorPage =
+            &ParameterPage.LowerPages[1].LowerPages[3];
+        TextPage_t *MotorLeftSpeedPIDAdjustPage =
+            &ParameterPage.LowerPages[2].LowerPages[1];
+        TextPage_t *MotorRightSpeedPIDAdjustPage =
+            &ParameterPage.LowerPages[2].LowerPages[2];
+        TextPage_t *GWGrayPositionPIDAdjustPage =
+            &ParameterPage.LowerPages[2].LowerPages[3];
+        TextPage_t *OptionPage = &ParameterPage.LowerPages[4];
 
-    ICM42688MonitorPage->LowerPages[1].FloatParameterPtr = &ICM42688.Angles[0];
-    ICM42688MonitorPage->LowerPages[2].FloatParameterPtr = &ICM42688.Angles[1];
-    ICM42688MonitorPage->LowerPages[3].FloatParameterPtr = &ICM42688.Angles[2];
+        ICM42688MonitorPage->LowerPages[1].FloatParameterPtr =
+            &ICM42688.Angles[0];
+        ICM42688MonitorPage->LowerPages[2].FloatParameterPtr =
+            &ICM42688.Angles[1];
+        ICM42688MonitorPage->LowerPages[3].FloatParameterPtr =
+            &ICM42688.Angles[2];
 
-    GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &DiffSpeed;
+        GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &DiffSpeed;
 
-    EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
-    EncoderMonitorPage->LowerPages[2].IntParameterPtr = &EncoderRightCounter;
+        EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
+        EncoderMonitorPage->LowerPages[2].IntParameterPtr =
+            &EncoderRightCounter;
 
-    MotorLeftSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
-        &MotorLeftSpeedPID.Kp;
-    MotorLeftSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
-        &MotorLeftSpeedPID.Ki;
-    MotorLeftSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
-        &MotorLeftSpeedPID.Kd;
+        MotorLeftSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+            &MotorLeftSpeedPID.Kp;
+        MotorLeftSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+            &MotorLeftSpeedPID.Ki;
+        MotorLeftSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+            &MotorLeftSpeedPID.Kd;
 
-    MotorRightSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
-        &MotorRightSpeedPID.Kp;
-    MotorRightSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
-        &MotorRightSpeedPID.Ki;
-    MotorRightSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
-        &MotorRightSpeedPID.Kd;
+        MotorRightSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+            &MotorRightSpeedPID.Kp;
+        MotorRightSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+            &MotorRightSpeedPID.Ki;
+        MotorRightSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+            &MotorRightSpeedPID.Kd;
 
-    GWGrayPositionPIDAdjustPage->LowerPages[1].FloatParameterPtr =
-        &GrayPositionPID.Kp;
-    GWGrayPositionPIDAdjustPage->LowerPages[2].FloatParameterPtr =
-        &GrayPositionPID.Ki;
-    GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
-        &GrayPositionPID.Kd;
+        GWGrayPositionPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+            &GrayPositionPID.Kp;
+        GWGrayPositionPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+            &GrayPositionPID.Ki;
+        GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+            &GrayPositionPID.Kd;
 
-    OptionPage->IntParameterPtr = &CarStatus;
+        OptionPage->IntParameterPtr = &CarStatus;
+    }
 
     // ---------------- Trace Line Test ---------------- //
     // int16_t BaseSpeed = 500;
@@ -117,29 +125,27 @@ void vMainTaskCode(void *pvParameters) {
     // }
 
     // ---------------- Serial Pack Test -------------------- //
-    for (;;) {
-        if (SerialBoard.PackRecieved == SET) {
-            switch (SerialBoard.PackType) {
-            case Serial_HexPack:
-                Serial_Printf(&SerialBoard, "Receive HexPack [");
-                Serial_Printf(&SerialBoard, "%#X", SerialBoard.HexPack[0]);
-                for (uint8_t i = 1; i < SerialBoard.PackLength; i++) {
-                    Serial_Printf(&SerialBoard, " %#X", SerialBoard.HexPack[i]);
-                }
-                Serial_Printf(&SerialBoard, "]\n");
-                break;
-
-            case Serial_StringPack:
-                Serial_Printf(&SerialBoard, "Receive StringPack [%s]\n",
-                              SerialBoard.StringPack);
-                break;
-            }
-
-            Serial_Clear(&SerialBoard);
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(1));
-    }
+    // for (;;) {
+    //     if (SerialBoard.PackRecieved == SET) {
+    //         switch (SerialBoard.PackType) {
+    //         case Serial_HexPack:
+    //             Serial_Printf(&SerialBoard, "Receive HexPack [");
+    //             Serial_Printf(&SerialBoard, "%#X", SerialBoard.HexPack[0]);
+    //             for (uint8_t i = 1; i < SerialBoard.PackLength; i++) {
+    //                 Serial_Printf(&SerialBoard, " %#X",
+    //                 SerialBoard.HexPack[i]);
+    //             }
+    //             Serial_Printf(&SerialBoard, "]\n");
+    //             break;
+    //         case Serial_StringPack:
+    //             Serial_Printf(&SerialBoard, "Receive StringPack [%s]\n",
+    //                           SerialBoard.StringPack);
+    //             break;
+    //         }
+    //         Serial_Clear(&SerialBoard);
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(1));
+    // }
 
     // ---------------- Key Test ----------------------- //
     // for (;;) {

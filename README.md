@@ -28,18 +28,33 @@ Key_Init(&Key);
 
 ## Serial
 
-### RxInterrupt
+### Normal
 
 * main.c
 
 ``` C
 Serial_t Serial = {
-    .USART = USART1,
+    .USARTx = USART3,
+    .TX = PD8,
+    .RX = PD9,
+    .Baudrate = 115200,
+};
+
+Serial_Init(&Serial);
+```
+
+### Rx Interrupt
+
+* main.c
+
+``` C
+Serial_t Serial = {
+    .USARTx = USART1,
     .TX = PA9,
     .RX = PA10,
     .Baudrate = 115200,
     .Default = ENABLE,
-    .RxIT = ENABLE,
+    .Interrupt = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
     .PackLength = 2,
@@ -53,16 +68,73 @@ Serial_Init(&Serial);
 ``` C
 void USART1_IRQHandler() {
     HAL_UART_IRQHandler(&Serial.Handler);
-    Serial_RXITStart(&Serial);
+
+    if (Serial.RxITSize) {
+        Serial_RXITStart(&Serial);
+
+    } else if (Serial.IdleDMA) {
+        Serial_IdleDMAStart(&Serial);
+    }
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-    if (huart->Instance == Serial.USART) {
-        if (Serial.PackRecieved == SET) {
+    if (huart->Instance == SerialBoard.USARTx) {
+        if (SerialBoard.PackRecieved == SET) {
             return;
         }
 
-        Serial_Parse(&Serial, Serial.RXBuffer[0]);
+        Serial_Parse(&SerialBoard, SerialBoard.RxBuffer[0]);
+
+    }
+}
+```
+
+### Idle Interrupt + DMA
+
+* main.c
+
+``` C
+Serial_t SerialBoard = {
+    .USARTx = USART1,
+    .TX = PA9,
+    .RX = PA10,
+    .Baudrate = 115200,
+    .Interrupt = ENABLE,
+    .IdleDMA = ENABLE,
+    .Priority = 1,
+    .DMA =
+        {
+            .DMAx = DMA2,
+            .Stream = 2,
+            .Channel = 4,
+        },
+    .PackLength = 2,
+    .Default = ENABLE,
+};
+
+Serial_Init(&Serial);
+```
+
+* interrupt.c
+
+``` C
+void USART1_IRQHandler() {
+    HAL_UART_IRQHandler(&Serial.Handler);
+
+    if (Serial.RxITSize) {
+        Serial_RXITStart(&Serial);
+
+    } else if (Serial.IdleDMA) {
+        Serial_IdleDMAStart(&Serial);
+    }
+}
+
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
+    if (huart->Instance == SerialBoard.USARTx) {
+        for (uint8_t i = 0; i < Size; i++) {
+            Serial_Parse(&SerialBoard, SerialBoard.RxBuffer[i]);
+        }
+
     }
 }
 ```
