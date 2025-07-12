@@ -9,8 +9,6 @@ PID_t MotorLeftSpeedPID = {
     .IMax = 10000,
 };
 
-// .Kd = 0.001,
-
 PID_t MotorRightSpeedPID = {
     .Kp = 4.2,
     .Ki = 16,
@@ -19,7 +17,7 @@ PID_t MotorRightSpeedPID = {
 };
 
 PID_t GrayPositionPID = {
-    .Kp = -6,
+    .Kp = -2.8,
     .Ki = -1,
     .IMax = 512,
 };
@@ -233,6 +231,8 @@ void vMainTaskCode(void *pvParameters) {
     //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
     //     printf(" Yaw, Pitch, Roll: %6.2f, %6.2f, %6.2f\n", YawPitchRoll[0],
     //            YawPitchRoll[1], YawPitchRoll[2]);
+    //     // printf("{ICM42688}%6.2f,%6.2f,%6.2f\n", YawPitchRoll[0],
+    //     //        YawPitchRoll[1], YawPitchRoll[2]);
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 

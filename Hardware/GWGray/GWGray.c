@@ -43,18 +43,29 @@ void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data) {
 
 int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
     uint8_t DigitalData[8], AnalogData[8];
-    GWGray_ReadDigital(Self, DigitalData);
+    // GWGray_ReadDigital(Self, DigitalData);
     GWGray_ReadAnalog(Self, AnalogData);
 
     uint8_t OnLineIndex = 8;
-    for (uint8_t i = 0; i < 8; i++) {
-        if (DigitalData[i] == 0) {
-            OnLineIndex = i;
-        }
+    // for (uint8_t i = 0; i < 8; i++) {
+    //     if (DigitalData[i] == 0) {
+    //         OnLineIndex = i;
+    //     }
 
-        if (OnCenterGroup(OnLineIndex) || OnRightGroup(OnLineIndex)) {
-            break;
+    //     if (OnCenterGroup(OnLineIndex) || OnRightGroup(OnLineIndex)) {
+    //         break;
+    //     }
+    // }
+    uint8_t MaxData = 0;
+    for (uint8_t i = 0; i < 8; i++) {
+        if (AnalogData[i] > MaxData) {
+            OnLineIndex = i;
+            MaxData = AnalogData[i];
         }
+    }
+
+    if (MaxData < 185) {
+        return 0xFFFF;
     }
 
     if (OnLineIndex == 8) {
