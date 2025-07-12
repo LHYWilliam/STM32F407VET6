@@ -33,11 +33,9 @@
      : (x) == UART4  ? UART4_IRQn                                              \
                      : NULL)
 
-#define BUFFER_SIZE 128
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 64
 
 typedef enum {
-    Serial_None,
     Serial_HexPack,
     Serial_StringPack,
 } Serial_PackType;
@@ -54,21 +52,23 @@ typedef struct {
 
     uint8_t PackLength;
 
-    FunctionalState Default;
-
     uint8_t ParsedCount;
     FlagStatus PackRecieved;
     Serial_PackType PackType;
-    uint8_t HexPack[BUFFER_SIZE];
+    FlagStatus FoundPackHead;
+
+    FunctionalState Default;
 
     uint8_t TXBuffer[BUFFER_SIZE];
     uint8_t RXBuffer[BUFFER_SIZE];
+    uint8_t HexPack[BUFFER_SIZE];
+    uint8_t StringPack[BUFFER_SIZE];
 
     UART_HandleTypeDef Handler;
 } Serial_t;
 
 void Serial_Init(Serial_t *Self);
-void Serial_RXITStart(Serial_t *Self, uint8_t Size);
+void Serial_RXITStart(Serial_t *Self);
 void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length);
 void Serial_Printf(Serial_t *Self, char *Format, ...);
 void Serial_Parse(Serial_t *Self, uint8_t RxData);

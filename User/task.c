@@ -116,6 +116,31 @@ void vMainTaskCode(void *pvParameters) {
     //     vTaskDelay(pdMS_TO_TICKS(100));
     // }
 
+    // ---------------- Serial Pack Test -------------------- //
+    for (;;) {
+        if (SerialBoard.PackRecieved == SET) {
+            switch (SerialBoard.PackType) {
+            case Serial_HexPack:
+                Serial_Printf(&SerialBoard, "Receive HexPack [");
+                Serial_Printf(&SerialBoard, "%#X", SerialBoard.HexPack[0]);
+                for (uint8_t i = 1; i < SerialBoard.PackLength; i++) {
+                    Serial_Printf(&SerialBoard, " %#X", SerialBoard.HexPack[i]);
+                }
+                Serial_Printf(&SerialBoard, "]\n");
+                break;
+
+            case Serial_StringPack:
+                Serial_Printf(&SerialBoard, "Receive StringPack [%s]\n",
+                              SerialBoard.StringPack);
+                break;
+            }
+
+            Serial_Clear(&SerialBoard);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(1));
+    }
+
     // ---------------- Key Test ----------------------- //
     // for (;;) {
     //     if (Key_IsPressing(&Key1)) {

@@ -1,8 +1,14 @@
 #include "main.h"
 
-void USART1_IRQHandler() { HAL_UART_IRQHandler(&SerialBoard.Handler); }
+void USART1_IRQHandler() {
+    HAL_UART_IRQHandler(&SerialBoard.Handler);
+    Serial_RXITStart(&SerialBoard);
+}
 
-void USART2_IRQHandler() { HAL_UART_IRQHandler(&SerialBluetooth.Handler); }
+void USART2_IRQHandler() {
+    HAL_UART_IRQHandler(&SerialBluetooth.Handler);
+    Serial_RXITStart(&SerialBluetooth);
+}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == SerialBoard.USART) {
@@ -11,13 +17,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         // return;
 
         if (SerialBoard.PackRecieved == SET) {
-            Serial_RXITStart(&SerialBoard, 1);
             return;
         }
 
         Serial_Parse(&SerialBoard, SerialBoard.RXBuffer[0]);
-
-        Serial_RXITStart(&SerialBoard, 1);
 
     } else if (huart->Instance == SerialBluetooth.USART) {
         // Serial_SendBytes(&SerialBluetooth, SerialBluetooth.RXBuffer, 1);
@@ -25,13 +28,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
         // return;
 
         if (SerialBluetooth.PackRecieved == SET) {
-            Serial_RXITStart(&SerialBluetooth, 1);
             return;
         }
 
         Serial_Parse(&SerialBluetooth, SerialBluetooth.RXBuffer[0]);
-
-        Serial_RXITStart(&SerialBluetooth, 1);
     }
 }
 

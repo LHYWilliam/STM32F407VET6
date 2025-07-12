@@ -7,6 +7,17 @@
 Serial_t *DefaultSerial;
 
 void Serial_Init(Serial_t *Self) {
+    GPIO_t GPIO = {
+        .Mode = GPIO_MODE_AF_PP,
+        .Alternate = GPIO_AFx_USARTy(Self->USART),
+    };
+    if (*Self->TX) {
+        GPIO_InitPin(&GPIO, Self->TX);
+    }
+    if (*Self->RX) {
+        GPIO_InitPin(&GPIO, Self->RX);
+    }
+
     Self->Handler = (UART_HandleTypeDef){
         .Instance = Self->USART,
         .Init =
@@ -22,30 +33,16 @@ void Serial_Init(Serial_t *Self) {
             },
     };
 
-    {
-        __HAL_RCC_USARTx_CLK_ENABLE(Self->USART);
-
-        GPIO_t GPIO = {
-            .Mode = GPIO_MODE_AF_PP,
-            .Alternate = GPIO_AFx_USARTy(Self->USART),
-        };
-        if (*Self->TX) {
-            GPIO_InitPin(&GPIO, Self->TX);
-        }
-        if (*Self->RX) {
-            GPIO_InitPin(&GPIO, Self->RX);
-        }
-
-        if (Self->RxIT) {
-            HAL_NVIC_EnableIRQ(USARTx_IRQn(Self->USART));
-            HAL_NVIC_SetPriority(USARTx_IRQn(Self->USART), Self->Priority, 0);
-        }
+    if (Self->RxIT) {
+        HAL_NVIC_EnableIRQ(USARTx_IRQn(Self->USART));
+        HAL_NVIC_SetPriority(USARTx_IRQn(Self->USART), Self->Priority, 0);
     }
 
+    __HAL_RCC_USARTx_CLK_ENABLE(Self->USART);
     HAL_UART_Init(&Self->Handler);
 
     if (Self->RxIT) {
-        Serial_RXITStart(Self, Self->RxITSize);
+        Serial_RXITStart(Self);
     }
 
     if (Self->Default) {
@@ -53,8 +50,8 @@ void Serial_Init(Serial_t *Self) {
     }
 }
 
-void Serial_RXITStart(Serial_t *Self, uint8_t Size) {
-    HAL_UART_Receive_IT(&Self->Handler, Self->RXBuffer, Size);
+void Serial_RXITStart(Serial_t *Self) {
+    HAL_UART_Receive_IT(&Self->Handler, Self->RXBuffer, Self->RxITSize);
 }
 
 void Serial_SendBytes(Serial_t *Self, uint8_t *Bytes, uint8_t Length) {
@@ -72,16 +69,23 @@ void Serial_Printf(Serial_t *Self, char *Format, ...) {
 }
 
 void Serial_Parse(Serial_t *Self, uint8_t RxData) {
-    switch (Self->PackType) {
-    case Serial_None:
+    if (Self->FoundPackHead == RESET) {
         if (RxData == 0xFE) {
+            Self->FoundPackHead = SET;
             Self->PackType = Serial_HexPack;
+
+        } else if (RxData == '>') {
+            Self->FoundPackHead = SET;
+            Self->PackType = Serial_StringPack;
 
         } else {
             Serial_Clear(Self);
         }
-        break;
 
+        return;
+    }
+
+    switch (Self->PackType) {
     case Serial_HexPack:
         if (RxData == 0xEF && Self->ParsedCount == Self->PackLength) {
             Self->PackRecieved = SET;
@@ -95,6 +99,20 @@ void Serial_Parse(Serial_t *Self, uint8_t RxData) {
         }
         break;
 
+    case Serial_StringPack:
+        if (RxData == '\n' && Self->StringPack[Self->ParsedCount - 1] == '\r') {
+            Self->PackRecieved = SET;
+            Self->StringPack[Self->ParsedCount - 1] = '\0';
+
+        } else {
+            Self->StringPack[Self->ParsedCount++] = RxData;
+        }
+
+        if (Self->ParsedCount > BUFFER_SIZE) {
+            Serial_Clear(Self);
+        }
+        break;
+
     default:
         Serial_Clear(Self);
         break;
@@ -104,7 +122,7 @@ void Serial_Parse(Serial_t *Self, uint8_t RxData) {
 void Serial_Clear(Serial_t *Self) {
     Self->ParsedCount = 0;
     Self->PackRecieved = RESET;
-    Self->PackType = Serial_None;
+    Self->FoundPackHead = RESET;
 }
 
 int fputc(int ch, FILE *f) {
