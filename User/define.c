@@ -356,7 +356,7 @@ TextPage_t ParameterPage = {
             (TextPage_t){
                 .Title = "Adjust",
                 .TextPage_NavigationPageConfig(),
-                .NumOfLowerPages = 4,
+                .NumOfLowerPages = 5,
                 .LowerPages =
                     (TextPage_t[]){
                         TextPage_Back("<"),
@@ -398,6 +398,19 @@ TextPage_t ParameterPage = {
                                     TextPage_ParameterAdjustPage("Kd", Float),
                                 },
                         },
+
+                        (TextPage_t){
+                            .Title = "Angle PID",
+                            .TextPage_AdjustPageConfig(),
+                            .NumOfLowerPages = 4,
+                            .LowerPages =
+                                (TextPage_t[]){
+                                    TextPage_Back("<"),
+                                    TextPage_ParameterAdjustPage("Kp", Float),
+                                    TextPage_ParameterAdjustPage("Ki", Float),
+                                    TextPage_ParameterAdjustPage("Kd", Float),
+                                },
+                        },
                     },
             },
 
@@ -409,7 +422,7 @@ TextPage_t ParameterPage = {
             (TextPage_t){
                 .Title = "Option",
                 .TextPage_OptiontPageConfig(),
-                .NumOfLowerPages = 5,
+                .NumOfLowerPages = 6,
                 .LowerPages =
                     (TextPage_t[]){
                         TextPage_Back("<"),
@@ -417,6 +430,7 @@ TextPage_t ParameterPage = {
                         TextPage_OptionPage("Advance"),
                         TextPage_OptionPage("Round"),
                         TextPage_OptionPage("Trace"),
+                        TextPage_OptionPage("Angle"),
                     },
             },
         },

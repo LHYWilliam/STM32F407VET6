@@ -17,13 +17,16 @@ PID_t MotorRightSpeedPID = {
 };
 
 PID_t GrayPositionPID = {
-    .Kp = -2.8,
+    .Kp = -1.8,
     .Ki = -1,
-    .IMax = 512,
+    .IMax = 10000,
 };
 
-int32_t DiffSpeed;
-int32_t EncoderLeftCounter, EncoderRightCounter;
+PID_t AnglePID = {
+    .Kp = 30,
+    .Ki = 1,
+    .IMax = 10000,
+};
 
 typedef enum {
     None,
@@ -31,13 +34,19 @@ typedef enum {
     Advance,
     Round,
     Trace,
+    Angle,
 } CarStatus_t;
 
 int32_t CarStatus;
 FunctionalState OLEDFlushStatus = ENABLE;
 
-int32_t AdvanceSpeed = 1024;
-int32_t RoundSpeed = 512;
+int32_t GrayError;
+int32_t EncoderLeftCounter, EncoderRightCounter;
+
+int32_t DiffSpeed;
+int32_t AdvanceSpeed = 1000;
+int32_t RoundSpeed = 500;
+float TargetAngle;
 
 void vMainTaskCode(void *pvParameters) {
     {
@@ -53,6 +62,8 @@ void vMainTaskCode(void *pvParameters) {
             &ParameterPage.LowerPages[2].LowerPages[2];
         TextPage_t *GWGrayPositionPIDAdjustPage =
             &ParameterPage.LowerPages[2].LowerPages[3];
+        TextPage_t *AnglePIDAdjustPage =
+            &ParameterPage.LowerPages[2].LowerPages[4];
         TextPage_t *OptionPage = &ParameterPage.LowerPages[4];
 
         ICM42688MonitorPage->LowerPages[1].FloatParameterPtr =
@@ -62,7 +73,7 @@ void vMainTaskCode(void *pvParameters) {
         ICM42688MonitorPage->LowerPages[3].FloatParameterPtr =
             &ICM42688.Angles[2];
 
-        GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &DiffSpeed;
+        GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GrayError;
 
         EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
         EncoderMonitorPage->LowerPages[2].IntParameterPtr =
@@ -88,6 +99,10 @@ void vMainTaskCode(void *pvParameters) {
             &GrayPositionPID.Ki;
         GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
             &GrayPositionPID.Kd;
+
+        AnglePIDAdjustPage->LowerPages[1].FloatParameterPtr = &AnglePID.Kp;
+        AnglePIDAdjustPage->LowerPages[2].FloatParameterPtr = &AnglePID.Ki;
+        AnglePIDAdjustPage->LowerPages[3].FloatParameterPtr = &AnglePID.Kd;
 
         OptionPage->IntParameterPtr = &CarStatus;
     }
@@ -309,6 +324,10 @@ void vMainTaskCode(void *pvParameters) {
             continue;
         }
 
+        if (TargetAngle == 0.) {
+            TargetAngle = ICM42688.Angles[0];
+        }
+
         EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
         EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
 
@@ -325,6 +344,7 @@ void vMainTaskCode(void *pvParameters) {
 
         int16_t BaseSpeed = 0;
         switch (CarStatus) {
+        case 0:
         case Stop:
             BaseSpeed = 0;
             DiffSpeed = 0;
@@ -341,17 +361,29 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case Trace:
-            DiffSpeed = GWGray_CaculateAnalogError(&GWGray);
+            GrayError = GWGray_CaculateAnalogError(&GWGray);
 
-            if (DiffSpeed == 0xFFFF) {
+            if (GrayError == 0xFFFF) {
                 BaseSpeed = 0;
                 DiffSpeed = 0;
 
                 CarStatus = Stop;
             } else {
                 BaseSpeed = AdvanceSpeed;
-                DiffSpeed = PID_Caculate(&GrayPositionPID, DiffSpeed);
+                DiffSpeed = PID_Caculate(&GrayPositionPID, GrayError);
+
+                Serial_Printf(&SerialBluetooth, "{Trace}%d\n", GrayError);
             }
+            break;
+
+        case Angle:
+            BaseSpeed = AdvanceSpeed;
+            DiffSpeed =
+                PID_Caculate(&AnglePID, TargetAngle - ICM42688.Angles[0]);
+
+            Serial_Printf(&SerialBluetooth, "{Angel}%.2f,%.2f\n",
+                          ICM42688.Angles[0], TargetAngle);
+
             break;
         }
 
