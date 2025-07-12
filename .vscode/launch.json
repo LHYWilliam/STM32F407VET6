@@ -31,10 +31,15 @@
             "target": {
                 "server": "pyocd",
                 "serverParameters": [
+                    "gdbserver",
+                    "--port",
+                    "3333",
                     "--probe",
                     "cmsisdap:",
                     "--connect",
-                    "attach"
+                    "attach",
+                    "--cbuild-run",
+                    "${command:cmsis-csolution.getCbuildRunFile}"
                 ],
                 "port": "3333"
             },

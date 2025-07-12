@@ -1,19 +1,19 @@
 #include "main.h"
 
-const float EncoderLeftToPWM = 10000. / 183.;
-const float EncoderRightToPWM = 10000. / 194.;
+const float EncoderLeftToPWM = 10000. / 178.;
+const float EncoderRightToPWM = 10000. / 187.;
 
 PID_t MotorLeftSpeedPID = {
-    .Kp = 2,
-    .Ki = 12,
+    .Kp = 4.2,
+    .Ki = 16,
     .IMax = 10000,
 };
 
 // .Kd = 0.001,
 
 PID_t MotorRightSpeedPID = {
-    .Kp = 2,
-    .Ki = 12,
+    .Kp = 4.2,
+    .Ki = 16,
     .IMax = 10000,
 
 };
@@ -222,12 +222,14 @@ void vMainTaskCode(void *pvParameters) {
     //     float Error = TargetSpeed - Count * EncoderLeftToPWM;
     //     int16_t Out = PID_Caculate(&MotorLeftSpeedPID, Error);
     //     Motor_SetSpeed(&MotorLeft, Out);
-    //     printf("Target, Real, Error, Out: %d, %d, %d, %d\n", TargetSpeed,
-    //            (int16_t)(Count * EncoderLeftToPWM), (int16_t)Error, Out);
-    //     if (SerialBoard.RecieveFlag == SET) {
-    //         TargetSpeed = SerialBoard.HexData[0] << 8 |
-    //         SerialBoard.HexData[1];
-    //         Serial_Clear(&SerialBoard);
+    //     Serial_Printf(&SerialBluetooth,
+    //                   "Target, Real, Error, Out: %d, %d, %d, %d\n",
+    //                   TargetSpeed, (int16_t)(Count * EncoderLeftToPWM),
+    //                   (int16_t)Error, Out);
+    //     if (SerialBluetooth.PackRecieved == SET) {
+    //         TargetSpeed =
+    //             SerialBluetooth.HexPack[0] << 8 | SerialBluetooth.HexPack[1];
+    //         Serial_Clear(&SerialBluetooth);
     //     }
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
