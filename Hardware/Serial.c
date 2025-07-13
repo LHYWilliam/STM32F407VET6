@@ -88,31 +88,87 @@ void Serial_Printf(Serial_t *Self, char *Format, ...) {
 void Serial_Parse(Serial_t *Self, uint8_t RxData) {
     if (Self->ParsedCount >= BUFFER_SIZE) {
         Serial_Clear(Self);
+        return;
     }
 
     switch (Self->PackType) {
     case SerialPack_Uint8:
         if (RxData == 0xFF) {
             Self->PackRecieved = SET;
+            return;
+        }
+        break;
 
-        } else {
-            Self->HexPack[Self->ParsedCount] = RxData;
-            Self->ParsedCount++;
+    case SerialPack_Uint16:
+        if (RxData == 0xFF && Self->ParsedCount >= 1 &&
+            Self->Pack[Self->ParsedCount - 1] == 0xFF) {
+            Self->ParsedCount -= 1;
+            Self->PackRecieved = SET;
+            return;
+        }
+        break;
+
+    case SerialPack_Uint32:
+        if (RxData == 0xFF && Self->ParsedCount >= 3 &&
+            Self->Pack[Self->ParsedCount - 1] == 0xFF &&
+            Self->Pack[Self->ParsedCount - 2] == 0xFF &&
+            Self->Pack[Self->ParsedCount - 3] == 0xFF) {
+            Self->ParsedCount -= 3;
+            Self->PackRecieved = SET;
+            return;
+        }
+        break;
+
+    case SerialPack_Int8:
+        if (RxData == 0x80) {
+            Self->PackRecieved = SET;
+            return;
+        }
+        break;
+
+    case SerialPack_Int16:
+        if (RxData == 0x00 && Self->ParsedCount >= 1 &&
+            Self->Pack[Self->ParsedCount - 1] == 0x80) {
+            Self->ParsedCount -= 1;
+            Self->PackRecieved = SET;
+            return;
+        }
+        break;
+
+    case SerialPack_Int32:
+        if (RxData == 0x00 && Self->ParsedCount >= 3 &&
+            Self->Pack[Self->ParsedCount - 1] == 0x00 &&
+            Self->Pack[Self->ParsedCount - 2] == 0x00 &&
+            Self->Pack[Self->ParsedCount - 3] == 0x80) {
+            Self->ParsedCount -= 3;
+            Self->PackRecieved = SET;
+            return;
+        }
+        break;
+
+    case SerialPack_Float32:
+        if (RxData == 0xFF && Self->ParsedCount >= 3 &&
+            Self->Pack[Self->ParsedCount - 1] == 0xFF &&
+            Self->Pack[Self->ParsedCount - 2] == 0xFF &&
+            Self->Pack[Self->ParsedCount - 3] == 0xFF) {
+            Self->ParsedCount -= 3;
+            Self->PackRecieved = SET;
+            return;
         }
         break;
 
     case SerialPack_String:
         if (RxData == '\n') {
+            Self->Pack[Self->ParsedCount] = '\0';
             Self->PackRecieved = SET;
-            Self->StringPack[Self->ParsedCount] = '\0';
-
-        } else {
-            Self->StringPack[Self->ParsedCount] = RxData;
-            Self->ParsedCount++;
+            return;
         }
 
         break;
     }
+
+    Self->Pack[Self->ParsedCount] = RxData;
+    Self->ParsedCount++;
 }
 
 void Serial_Clear(Serial_t *Self) {

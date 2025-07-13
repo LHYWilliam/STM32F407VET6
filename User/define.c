@@ -61,7 +61,7 @@ Serial_t SerialBoard = {
             .Stream = 2,
             .Channel = 4,
         },
-    .PackType = SerialPack_String,
+    .PackType = SerialPack_Int16,
     .Default = ENABLE,
 };
 

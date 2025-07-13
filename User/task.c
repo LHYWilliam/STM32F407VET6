@@ -140,18 +140,23 @@ void vMainTaskCode(void *pvParameters) {
     // for (;;) {
     //     if (SerialBoard.PackRecieved == SET) {
     //         switch (SerialBoard.PackType) {
-    //         case Serial_HexPack:
+    //         case SerialPack_Int8:
+    //         case SerialPack_Int16:
+    //         case SerialPack_Int32:
+    //         case SerialPack_Uint8:
+    //         case SerialPack_Uint16:
+    //         case SerialPack_Uint32:
+    //         case SerialPack_Float32:
     //             Serial_Printf(&SerialBoard, "Receive HexPack [");
-    //             Serial_Printf(&SerialBoard, "%#X", SerialBoard.HexPack[0]);
-    //             for (uint8_t i = 1; i < SerialBoard.PackLength; i++) {
-    //                 Serial_Printf(&SerialBoard, " %#X",
-    //                 SerialBoard.HexPack[i]);
+    //             for (uint8_t i = 0; i < SerialBoard.ParsedCount; i++) {
+    //                 Serial_Printf(&SerialBoard, i == 0 ? "%#X" : " %#X",
+    //                               SerialBoard.Pack[i]);
     //             }
     //             Serial_Printf(&SerialBoard, "]\n");
     //             break;
-    //         case Serial_StringPack:
+    //         case SerialPack_String:
     //             Serial_Printf(&SerialBoard, "Receive StringPack [%s]\n",
-    //                           SerialBoard.StringPack);
+    //                           SerialBoard.Pack);
     //             break;
     //         }
     //         Serial_Clear(&SerialBoard);
@@ -337,13 +342,7 @@ void vMainTaskCode(void *pvParameters) {
         Serial_Printf(&SerialBluetooth, "{Encoder}%d,%d\n", EncoderLeftCounter,
                       EncoderRightCounter);
 
-        if (SerialBoard.PackRecieved == SET) {
-            Serial_Clear(&SerialBoard);
-        }
-
-        if (SerialBluetooth.PackRecieved == SET) {
-            Serial_Clear(&SerialBluetooth);
-        }
+        CLI_Handler(&CLI);
 
         int16_t AdvanceSpeed = 0, DiffSpeed = 0;
         switch (CarStatus) {

@@ -69,8 +69,7 @@ typedef struct {
 
     uint8_t TxBuffer[BUFFER_SIZE];
     uint8_t RxBuffer[BUFFER_SIZE];
-    uint8_t HexPack[BUFFER_SIZE];
-    uint8_t StringPack[BUFFER_SIZE];
+    uint8_t Pack[BUFFER_SIZE];
 
     UART_HandleTypeDef Handler;
 } Serial_t;

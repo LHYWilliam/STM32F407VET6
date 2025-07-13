@@ -41,13 +41,25 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
     if (huart->Instance == SerialBoard.USARTx) {
+        if (SerialBoard.PackRecieved == SET) {
+            return;
+        }
         for (uint8_t i = 0; i < Size; i++) {
             Serial_Parse(&SerialBoard, SerialBoard.RxBuffer[i]);
+            if (SerialBoard.PackRecieved == SET) {
+                return;
+            }
         }
 
     } else if (huart->Instance == SerialBluetooth.USARTx) {
+        if (SerialBluetooth.PackRecieved == SET) {
+            return;
+        }
         for (uint8_t i = 0; i < Size; i++) {
             Serial_Parse(&SerialBluetooth, SerialBluetooth.RxBuffer[i]);
+            if (SerialBluetooth.PackRecieved == SET) {
+                return;
+            }
         }
     }
 }
