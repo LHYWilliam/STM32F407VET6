@@ -2,6 +2,13 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "type": "cmsis-csolution.build",
+            "solution": "${command:cmsis-csolution.getSolutionFile}",
+            "rebuild": false,
+            "problemMatcher": [],
+            "label": "cmsis-csolution.build: Build"
+        },
+        {
             "label": "CMSIS Erase",
             "type": "shell",
             "command": "probe-rs",
@@ -42,7 +49,7 @@
             "args": [
                 "erase",
                 "--chip",
-                "STM32F407VE",
+                "STM32F407VE"
             ],
             "problemMatcher": []
         },
@@ -87,7 +94,7 @@
             "args": [
                 "reset",
                 "--chip",
-                "STM32F407VE",
+                "STM32F407VE"
             ],
             "problemMatcher": []
         },
@@ -189,7 +196,6 @@
             "label": "CMSIS Load+Run",
             "dependsOn": [
                 "CMSIS Load",
-                // "CMSIS Run"
                 "CMSIS Reset"
             ],
             "dependsOrder": "sequence",
@@ -234,9 +240,7 @@
                 }
             },
             "args": [
-                "list",
-                // "--cbuild-run",
-                // "${command:cmsis-csolution.getCbuildRunFile}"
+                "list"
             ],
             "problemMatcher": []
         }
