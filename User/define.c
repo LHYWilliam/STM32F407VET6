@@ -61,7 +61,7 @@ Serial_t SerialBoard = {
             .Stream = 2,
             .Channel = 4,
         },
-    .PackLength = 2,
+    .PackType = SerialPack_String,
     .Default = ENABLE,
 };
 
@@ -73,7 +73,6 @@ Serial_t SerialBluetooth = {
     .Interrupt = ENABLE,
     .RxITSize = 1,
     .Priority = 1,
-    .PackLength = 2,
 };
 
 Serial_t SerialK230 = {
@@ -197,6 +196,10 @@ ICM42688_t ICM42688 = {
     .GyroRange = ICM42688Gyro_1000DPS,
     .AccFreq = ICM42688Acc_100Hz,
     .GyroFreq = ICM42688Gyro_100Hz,
+};
+
+CLI_t CLI = {
+    .Serial = &SerialBoard,
 };
 
 TaskHandle_t xMainTaskHandle;

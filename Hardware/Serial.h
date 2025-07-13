@@ -37,8 +37,14 @@
 #define BUFFER_SIZE 64
 
 typedef enum {
-    Serial_HexPack,
-    Serial_StringPack,
+    SerialPack_Int8,
+    SerialPack_Int16,
+    SerialPack_Int32,
+    SerialPack_Uint8,
+    SerialPack_Uint16,
+    SerialPack_Uint32,
+    SerialPack_Float32,
+    SerialPack_String,
 } Serial_PackType;
 
 typedef struct {
@@ -54,14 +60,12 @@ typedef struct {
 
     DMA_t DMA;
 
-    uint8_t PackLength;
+    Serial_PackType PackType;
 
     FunctionalState Default;
 
     uint8_t ParsedCount;
     FlagStatus PackRecieved;
-    Serial_PackType PackType;
-    FlagStatus FoundPackHead;
 
     uint8_t TxBuffer[BUFFER_SIZE];
     uint8_t RxBuffer[BUFFER_SIZE];

@@ -10,7 +10,6 @@ project:
       processor:
         fpu: sp
       add-path:
-        - Util
         - User
         - System
         - Hardware
@@ -18,6 +17,8 @@ project:
         - Hardware/OLED
         - Hardware/GWGray
         - Hardware/ICM42688
+        - Util
+        - Util/CLI
       debug: "on"
       define:
         - __MICROLIB
@@ -135,6 +136,8 @@ project:
         - file: Util/Time.h
         - file: Util/PID.c
         - file: Util/PID.h
+        - file: Util/CLI/CLI.c
+        - file: Util/CLI/CLI.h
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick

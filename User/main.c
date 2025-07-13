@@ -41,6 +41,8 @@ int main() {
     GWGray_Init(&GWGray);
     ICM42688_Init(&ICM42688);
 
+    CLI_Init(&CLI);
+
     TextPage_Init(&ParameterPage, &OLED);
     TextMenu.Page = &ParameterPage;
     SelectioneBar_BindTextPage(&Bar, &ParameterPage.LowerPages[0]);

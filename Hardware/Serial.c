@@ -86,48 +86,31 @@ void Serial_Printf(Serial_t *Self, char *Format, ...) {
 }
 
 void Serial_Parse(Serial_t *Self, uint8_t RxData) {
-    if (Self->FoundPackHead == RESET) {
-        if (RxData == 0xFE) {
-            Self->FoundPackHead = SET;
-            Self->PackType = Serial_HexPack;
-
-        } else if (RxData == '>') {
-            Self->FoundPackHead = SET;
-            Self->PackType = Serial_StringPack;
-
-        } else {
-            Serial_Clear(Self);
-        }
-
-        return;
+    if (Self->ParsedCount >= BUFFER_SIZE) {
+        Serial_Clear(Self);
     }
 
     switch (Self->PackType) {
-    case Serial_HexPack:
-        if (RxData == 0xEF && Self->ParsedCount == Self->PackLength) {
+    case SerialPack_Uint8:
+        if (RxData == 0xFF) {
             Self->PackRecieved = SET;
 
         } else {
-            Self->HexPack[Self->ParsedCount++] = RxData;
-        }
-
-        if (Self->ParsedCount > Self->PackLength) {
-            Serial_Clear(Self);
+            Self->HexPack[Self->ParsedCount] = RxData;
+            Self->ParsedCount++;
         }
         break;
 
-    case Serial_StringPack:
-        if (RxData == '\n' && Self->StringPack[Self->ParsedCount - 1] == '\r') {
+    case SerialPack_String:
+        if (RxData == '\n') {
             Self->PackRecieved = SET;
-            Self->StringPack[Self->ParsedCount - 1] = '\0';
+            Self->StringPack[Self->ParsedCount] = '\0';
 
         } else {
-            Self->StringPack[Self->ParsedCount++] = RxData;
+            Self->StringPack[Self->ParsedCount] = RxData;
+            Self->ParsedCount++;
         }
 
-        if (Self->ParsedCount > BUFFER_SIZE) {
-            Serial_Clear(Self);
-        }
         break;
     }
 }
@@ -135,7 +118,6 @@ void Serial_Parse(Serial_t *Self, uint8_t RxData) {
 void Serial_Clear(Serial_t *Self) {
     Self->ParsedCount = 0;
     Self->PackRecieved = RESET;
-    Self->FoundPackHead = RESET;
 }
 
 int fputc(int ch, FILE *f) {

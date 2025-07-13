@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 
+#include "CLI.h"
 #include "Encoder.h"
 #include "GWGray.h"
 #include "ICM42688.h"
@@ -56,6 +57,8 @@ extern Sampler_t Sampler;
 extern OLED_t OLED;
 extern GWGray_t GWGray;
 extern ICM42688_t ICM42688;
+
+extern CLI_t CLI;
 
 extern TaskHandle_t xMainTaskHandle;
 extern void vMainTaskCode(void *pvParameters);

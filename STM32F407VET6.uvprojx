@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\Util;.\User;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\GWGray;.\Hardware\ICM42688</IncludePath>
+              <IncludePath>.\User;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\GWGray;.\Hardware\ICM42688;.\Util;.\Util\CLI</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -698,6 +698,16 @@
               <FileName>PID.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Util\PID.h</FilePath>
+            </File>
+            <File>
+              <FileName>CLI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\CLI\CLI.c</FilePath>
+            </File>
+            <File>
+              <FileName>CLI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\CLI\CLI.h</FilePath>
             </File>
           </Files>
         </Group>
