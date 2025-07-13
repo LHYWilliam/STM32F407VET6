@@ -4,7 +4,7 @@
         {
             "label": "CMSIS Erase",
             "type": "shell",
-            "command": "pyocd",
+            "command": "probe-rs",
             "options": {
                 "cwd": "${workspaceFolder}/"
             },
@@ -41,18 +41,60 @@
             },
             "args": [
                 "erase",
-                "--probe",
-                "cmsisdap:",
                 "--chip",
-                "--cbuild-run",
-                "${command:cmsis-csolution.getCbuildRunFile}"
+                "STM32F407VE",
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "CMSIS Reset",
+            "type": "shell",
+            "command": "probe-rs",
+            "options": {
+                "cwd": "${workspaceFolder}/"
+            },
+            "windows": {
+                "options": {
+                    "shell": {
+                        "executable": "cmd.exe",
+                        "args": [
+                            "/d",
+                            "/c"
+                        ]
+                    }
+                }
+            },
+            "linux": {
+                "options": {
+                    "shell": {
+                        "executable": "/bin/bash",
+                        "args": [
+                            "-c"
+                        ]
+                    }
+                }
+            },
+            "osx": {
+                "options": {
+                    "shell": {
+                        "executable": "/bin/bash",
+                        "args": [
+                            "-c"
+                        ]
+                    }
+                }
+            },
+            "args": [
+                "reset",
+                "--chip",
+                "STM32F407VE",
             ],
             "problemMatcher": []
         },
         {
             "label": "CMSIS Load",
             "type": "shell",
-            "command": "pyocd",
+            "command": "probe-rs",
             "options": {
                 "cwd": "${workspaceFolder}/"
             },
@@ -88,18 +130,18 @@
                 }
             },
             "args": [
-                "load",
-                "--probe",
-                "cmsisdap:",
-                "--cbuild-run",
-                "${command:cmsis-csolution.getCbuildRunFile}"
+                "download",
+                "--chip",
+                "STM32F407VE",
+                "./out/STM32F407VET6/STM32F407VET6/STM32F407VET6.axf",
+                "--verify"
             ],
             "problemMatcher": []
         },
         {
             "label": "CMSIS Run",
             "type": "shell",
-            "command": "pyocd",
+            "command": "probe-rs",
             "options": {
                 "cwd": "${workspaceFolder}/"
             },
@@ -135,17 +177,11 @@
                 }
             },
             "args": [
-                "gdbserver",
-                "--port",
-                "3333",
-                "--probe",
-                "cmsisdap:",
-                "--connect",
-                "attach",
-                "--persist",
-                "--reset-run",
-                "--cbuild-run",
-                "${command:cmsis-csolution.getCbuildRunFile}"
+                "run",
+                "--chip",
+                "STM32F407VE",
+                "./out/STM32F407VET6/STM32F407VET6/STM32F407VET6.axf",
+                "--verify"
             ],
             "problemMatcher": []
         },
@@ -153,7 +189,8 @@
             "label": "CMSIS Load+Run",
             "dependsOn": [
                 "CMSIS Load",
-                "CMSIS Run"
+                // "CMSIS Run"
+                "CMSIS Reset"
             ],
             "dependsOrder": "sequence",
             "problemMatcher": []
@@ -161,7 +198,7 @@
         {
             "label": "CMSIS TargetInfo",
             "type": "shell",
-            "command": "pyocd",
+            "command": "probe-rs",
             "options": {
                 "cwd": "${workspaceFolder}/"
             },
@@ -198,8 +235,8 @@
             },
             "args": [
                 "list",
-                "--cbuild-run",
-                "${command:cmsis-csolution.getCbuildRunFile}"
+                // "--cbuild-run",
+                // "${command:cmsis-csolution.getCbuildRunFile}"
             ],
             "problemMatcher": []
         }

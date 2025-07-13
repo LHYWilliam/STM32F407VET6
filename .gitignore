@@ -151,3 +151,5 @@ LVGL/generated
 
 # Jlink
 JlinkLog.txt
+
+*.back
