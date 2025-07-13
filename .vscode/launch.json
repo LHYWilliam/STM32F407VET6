@@ -13,7 +13,7 @@
             "chip": "STM32F407VE",
             "flashingConfig": {
                 "flashingEnabled": true,
-                "haltAfterReset": false,
+                "haltAfterReset": false
             },
             "coreConfigs": [
                 {

@@ -43,8 +43,7 @@ FunctionalState OLEDFlushStatus = ENABLE;
 int32_t GrayError;
 int32_t EncoderLeftCounter, EncoderRightCounter;
 
-int32_t DiffSpeed;
-int32_t AdvanceSpeed = 1000;
+int32_t BaseSpeed = 1000;
 int32_t RoundSpeed = 500;
 float TargetAngle;
 
@@ -324,6 +323,10 @@ void vMainTaskCode(void *pvParameters) {
             continue;
         }
 
+        Serial_Printf(&SerialBluetooth, "{ICM42688}%6.2f,%6.2f,%6.2f\n",
+                      ICM42688.Angles[0], ICM42688.Angles[1],
+                      ICM42688.Angles[2]);
+
         if (TargetAngle == 0.) {
             TargetAngle = ICM42688.Angles[0];
         }
@@ -331,32 +334,32 @@ void vMainTaskCode(void *pvParameters) {
         EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
         EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
 
-        // if (SerialBoard.PackRecieved == SET) {
-        //     AdvanceSpeed = SerialBoard.HexPack[0] << 8 |
-        //     SerialBoard.HexPack[1]; Serial_Clear(&SerialBoard);
-        // }
+        Serial_Printf(&SerialBluetooth, "{Encoder}%d,%d\n", EncoderLeftCounter,
+                      EncoderRightCounter);
 
-        // if (SerialBluetooth.PackRecieved == SET) {
-        //     AdvanceSpeed =
-        //         SerialBluetooth.HexPack[0] << 8 | SerialBluetooth.HexPack[1];
-        //     Serial_Clear(&SerialBluetooth);
-        // }
+        if (SerialBoard.PackRecieved == SET) {
+            Serial_Clear(&SerialBoard);
+        }
 
-        int16_t BaseSpeed = 0;
+        if (SerialBluetooth.PackRecieved == SET) {
+            Serial_Clear(&SerialBluetooth);
+        }
+
+        int16_t AdvanceSpeed = 0, DiffSpeed = 0;
         switch (CarStatus) {
         case 0:
         case Stop:
-            BaseSpeed = 0;
+            AdvanceSpeed = 0;
             DiffSpeed = 0;
             break;
 
         case Advance:
-            BaseSpeed = AdvanceSpeed;
+            AdvanceSpeed = BaseSpeed;
             DiffSpeed = 0;
             break;
 
         case Round:
-            BaseSpeed = 0;
+            AdvanceSpeed = 0;
             DiffSpeed = RoundSpeed;
             break;
 
@@ -364,12 +367,12 @@ void vMainTaskCode(void *pvParameters) {
             GrayError = GWGray_CaculateAnalogError(&GWGray);
 
             if (GrayError == 0xFFFF) {
-                BaseSpeed = 0;
+                AdvanceSpeed = 0;
                 DiffSpeed = 0;
 
                 CarStatus = Stop;
             } else {
-                BaseSpeed = AdvanceSpeed;
+                AdvanceSpeed = BaseSpeed;
                 DiffSpeed = PID_Caculate(&GrayPositionPID, GrayError);
 
                 Serial_Printf(&SerialBluetooth, "{Trace}%d\n", GrayError);
@@ -377,7 +380,7 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case Angle:
-            BaseSpeed = AdvanceSpeed;
+            AdvanceSpeed = BaseSpeed;
             DiffSpeed =
                 PID_Caculate(&AnglePID, TargetAngle - ICM42688.Angles[0]);
 
@@ -389,10 +392,10 @@ void vMainTaskCode(void *pvParameters) {
 
         int16_t LeftOut = PID_Caculate(
             &MotorLeftSpeedPID,
-            BaseSpeed + DiffSpeed - EncoderLeftCounter * EncoderLeftToPWM);
+            AdvanceSpeed + DiffSpeed - EncoderLeftCounter * EncoderLeftToPWM);
         int16_t RightOut = PID_Caculate(
             &MotorRightSpeedPID,
-            BaseSpeed - DiffSpeed - EncoderRightCounter * EncoderRightToPWM);
+            AdvanceSpeed - DiffSpeed - EncoderRightCounter * EncoderRightToPWM);
         Motor_SetSpeed(&MotorLeft, LeftOut);
         Motor_SetSpeed(&MotorRight, RightOut);
 
