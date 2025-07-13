@@ -174,6 +174,7 @@ void Serial_Parse(Serial_t *Self, uint8_t RxData) {
 void Serial_Clear(Serial_t *Self) {
     Self->ParsedCount = 0;
     Self->PackRecieved = RESET;
+    memset(Self->Pack, 0, BUFFER_SIZE);
 }
 
 int fputc(int ch, FILE *f) {

@@ -61,7 +61,7 @@ Serial_t SerialBoard = {
             .Stream = 2,
             .Channel = 4,
         },
-    .PackType = SerialPack_Int16,
+    .PackType = SerialPack_String,
     .Default = ENABLE,
 };
 
@@ -200,6 +200,22 @@ ICM42688_t ICM42688 = {
 
 CLI_t CLI = {
     .Serial = &SerialBoard,
+    .DataCount = 3,
+    .Datas =
+        (CLIData_t[]){
+            (CLIData_t){
+                .Name = "MotorLeftSpeedPID_Kp",
+                .DataType = CLIData_Float,
+            },
+            (CLIData_t){
+                .Name = "MotorLeftSpeedPID_Ki",
+                .DataType = CLIData_Float,
+            },
+            (CLIData_t){
+                .Name = "MotorLeftSpeedPID_Kd",
+                .DataType = CLIData_Float,
+            },
+        },
 };
 
 TaskHandle_t xMainTaskHandle;

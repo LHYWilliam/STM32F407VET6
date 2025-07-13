@@ -104,6 +104,10 @@ void vMainTaskCode(void *pvParameters) {
         AnglePIDAdjustPage->LowerPages[3].FloatParameterPtr = &AnglePID.Kd;
 
         OptionPage->IntParameterPtr = &CarStatus;
+
+        CLI.Datas[0].FloatDataPtr = &MotorLeftSpeedPID.Kp;
+        CLI.Datas[1].FloatDataPtr = &MotorLeftSpeedPID.Ki;
+        CLI.Datas[2].FloatDataPtr = &MotorLeftSpeedPID.Kd;
     }
 
     // ---------------- Trace Line Test ---------------- //
