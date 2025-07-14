@@ -64,12 +64,14 @@ int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
         }
     }
 
-    if (MaxData < 185) {
-        return 0xFFFF;
-    }
-
-    if (OnLineIndex == 8) {
-        return 0xFFFF;
+    static uint8_t LostCount = 0;
+    if (MaxData < 200 || OnLineIndex == 8) {
+        LostCount++;
+        if (LostCount >= 1) {
+            return 0xFFFF;
+        }
+    } else {
+        LostCount = 0;
     }
 
     uint8_t LeftAnalog, RightAnalog;

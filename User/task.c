@@ -4,22 +4,21 @@ const float EncoderLeftToPWM = 10000. / 178.;
 const float EncoderRightToPWM = 10000. / 187.;
 
 PID_t MotorLeftSpeedPID = {
-    .Kp = 4.2,
-    .Ki = 16,
+    .Kp = 5,
+    .Ki = 20,
     .IMax = 10000,
 };
 
 PID_t MotorRightSpeedPID = {
-    .Kp = 4.2,
-    .Ki = 16,
+    .Kp = 5,
+    .Ki = 20,
     .IMax = 10000,
 
 };
 
 PID_t GrayPositionPID = {
-    .Kp = -1.8,
-    .Ki = -1,
-    .IMax = 10000,
+    .Kp = -2.5,
+    .Kd = -0.1,
 };
 
 PID_t AnglePID = {
@@ -105,9 +104,10 @@ void vMainTaskCode(void *pvParameters) {
 
         OptionPage->IntParameterPtr = &CarStatus;
 
-        CLI.Datas[0].FloatDataPtr = &MotorLeftSpeedPID.Kp;
-        CLI.Datas[1].FloatDataPtr = &MotorLeftSpeedPID.Ki;
-        CLI.Datas[2].FloatDataPtr = &MotorLeftSpeedPID.Kd;
+        CLI.Datas[0].IntDataPtr = &CarStatus;
+        CLI.Datas[1].FloatDataPtr = &GrayPositionPID.Kp;
+        CLI.Datas[2].FloatDataPtr = &GrayPositionPID.Ki;
+        CLI.Datas[3].FloatDataPtr = &GrayPositionPID.Kd;
     }
 
     // ---------------- Trace Line Test ---------------- //
@@ -269,22 +269,15 @@ void vMainTaskCode(void *pvParameters) {
     // ---------------- MotorSpeedPID Test ------------- //
     // while (!Key_IsPressing(&Key1))
     //     ;
-    // int16_t TargetSpeed = 0;
-    // Motor_SetSpeed(&MotorLeft, TargetSpeed);
+    // Motor_SetSpeed(&MotorLeft, BaseSpeed);
     // for (;;) {
-    //     int16_t Count = Encoder_GetCounter(&EncoderLeft);
-    //     float Error = TargetSpeed - Count * EncoderLeftToPWM;
-    //     int16_t Out = PID_Caculate(&MotorLeftSpeedPID, Error);
+    //     CLI_Handler(&CLI);
+    //     EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
+    //     float Error = BaseSpeed - EncoderLeftCounter * EncoderLeftToPWM;
+    //     int32_t Out = (int32_t)PID_Caculate(&MotorLeftSpeedPID, Error);
     //     Motor_SetSpeed(&MotorLeft, Out);
-    //     Serial_Printf(&SerialBluetooth,
-    //                   "Target, Real, Error, Out: %d, %d, %d, %d\n",
-    //                   TargetSpeed, (int16_t)(Count * EncoderLeftToPWM),
-    //                   (int16_t)Error, Out);
-    //     if (SerialBluetooth.PackRecieved == SET) {
-    //         TargetSpeed =
-    //             SerialBluetooth.HexPack[0] << 8 | SerialBluetooth.HexPack[1];
-    //         Serial_Clear(&SerialBluetooth);
-    //     }
+    //     Serial_Printf(&SerialBoard, "{MotorSpeedPID}%d, %f\r\n", BaseSpeed,
+    //                   EncoderLeftCounter * EncoderLeftToPWM);
     //     vTaskDelay(pdMS_TO_TICKS(10));
     // }
 
@@ -332,9 +325,9 @@ void vMainTaskCode(void *pvParameters) {
             continue;
         }
 
-        Serial_Printf(&SerialBluetooth, "{ICM42688}%6.2f,%6.2f,%6.2f\n",
-                      ICM42688.Angles[0], ICM42688.Angles[1],
-                      ICM42688.Angles[2]);
+        // Serial_Printf(&SerialBluetooth, "{ICM42688}%6.2f,%6.2f,%6.2f\n",
+        //               ICM42688.Angles[0], ICM42688.Angles[1],
+        //               ICM42688.Angles[2]);
 
         if (TargetAngle == 0.) {
             TargetAngle = ICM42688.Angles[0];
@@ -343,14 +336,15 @@ void vMainTaskCode(void *pvParameters) {
         EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
         EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
 
-        Serial_Printf(&SerialBluetooth, "{Encoder}%d,%d\n", EncoderLeftCounter,
-                      EncoderRightCounter);
+        // Serial_Printf(&SerialBluetooth, "{Encoder}%d,%d\n",
+        // EncoderLeftCounter,
+        //               EncoderRightCounter);
 
         CLI_Handler(&CLI);
 
         int16_t AdvanceSpeed = 0, DiffSpeed = 0;
         switch (CarStatus) {
-        case 0:
+        case None:
         case Stop:
             AdvanceSpeed = 0;
             DiffSpeed = 0;
@@ -378,7 +372,7 @@ void vMainTaskCode(void *pvParameters) {
                 AdvanceSpeed = BaseSpeed;
                 DiffSpeed = PID_Caculate(&GrayPositionPID, GrayError);
 
-                Serial_Printf(&SerialBluetooth, "{Trace}%d\n", GrayError);
+                Serial_Printf(&SerialBluetooth, "{Trace}%d\r\n", GrayError);
             }
             break;
 

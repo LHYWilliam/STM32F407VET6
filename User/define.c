@@ -71,8 +71,15 @@ Serial_t SerialBluetooth = {
     .RX = PD6,
     .Baudrate = 115200,
     .Interrupt = ENABLE,
-    .RxITSize = 1,
+    .IdleDMA = ENABLE,
     .Priority = 1,
+    .DMA =
+        {
+            .DMAx = DMA1,
+            .Stream = 5,
+            .Channel = 4,
+        },
+    .PackType = SerialPack_String,
 };
 
 Serial_t SerialK230 = {
@@ -202,13 +209,14 @@ ICM42688_t ICM42688 = {
     (CLIData_t) { .Name = name, .DataType = type, }
 
 CLI_t CLI = {
-    .Serial = &SerialBoard,
-    .DataCount = 3,
+    .Serial = &SerialBluetooth,
+    .DataCount = 4,
     .Datas =
         (CLIData_t[]){
-            CLIData("MLKp", CLIData_Float),
-            CLIData("MLKi", CLIData_Float),
-            CLIData("MLKd", CLIData_Float),
+            CLIData("s", CLIData_Int),
+            CLIData("p", CLIData_Float),
+            CLIData("i", CLIData_Float),
+            CLIData("d", CLIData_Float),
         },
 };
 

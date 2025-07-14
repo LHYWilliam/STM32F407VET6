@@ -24,6 +24,6 @@ typedef struct {
     FlagStatus NaN;
 } PID_t;
 
-int32_t PID_Caculate(PID_t *pid, float error);
+float PID_Caculate(PID_t *Self, float Error);
 
 #endif
