@@ -22,6 +22,8 @@ int main() {
     Serial_Init(&SerialK230);
     Serial_Init(&SerialJY61P);
 
+    // SEGGER_RTT_Init();
+
     Motor_Init(&MotorLeft);
     Motor_Init(&MotorRight);
     Motor_SetSpeed(&MotorLeft, 0);

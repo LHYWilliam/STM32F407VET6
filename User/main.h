@@ -22,6 +22,7 @@
 #include "OLED.h"
 #include "PID.h"
 #include "PWM.h"
+#include "SEGGER_RTT.h"
 #include "Sampler.h"
 #include "Serial.h"
 #include "Servo.h"

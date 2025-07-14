@@ -198,23 +198,17 @@ ICM42688_t ICM42688 = {
     .GyroFreq = ICM42688Gyro_100Hz,
 };
 
+#define CLIData(name, type)                                                    \
+    (CLIData_t) { .Name = name, .DataType = type, }
+
 CLI_t CLI = {
     .Serial = &SerialBoard,
     .DataCount = 3,
     .Datas =
         (CLIData_t[]){
-            (CLIData_t){
-                .Name = "MotorLeftSpeedPID_Kp",
-                .DataType = CLIData_Float,
-            },
-            (CLIData_t){
-                .Name = "MotorLeftSpeedPID_Ki",
-                .DataType = CLIData_Float,
-            },
-            (CLIData_t){
-                .Name = "MotorLeftSpeedPID_Kd",
-                .DataType = CLIData_Float,
-            },
+            CLIData("MLKp", CLIData_Float),
+            CLIData("MLKi", CLIData_Float),
+            CLIData("MLKd", CLIData_Float),
         },
 };
 

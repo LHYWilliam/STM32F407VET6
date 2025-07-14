@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\User;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\GWGray;.\Hardware\ICM42688;.\Util;.\Util\CLI</IncludePath>
+              <IncludePath>.\User;.\System;.\Hardware;.\Hardware\LCD;.\Hardware\OLED;.\Hardware\GWGray;.\Hardware\ICM42688;.\Util;.\Util\CLI;.\Util\RTT</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -708,6 +708,26 @@
               <FileName>CLI.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\Util\CLI\CLI.h</FilePath>
+            </File>
+            <File>
+              <FileName>SEGGER_RTT.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\RTT\SEGGER_RTT.c</FilePath>
+            </File>
+            <File>
+              <FileName>SEGGER_RTT.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\RTT\SEGGER_RTT.h</FilePath>
+            </File>
+            <File>
+              <FileName>SEGGER_RTT_Conf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\Util\RTT\SEGGER_RTT_Conf.h</FilePath>
+            </File>
+            <File>
+              <FileName>SEGGER_RTT_printf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\Util\RTT\SEGGER_RTT_printf.c</FilePath>
             </File>
           </Files>
         </Group>

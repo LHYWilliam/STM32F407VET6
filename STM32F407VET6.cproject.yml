@@ -19,6 +19,7 @@ project:
         - Hardware/ICM42688
         - Util
         - Util/CLI
+        - Util/RTT
       debug: "on"
       define:
         - __MICROLIB
@@ -138,6 +139,10 @@ project:
         - file: Util/PID.h
         - file: Util/CLI/CLI.c
         - file: Util/CLI/CLI.h
+        - file: Util/RTT/SEGGER_RTT.c
+        - file: Util/RTT/SEGGER_RTT.h
+        - file: Util/RTT/SEGGER_RTT_Conf.h
+        - file: Util/RTT/SEGGER_RTT_printf.c
   components:
     - component: ARM::CMSIS:CORE
     - component: ARM::CMSIS:OS Tick:SysTick
