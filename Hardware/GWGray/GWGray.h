@@ -79,22 +79,22 @@ static const uint8_t RightOnRoad = 0b001;
 static const uint8_t OnRoad = 0b1000;
 
 typedef enum {
-    RoudStatus_DeadEnd = DeadEnd,
-    RoudStatus_RightSide = RightOnRoad,
-    RoudStatus_Straight = MidtOnRoad,
-    RoudStatus_RightSideJunction = MidtOnRoad | RightOnRoad,
-    RoudStatus_LeftSide = LeftOnRoad,
-    RoudStatus_TJunction = LeftOnRoad | RightOnRoad,
-    RoudStatus_LeftSideJunction = LeftOnRoad | MidtOnRoad,
-    RoudStatus_Cross = LeftOnRoad | MidtOnRoad | RightOnRoad,
-    RoudStatus_OnRoad = OnRoad,
-} RoudStatus_t;
-static char *RoudStatusString[] = {
-    "RoudStatus_DeadEnd",          "RoudStatus_RightSide",
-    "RoudStatus_Straight",         "RoudStatus_RightSideJunction",
-    "RoudStatus_LeftSide",         "RoudStatus_TJunction",
-    "RoudStatus_LeftSideJunction", "RoudStatus_Cross",
-    "RoudStatus_OnRoad",
+    RoadStatus_DeadEnd = DeadEnd,
+    RoadStatus_RightSide = RightOnRoad,
+    RoadStatus_Straight = MidtOnRoad,
+    RoadStatus_RightSideJunction = MidtOnRoad | RightOnRoad,
+    RoadStatus_LeftSide = LeftOnRoad,
+    RoadStatus_TJunction = LeftOnRoad | RightOnRoad,
+    RoadStatus_LeftSideJunction = LeftOnRoad | MidtOnRoad,
+    RoadStatus_Cross = LeftOnRoad | MidtOnRoad | RightOnRoad,
+    RoadStatus_OnRoad = OnRoad,
+} RoadStatus_t;
+static char *RoadStatusString[] = {
+    "RoadStatus_DeadEnd",          "RoadStatus_RightSide",
+    "RoadStatus_Straight",         "RoadStatus_RightSideJunction",
+    "RoadStatus_LeftSide",         "RoadStatus_TJunction",
+    "RoadStatus_LeftSideJunction", "RoadStatus_Cross",
+    "RoadStatus_OnRoad",
 };
 
 typedef struct {
@@ -104,6 +104,8 @@ typedef struct {
 
     uint8_t DigitalData[8];
     uint8_t AnalogData[8];
+    int32_t GrayError;
+    RoadStatus_t RoadStatus;
 
     GPIO_TypeDef *SCL_GPIO;
     uint32_t SCL_Pin;
@@ -116,6 +118,6 @@ void GWGray_ReadDigital(GWGray_t *Self, uint8_t *Data);
 void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data);
 void GWGray_Update(GWGray_t *Self);
 int32_t GWGray_CaculateAnalogError(GWGray_t *Self);
-RoudStatus_t GWGray_GetRoudStatus(GWGray_t *Self);
+RoadStatus_t GWGray_GetRoadStatus(GWGray_t *Self);
 
 #endif

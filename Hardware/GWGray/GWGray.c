@@ -43,6 +43,8 @@ void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data) {
 void GWGray_Update(GWGray_t *Self) {
     GWGray_ReadDigital(Self, Self->DigitalData);
     GWGray_ReadAnalog(Self, Self->AnalogData);
+    Self->GrayError = GWGray_CaculateAnalogError(Self);
+    Self->RoadStatus = GWGray_GetRoadStatus(Self);
 }
 
 #define MAX(a, b)            ((a) > (b) ? (a) : (b))
@@ -109,7 +111,7 @@ int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
     return Error;
 }
 
-RoudStatus_t GWGray_GetRoudStatus(GWGray_t *Self) {
+RoadStatus_t GWGray_GetRoadStatus(GWGray_t *Self) {
     uint8_t LeftOnRoad =
         Self->DigitalData[0] && Self->DigitalData[1] && Self->DigitalData[2];
     uint8_t MidOnRoad = Self->DigitalData[3] || Self->DigitalData[4];
@@ -121,13 +123,13 @@ RoudStatus_t GWGray_GetRoudStatus(GWGray_t *Self) {
         OnRoad = OnRoad | Self->DigitalData[i];
     }
 
-    RoudStatus_t RoudStatus =
-        (RoudStatus_t)((LeftOnRoad << 2) | (MidOnRoad << 1) | RightOnRoad);
-    if (RoudStatus == RoudStatus_DeadEnd && OnRoad) {
-        RoudStatus = RoudStatus_OnRoad;
+    RoadStatus_t RoadStatus =
+        (RoadStatus_t)((LeftOnRoad << 2) | (MidOnRoad << 1) | RightOnRoad);
+    if (RoadStatus == RoadStatus_DeadEnd && OnRoad) {
+        RoadStatus = RoadStatus_OnRoad;
     }
 
-    return RoudStatus;
+    return RoadStatus;
 }
 
 ErrorStatus GWGray_ScanAddress(GWGray_t *Self) {

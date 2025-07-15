@@ -27,6 +27,7 @@ PID_t AnglePID = {
 };
 
 typedef enum {
+    TurnDirection_None,
     TurnDirection_Left,
     TurnDirection_Right,
 } TurnDirection_t;
@@ -37,7 +38,7 @@ typedef enum {
     CarStatus_None,
     CarStatus_Stop,
     CarStatus_Advance,
-    CarStatus_Turn,
+    CarStatus_Cross,
     CarStatus_Trace,
     CarStatus_Angle,
 } CarStatus_t;
@@ -51,13 +52,17 @@ int32_t TaskOption;
 
 FunctionalState OLEDFlushStatus = ENABLE;
 
-int32_t GrayError;
 int32_t EncoderLeftCounter, EncoderRightCounter;
-RoudStatus_t RoudStatus;
 
 int32_t BaseSpeed = 1000;
 int32_t RoundSpeed = 500;
 float TargetAngle;
+
+FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                         float NowAngle, float TurnBeginAngle,
+                         TurnDirection_t TurnDirection);
+ErrorStatus TraceHandler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                         RoadStatus_t RoadStatus);
 
 void vMainTaskCode(void *pvParameters) {
     {
@@ -84,7 +89,7 @@ void vMainTaskCode(void *pvParameters) {
         ICM42688MonitorPage->LowerPages[3].FloatParameterPtr =
             &ICM42688.Angles[2];
 
-        GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GrayError;
+        GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GWGray.GrayError;
 
         EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
         EncoderMonitorPage->LowerPages[2].IntParameterPtr =
@@ -353,16 +358,16 @@ void vMainTaskCode(void *pvParameters) {
         // EncoderLeftCounter,
         //               EncoderRightCounter);
 
-        int16_t AdvanceSpeed = 0, DiffSpeed = 0;
+        int32_t AdvanceSpeed = 0, DiffSpeed = 0;
         switch (CarStatus) {
         case CarStatus_None:
         case CarStatus_Stop:
             AdvanceSpeed = 0;
             DiffSpeed = 0;
 
-            // RoudStatus = GWGray_GetRoudStatus(&GWGray);
+            // RoadStatus = GWGray_GetRoadStatus(&GWGray);
             // Serial_Printf(&SerialBluetooth, "%s\r\n",
-            //               RoudStatusString[RoudStatus]);
+            //               RoadStatusString[RoadStatus]);
             break;
 
         case CarStatus_Advance:
@@ -370,17 +375,11 @@ void vMainTaskCode(void *pvParameters) {
             DiffSpeed = 0;
             break;
 
-        case CarStatus_Turn:
-            if (fabs(ICM42688.Angles[0] - TurnEndAngle) > 4.0f) {
-                AdvanceSpeed = BaseSpeed;
-                if (TurnDirection == TurnDirection_Left) {
-                    DiffSpeed = -RoundSpeed;
+        case CarStatus_Cross:
+            FlagStatus TurnFinished = Cross_Handler(
+                &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], NULL, NULL);
 
-                } else if (TurnDirection == TurnDirection_Right) {
-                    DiffSpeed = RoundSpeed;
-                }
-
-            } else {
+            if (TurnFinished) {
                 AdvanceSpeed = 0;
                 DiffSpeed = 0;
                 CarStatus = CarStatus_Trace;
@@ -389,35 +388,20 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case CarStatus_Trace:
-            RoudStatus = GWGray_GetRoudStatus(&GWGray);
+            ErrorStatus TarceStatus =
+                TraceHandler(&AdvanceSpeed, &DiffSpeed, GWGray.RoadStatus);
 
-            if (RoudStatus == RoudStatus_DeadEnd) {
-                AdvanceSpeed = 0;
-                DiffSpeed = 0;
-                CarStatus = CarStatus_Stop;
+            if (TarceStatus == ERROR) {
+                if (GWGray.RoadStatus == RoadStatus_DeadEnd) {
+                    AdvanceSpeed = 0;
+                    DiffSpeed = 0;
+                    CarStatus = CarStatus_Stop;
 
-            } else if (RoudStatus & RightOnRoad) {
-                TurnBeginAngle = ICM42688.Angles[0];
-                TurnEndAngle = TurnBeginAngle + 90.f;
-
-                TurnEndAngle =
-                    TurnEndAngle - 360.0f * floor(TurnEndAngle / 360.0f);
-                if (TurnEndAngle > 180.0f) {
-                    TurnEndAngle -= 360.0f;
+                } else if (GWGray.RoadStatus == RoadStatus_Cross) {
+                    CarStatus = CarStatus_Cross;
+                    Cross_Handler(&AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0],
+                                  ICM42688.Angles[0], TurnDirection_Right);
                 }
-
-                TurnDirection = TurnDirection_Right;
-
-                AdvanceSpeed = 0;
-                DiffSpeed = 0;
-                CarStatus = CarStatus_Turn;
-            } else {
-                GrayError = GWGray_CaculateAnalogError(&GWGray);
-
-                AdvanceSpeed = BaseSpeed;
-                DiffSpeed = PID_Caculate(&GrayPositionPID, GrayError);
-
-                Serial_Printf(&SerialBluetooth, "{Trace}%d\r\n", GrayError);
             }
             break;
 
@@ -527,3 +511,86 @@ void vOLEDTaskCode(void *pvParameters) {
 void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LEDRed); }
 
 void vApplicationTickHook() { HAL_IncTick(); }
+
+FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                         float NowAngle, float TurnBeginAngle,
+                         TurnDirection_t _TurnDirection) {
+    static float TurnEndAngle;
+    static TurnDirection_t TurnDirection;
+    static FlagStatus FirstHandle = SET;
+
+    if (FirstHandle == SET) {
+        TurnDirection = _TurnDirection;
+
+        switch (TurnDirection) {
+        case TurnDirection_None:
+            TurnEndAngle = TurnBeginAngle;
+            break;
+
+        case TurnDirection_Left:
+            TurnEndAngle = TurnBeginAngle - 90.f;
+            break;
+
+        case TurnDirection_Right:
+            TurnEndAngle = TurnBeginAngle + 90.f;
+            break;
+        }
+
+        TurnEndAngle = TurnEndAngle - 360.0f * floor(TurnEndAngle / 360.0f);
+        if (TurnEndAngle > 180.0f) {
+            TurnEndAngle -= 360.0f;
+        }
+
+        FirstHandle = RESET;
+
+        *AdvanceSpeed = 0;
+        *DiffSpeed = 0;
+
+        return RESET;
+    }
+
+    if (fabs(NowAngle - TurnEndAngle) > 4.0f) {
+        switch (TurnDirection) {
+        case TurnDirection_None:
+            *AdvanceSpeed = 0;
+            *DiffSpeed = 0;
+            break;
+
+        case TurnDirection_Left:
+            *AdvanceSpeed = BaseSpeed;
+            *DiffSpeed = -RoundSpeed;
+            break;
+
+        case TurnDirection_Right:
+            *AdvanceSpeed = BaseSpeed;
+            *DiffSpeed = RoundSpeed;
+            break;
+        }
+
+        return RESET;
+
+    } else {
+        FirstHandle = SET;
+
+        *AdvanceSpeed = 0;
+        *DiffSpeed = 0;
+
+        return SET;
+    }
+}
+
+ErrorStatus TraceHandler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                         RoadStatus_t RoadStatus) {
+    if (RoadStatus == RoadStatus_Straight || RoadStatus == RoadStatus_OnRoad) {
+        *AdvanceSpeed = BaseSpeed;
+        *DiffSpeed = PID_Caculate(&GrayPositionPID, GWGray.GrayError);
+
+        return SUCCESS;
+
+    } else {
+        *AdvanceSpeed = 0;
+        *DiffSpeed = 0;
+
+        return ERROR;
+    }
+}
