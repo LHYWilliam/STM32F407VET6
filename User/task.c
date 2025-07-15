@@ -58,11 +58,14 @@ int32_t BaseSpeed = 1000;
 int32_t RoundSpeed = 500;
 float TargetAngle;
 
+void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                          float NowAngle, float TurnBeginAngle,
                          TurnDirection_t TurnDirection);
-ErrorStatus TraceHandler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
-                         RoadStatus_t RoadStatus);
+ErrorStatus Trace_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                          RoadStatus_t RoadStatus);
+FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                         float NowAngle, float _TargetAngle);
 
 void vMainTaskCode(void *pvParameters) {
     {
@@ -362,12 +365,7 @@ void vMainTaskCode(void *pvParameters) {
         switch (CarStatus) {
         case CarStatus_None:
         case CarStatus_Stop:
-            AdvanceSpeed = 0;
-            DiffSpeed = 0;
-
-            // RoadStatus = GWGray_GetRoadStatus(&GWGray);
-            // Serial_Printf(&SerialBluetooth, "%s\r\n",
-            //               RoadStatusString[RoadStatus]);
+            Stop_Handler(&AdvanceSpeed, &DiffSpeed);
             break;
 
         case CarStatus_Advance:
@@ -380,22 +378,19 @@ void vMainTaskCode(void *pvParameters) {
                 &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], NULL, NULL);
 
             if (TurnFinished) {
-                AdvanceSpeed = 0;
-                DiffSpeed = 0;
                 CarStatus = CarStatus_Trace;
+                Trace_Handler(&AdvanceSpeed, &DiffSpeed, GWGray.RoadStatus);
             }
-
             break;
 
         case CarStatus_Trace:
             ErrorStatus TarceStatus =
-                TraceHandler(&AdvanceSpeed, &DiffSpeed, GWGray.RoadStatus);
+                Trace_Handler(&AdvanceSpeed, &DiffSpeed, GWGray.RoadStatus);
 
             if (TarceStatus == ERROR) {
                 if (GWGray.RoadStatus == RoadStatus_DeadEnd) {
-                    AdvanceSpeed = 0;
-                    DiffSpeed = 0;
                     CarStatus = CarStatus_Stop;
+                    Stop_Handler(&AdvanceSpeed, &DiffSpeed);
 
                 } else if (GWGray.RoadStatus == RoadStatus_Cross) {
                     CarStatus = CarStatus_Cross;
@@ -406,36 +401,13 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case CarStatus_Angle:
-            static TickType_t OnAngleTime = 0;
+            FlagStatus AngleStatus = Angle_Handler(
+                &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], TargetAngle);
 
-            float AngelError = TargetAngle - ICM42688.Angles[0];
-            if (AngelError > 180.0f) {
-                AngelError -= 360.0f;
-            } else if (AngelError < -180.0f) {
-                AngelError += 360.0f;
-            }
-
-            if (fabs(AngelError) < 0.1) {
-                if (OnAngleTime == 0) {
-                    OnAngleTime = xTaskGetTickCount();
-                }
-
-                if (xTaskGetTickCount() - OnAngleTime > pdMS_TO_TICKS(1000)) {
-                    AdvanceSpeed = 0;
-                    DiffSpeed = 0;
-                    CarStatus = CarStatus_Stop;
-                    break;
-                }
-
-            } else {
-                OnAngleTime = 0;
-            }
-
-            AdvanceSpeed = 0;
-            DiffSpeed = PID_Caculate(&AnglePID, AngelError);
-
-            Serial_Printf(&SerialBluetooth, "{Angel}%.2f,%.2f\n",
-                          ICM42688.Angles[0], TargetAngle);
+            // if (AngleStatus == SET) {
+            //     CarStatus = CarStatus_Stop;
+            //     Stop_Handler(&AdvanceSpeed, &DiffSpeed);
+            // }
 
             break;
         }
@@ -446,6 +418,7 @@ void vMainTaskCode(void *pvParameters) {
         int16_t RightOut = PID_Caculate(
             &MotorRightSpeedPID,
             AdvanceSpeed - DiffSpeed - EncoderRightCounter * EncoderRightToPWM);
+
         Motor_SetSpeed(&MotorLeft, LeftOut);
         Motor_SetSpeed(&MotorRight, RightOut);
 
@@ -511,6 +484,11 @@ void vOLEDTaskCode(void *pvParameters) {
 void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LEDRed); }
 
 void vApplicationTickHook() { HAL_IncTick(); }
+
+void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
+    *AdvanceSpeed = 0;
+    *DiffSpeed = 0;
+}
 
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                          float NowAngle, float TurnBeginAngle,
@@ -579,8 +557,8 @@ FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
     }
 }
 
-ErrorStatus TraceHandler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
-                         RoadStatus_t RoadStatus) {
+ErrorStatus Trace_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                          RoadStatus_t RoadStatus) {
     if (RoadStatus == RoadStatus_Straight || RoadStatus == RoadStatus_OnRoad) {
         *AdvanceSpeed = BaseSpeed;
         *DiffSpeed = PID_Caculate(&GrayPositionPID, GWGray.GrayError);
@@ -593,4 +571,54 @@ ErrorStatus TraceHandler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
 
         return ERROR;
     }
+}
+
+FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                         float NowAngle, float _TargetAngle) {
+    static float TargetAngle;
+    static TickType_t OnAngleTime = 0;
+    static FlagStatus FirstHandle = SET;
+
+    if (FirstHandle == SET) {
+        TargetAngle = _TargetAngle;
+
+        FirstHandle = RESET;
+
+        *AdvanceSpeed = 0;
+        *DiffSpeed = 0;
+
+        return RESET;
+    }
+
+    float AngelError = TargetAngle - NowAngle;
+    if (AngelError > 180.0f) {
+        AngelError -= 360.0f;
+    } else if (AngelError < -180.0f) {
+        AngelError += 360.0f;
+    }
+
+    if (fabs(AngelError) < 0.25) {
+        if (OnAngleTime == 0) {
+            OnAngleTime = xTaskGetTickCount();
+        }
+
+        if (xTaskGetTickCount() - OnAngleTime > pdMS_TO_TICKS(1000)) {
+            FirstHandle = SET;
+
+            *AdvanceSpeed = 0;
+            *DiffSpeed = 0;
+
+            return SET;
+        }
+
+    } else {
+        OnAngleTime = 0;
+
+        *AdvanceSpeed = 0;
+        *DiffSpeed = PID_Caculate(&AnglePID, AngelError);
+
+        return RESET;
+    }
+
+    return RESET;
 }
