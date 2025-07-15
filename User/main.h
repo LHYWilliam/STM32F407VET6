@@ -8,6 +8,7 @@
 #include "task.h"
 #include "timers.h"
 
+#include <math.h>
 #include <stdio.h>
 
 #include "CLI.h"

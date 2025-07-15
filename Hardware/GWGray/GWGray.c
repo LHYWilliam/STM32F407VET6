@@ -36,54 +36,63 @@ void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data) {
     }
 }
 
+void GWGray_Update(GWGray_t *Self) {
+    GWGray_ReadDigital(Self, Self->DigitalData);
+    GWGray_ReadAnalog(Self, Self->AnalogData);
+}
+
 #define MAX(a, b)            ((a) > (b) ? (a) : (b))
 #define OnLeftGroup(Index)   (0 <= (Index) && (Index) <= 2)
 #define OnCenterGroup(Index) (3 <= (Index) && (Index) <= 4)
 #define OnRightGroup(Index)  (5 <= (Index) && (Index) <= 7)
 
 int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
-    uint8_t DigitalData[8], AnalogData[8];
-    // GWGray_ReadDigital(Self, DigitalData);
-    GWGray_ReadAnalog(Self, AnalogData);
-
     uint8_t OnLineIndex = 8;
-    // for (uint8_t i = 0; i < 8; i++) {
-    //     if (DigitalData[i] == 0) {
-    //         OnLineIndex = i;
-    //     }
 
-    //     if (OnCenterGroup(OnLineIndex) || OnRightGroup(OnLineIndex)) {
-    //         break;
-    //     }
-    // }
-    uint8_t MaxData = 0;
-    for (uint8_t i = 0; i < 8; i++) {
-        if (AnalogData[i] > MaxData) {
-            OnLineIndex = i;
-            MaxData = AnalogData[i];
+    {
+        for (uint8_t i = 0; i < 8; i++) {
+            if (Self->DigitalData[i] == 0) {
+                OnLineIndex = i;
+            }
+
+            if (OnCenterGroup(OnLineIndex) || OnRightGroup(OnLineIndex)) {
+                break;
+            }
+        }
+        if (OnLineIndex == 8) {
+            return 0xFFFF;
         }
     }
 
-    static uint8_t LostCount = 0;
-    if (MaxData < 200 || OnLineIndex == 8) {
-        LostCount++;
-        if (LostCount >= 1) {
-            return 0xFFFF;
-        }
-    } else {
-        LostCount = 0;
+    {
+        // uint8_t MaxData = 0;
+        // for (uint8_t i = 0; i < 8; i++) {
+        //     if (AnalogData[i] > MaxData) {
+        //         OnLineIndex = i;
+        //         MaxData = AnalogData[i];
+        //     }
+        // }
+        // static uint8_t LostCount = 0;
+        // if (MaxData < 200 || OnLineIndex == 8) {
+        //     LostCount++;
+        //     if (LostCount >= 1) {
+        //         return 0xFFFF;
+        //     }
+        // } else {
+        //     LostCount = 0;
+        // }
     }
 
     uint8_t LeftAnalog, RightAnalog;
     if (OnLeftGroup(OnLineIndex)) {
-        LeftAnalog = AnalogData[OnLineIndex];
-        RightAnalog = AnalogData[OnLineIndex + 1];
+        LeftAnalog = Self->AnalogData[OnLineIndex];
+        RightAnalog = Self->AnalogData[OnLineIndex + 1];
     } else if (OnCenterGroup(OnLineIndex)) {
-        LeftAnalog = AnalogData[3];
-        RightAnalog = AnalogData[4];
+        LeftAnalog = Self->AnalogData[3];
+        RightAnalog = Self->AnalogData[4];
     } else if (OnRightGroup(OnLineIndex)) {
-        LeftAnalog = AnalogData[OnLineIndex - 1];
-        RightAnalog = AnalogData[OnLineIndex];
+        LeftAnalog = Self->AnalogData[OnLineIndex - 1];
+        RightAnalog = Self->AnalogData[OnLineIndex];
     }
 
     int16_t Error = LeftAnalog - RightAnalog;
@@ -96,71 +105,16 @@ int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
     return Error;
 }
 
-int16_t GWGray_CaculateAnalogError2(GWGray_t *Self) {
-    uint8_t DigitalData[8], AnalogData[8];
-    GWGray_ReadDigital(Self, DigitalData);
-    GWGray_ReadAnalog(Self, AnalogData);
+RoudStatus_t GWGray_GetRoudStatus(GWGray_t *Self) {
+    uint8_t LeftOnRoad =
+        (Self->DigitalData[0] == 0) || (Self->DigitalData[1] == 0);
+    uint8_t MidOnRoad =
+        (Self->DigitalData[2] == 0) || (Self->DigitalData[3] == 0) ||
+        (Self->DigitalData[4] == 0) || (Self->DigitalData[5] == 0);
+    uint8_t RightOnRoad =
+        (Self->DigitalData[6] == 0) || (Self->DigitalData[7] == 0);
 
-    uint8_t OnLineIndex = 8, CenterIndex = 8;
-    for (uint8_t i = 0; i < 8; i++) {
-        if (DigitalData[i] == 0) {
-            OnLineIndex = i;
-        }
-
-        if (OnCenterGroup(OnLineIndex) || OnRightGroup(OnLineIndex)) {
-            break;
-        }
-    }
-
-    if (OnLineIndex == 8) {
-        return 0;
-    }
-
-    uint8_t LeftAnalog, CenterAnalog, RightAnalog;
-    if (OnLeftGroup(OnLineIndex)) {
-        CenterIndex = OnLineIndex + 1;
-        LeftAnalog = AnalogData[CenterIndex - 1];
-        CenterAnalog = AnalogData[CenterIndex];
-        RightAnalog = AnalogData[CenterIndex + 1];
-
-    } else if (OnCenterGroup(OnLineIndex)) {
-        LeftAnalog = AnalogData[3];
-        RightAnalog = AnalogData[4];
-
-    } else if (OnRightGroup(OnLineIndex)) {
-        CenterIndex = OnLineIndex - 1;
-        LeftAnalog = AnalogData[CenterIndex - 1];
-        CenterAnalog = AnalogData[CenterIndex];
-        RightAnalog = AnalogData[CenterIndex + 1];
-    }
-
-    int16_t Error;
-    if (OnCenterGroup(OnLineIndex)) {
-        Error = LeftAnalog - RightAnalog;
-
-    } else if (OnLeftGroup(OnLineIndex) || OnRightGroup(OnLineIndex)) {
-        uint8_t LeftRightMaxAnalog, WhenLRMCenterAnalog;
-        LeftRightMaxAnalog = MAX(Self->LeftRightMaxAnalogs[CenterIndex - 1],
-                                 Self->LeftRightMaxAnalogs[CenterIndex + 1]);
-        WhenLRMCenterAnalog = Self->WhenLRMCenterAnalogs[CenterIndex];
-
-        if (CenterAnalog > WhenLRMCenterAnalog) {
-            Error = LeftAnalog - RightAnalog;
-
-        } else if (LeftAnalog > RightAnalog) {
-            Error = (2 * LeftRightMaxAnalog - LeftAnalog) - RightAnalog +
-                    255 * (3 - CenterIndex);
-
-        } else if (LeftAnalog < RightAnalog) {
-            Error = LeftAnalog - (2 * LeftRightMaxAnalog - RightAnalog) -
-                    255 * (CenterIndex - 4);
-        }
-
-    } else {
-        Error = 0;
-    }
-
-    return Error;
+    return (RoudStatus_t)((LeftOnRoad << 2) | (MidOnRoad << 1) | RightOnRoad);
 }
 
 ErrorStatus GWGray_ScanAddress(GWGray_t *Self) {

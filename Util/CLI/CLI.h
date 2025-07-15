@@ -9,11 +9,11 @@
 typedef enum {
     CLIData_Int,
     CLIData_Float,
-} CLI_DataType;
+} CLIDataType_t;
 
 typedef struct {
     char Name[32];
-    CLI_DataType DataType;
+    CLIDataType_t DataType;
     union {
         int32_t *IntDataPtr;
         float *FloatDataPtr;

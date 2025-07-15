@@ -72,13 +72,34 @@
 // 广播重置地址所需要发的数据
 #define GW_GRAY_BROADCAST_RESET "\xB8\xD0\xCE\xAA\xBF\xC6\xBC\xBC"
 
+static const uint8_t LeftOnRoad = 0b100;
+static const uint8_t MidtOnRoad = 0b010;
+static const uint8_t RightOnRoad = 0b001;
+
+typedef enum {
+    RoudStatus_DeadEnd = 0b000,
+    RoudStatus_RightSide = RightOnRoad,
+    RoudStatus_Straight = MidtOnRoad,
+    RoudStatus_RightSideJunction = MidtOnRoad | RightOnRoad,
+    RoudStatus_LeftSide = LeftOnRoad,
+    RoudStatus_TJunction = LeftOnRoad | RightOnRoad,
+    RoudStatus_LeftSideJunction = LeftOnRoad | MidtOnRoad,
+    RoudStatus_Cross = LeftOnRoad | MidtOnRoad | RightOnRoad,
+} RoudStatus_t;
+static char *RoudStatusString[] = {
+    "RoudStatus_DeadEnd",          "RoudStatus_RightSide",
+    "RoudStatus_Straight",         "RoudStatus_RightSideJunction",
+    "RoudStatus_LeftSide",         "RoudStatus_TJunction",
+    "RoudStatus_LeftSideJunction", "RoudStatus_Cross",
+};
+
 typedef struct {
     GPIOxPiny_t SCL;
     GPIOxPiny_t SDA;
     uint8_t DevAddr;
 
-    uint8_t LeftRightMaxAnalogs[8];
-    uint8_t WhenLRMCenterAnalogs[8];
+    uint8_t DigitalData[8];
+    uint8_t AnalogData[8];
 
     GPIO_TypeDef *SCL_GPIO;
     uint32_t SCL_Pin;
@@ -89,6 +110,8 @@ typedef struct {
 ErrorStatus GWGray_Init(GWGray_t *Self);
 void GWGray_ReadDigital(GWGray_t *Self, uint8_t *Data);
 void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data);
+void GWGray_Update(GWGray_t *Self);
 int32_t GWGray_CaculateAnalogError(GWGray_t *Self);
+RoudStatus_t GWGray_GetRoudStatus(GWGray_t *Self);
 
 #endif

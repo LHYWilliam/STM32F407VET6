@@ -41,7 +41,7 @@ typedef enum {
     U2D_R2L = 5,
     D2U_L2R = 6,
     D2U_R2L = 7,
-} LCD_ScanDirection;
+} LCDScanDirection_t;
 
 #define Vertical_ScanDirection   L2R_U2D
 #define Horizontal_ScanDirection U2D_R2L
@@ -49,7 +49,7 @@ typedef enum {
 typedef enum {
     LCD_Vertical = 0,
     LCD_Horizontal = 1,
-} LCD_Direction;
+} LCDDirection_t;
 
 #define LCD_BASE                                                               \
     ((uint32_t)(0x60000000 + (0x4000000 * (1 - 1))) | (((1 << 18) * 2) - 2))
@@ -61,8 +61,8 @@ typedef struct {
 } LCD_TypeDef;
 
 typedef struct {
-    LCD_Direction Direction;
-    LCD_ScanDirection ScanDirection;
+    LCDDirection_t Direction;
+    LCDScanDirection_t ScanDirection;
 
     DMA_t DMA;
 

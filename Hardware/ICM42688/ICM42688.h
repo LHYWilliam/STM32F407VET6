@@ -136,7 +136,7 @@ typedef enum {
     ICM42688Acc_8G = 0x01,
     ICM42688Acc_4G = 0x02,
     ICM42688Acc_2G = 0x03,
-} ICM42688_AccRange;
+} ICM42688AccRange_t;
 
 // 加速度计输出速率
 typedef enum {
@@ -153,7 +153,7 @@ typedef enum {
     ICM42688Acc_3_125Hz = 0x0D,
     ICM42688Acc_1_5625Hz = 0x0E,
     ICM42688Acc_500Hz = 0x0F,
-} ICM42688_AccFreq;
+} ICM42688AccFreq_t;
 
 // 陀螺仪量程
 typedef enum {
@@ -165,7 +165,7 @@ typedef enum {
     ICM42688Gyro_62_5DPS = 0x05,
     ICM42688Gyro_31_25DPS = 0x06,
     ICM42688Gyro_15_125DPS = 0x07,
-} ICM42688_GyroRange;
+} ICM42688GyroRange_t;
 
 // 陀螺仪输出速率
 typedef enum {
@@ -179,7 +179,7 @@ typedef enum {
     ICM42688Gyro_25Hz = 0x0A,
     ICM42688Gyro_12_5Hz = 0x0B,
     ICM42688Gyro_500Hz = 0x0F,
-} ICM42688_GyroFreq;
+} ICM42688GyroFreq_t;
 
 // 传感器ID
 #define ICM42688_ID      0x47
@@ -200,10 +200,10 @@ typedef struct ICM42688_t {
     SPI_TypeDef *SPIx;
     FunctionalState SPI;
 
-    ICM42688_AccRange AccRange;
-    ICM42688_GyroRange GyroRange;
-    ICM42688_AccFreq AccFreq;
-    ICM42688_GyroFreq GyroFreq;
+    ICM42688AccRange_t AccRange;
+    ICM42688GyroRange_t GyroRange;
+    ICM42688AccFreq_t AccFreq;
+    ICM42688GyroFreq_t GyroFreq;
 
     float Kp;
     float Ki;

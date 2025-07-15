@@ -27,15 +27,21 @@ PID_t AnglePID = {
 };
 
 typedef enum {
-    None,
-    Stop,
-    Advance,
-    Round,
-    Trace,
-    Angle,
+    CarStatus_None,
+    CarStatus_Stop,
+    CarStatus_Advance,
+    CarStatus_Round,
+    CarStatus_Trace,
+    CarStatus_Angle,
 } CarStatus_t;
-
 int32_t CarStatus;
+
+typedef enum {
+    TaskOption_None,
+    TaskOption_Task1,
+} TaskOption_t;
+int32_t TaskOption;
+
 FunctionalState OLEDFlushStatus = ENABLE;
 
 int32_t GrayError;
@@ -319,9 +325,13 @@ void vMainTaskCode(void *pvParameters) {
     xLastWakeTime = xTaskGetTickCount();
     for (;;) {
         ICM42688_AHRS_Update(&ICM42688);
+        GWGray_Update(&GWGray);
+        CLI_Handler(&CLI);
+        EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
+        EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
 
         if (ICM42688.CalibrationFinished == RESET) {
-            vTaskDelay(pdMS_TO_TICKS(10));
+            vTaskDelayUntil(&xLastWakeTime, xFrequency);
             continue;
         }
 
@@ -329,69 +339,75 @@ void vMainTaskCode(void *pvParameters) {
         //               ICM42688.Angles[0], ICM42688.Angles[1],
         //               ICM42688.Angles[2]);
 
-        // if (TargetAngle == 0.) {
-        //     TargetAngle = ICM42688.Angles[0];
-        // }
-
-        EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
-        EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
-
         // Serial_Printf(&SerialBluetooth, "{Encoder}%d,%d\n",
         // EncoderLeftCounter,
         //               EncoderRightCounter);
 
-        CLI_Handler(&CLI);
-
         int16_t AdvanceSpeed = 0, DiffSpeed = 0;
         switch (CarStatus) {
-        case None:
-        case Stop:
+        case CarStatus_None:
+        case CarStatus_Stop:
             AdvanceSpeed = 0;
             DiffSpeed = 0;
             break;
 
-        case Advance:
+        case CarStatus_Advance:
             AdvanceSpeed = BaseSpeed;
             DiffSpeed = 0;
             break;
 
-        case Round:
+        case CarStatus_Round:
             AdvanceSpeed = 0;
             DiffSpeed = RoundSpeed;
             break;
 
-        case Trace:
+        case CarStatus_Trace:
             GrayError = GWGray_CaculateAnalogError(&GWGray);
 
-            if (GrayError == 0xFFFF) {
-                AdvanceSpeed = 0;
-                DiffSpeed = 0;
-
-                CarStatus = Stop;
-            } else {
+            if (GrayError != 0xFFFF) {
                 AdvanceSpeed = BaseSpeed;
                 DiffSpeed = PID_Caculate(&GrayPositionPID, GrayError);
 
                 Serial_Printf(&SerialBluetooth, "{Trace}%d\r\n", GrayError);
+
+            } else {
+                AdvanceSpeed = 0;
+                DiffSpeed = 0;
+                CarStatus = CarStatus_Stop;
             }
             break;
 
-        case Angle:
-            AdvanceSpeed = 0;
+        case CarStatus_Angle:
+            static TickType_t OnAngleTime = 0;
 
-            float Yaw = ICM42688.Angles[0];
-            float AngelError = TargetAngle - Yaw;
+            float AngelError = TargetAngle - ICM42688.Angles[0];
+                if (AngelError > 180.0f) {
+                    AngelError -= 360.0f;
+                } else if (AngelError < -180.0f) {
+                    AngelError += 360.0f;
+                }
 
-            if (AngelError > 180.0f) {
-                AngelError -= 360.0f;
-            } else if (AngelError < -180.0f) {
-                AngelError += 360.0f;
+            if (fabs(AngelError) < 0.1) {
+                if (OnAngleTime == 0) {
+                    OnAngleTime = xTaskGetTickCount();
+                }
+
+                if (xTaskGetTickCount() - OnAngleTime > pdMS_TO_TICKS(1000)) {
+                    AdvanceSpeed = 0;
+                    DiffSpeed = 0;
+                    CarStatus = CarStatus_Stop;
+                    break;
+                }
+
+            } else {
+                OnAngleTime = 0;
             }
 
-            DiffSpeed = PID_Caculate(&AnglePID, AngelError);
+                AdvanceSpeed = 0;
+                DiffSpeed = PID_Caculate(&AnglePID, AngelError);
 
-            Serial_Printf(&SerialBluetooth, "{Angel}%.2f,%.2f\n",
-                          ICM42688.Angles[0], TargetAngle);
+                Serial_Printf(&SerialBluetooth, "{Angel}%.2f,%.2f\n",
+                              ICM42688.Angles[0], TargetAngle);
 
             break;
         }

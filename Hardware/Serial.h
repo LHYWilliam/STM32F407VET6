@@ -45,7 +45,7 @@ typedef enum {
     SerialPack_Uint32,
     SerialPack_Float32,
     SerialPack_String,
-} Serial_PackType;
+} SerialPackType_t;
 
 typedef struct {
     USART_TypeDef *USARTx;
@@ -60,7 +60,7 @@ typedef struct {
 
     DMA_t DMA;
 
-    Serial_PackType PackType;
+    SerialPackType_t PackType;
 
     FunctionalState Default;
 
