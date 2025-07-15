@@ -20,7 +20,7 @@ void GWGray_SWI2C_Init(GWGray_t *Self) {
     HAL_GPIO_WritePin(Self->SDA_GPIO, Self->SDA_Pin, GPIO_PIN_SET);
 }
 
-void GWGray_SWI2C_Delay() { Time_Delayus(5); }
+void GWGray_SWI2C_Delay() { Time_Delayus(6); }
 
 void GWGray_SWI2C_SDAOut(GWGray_t *Self, uint8_t Bit) {
     HAL_GPIO_WritePin(Self->SDA_GPIO, Self->SDA_Pin, (GPIO_PinState)Bit);

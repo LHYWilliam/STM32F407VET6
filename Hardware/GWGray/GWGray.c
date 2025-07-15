@@ -25,6 +25,10 @@ void GWGray_ReadDigital(GWGray_t *Self, uint8_t *Data) {
                                      GW_GRAY_DIGITAL_MODE, &Byte, 1);
 
     SplitByteToArray(Byte, Data);
+
+    for (uint8_t i = 0; i < 8; i++) {
+        Data[i] = !Data[i];
+    }
 }
 
 void GWGray_ReadAnalog(GWGray_t *Self, uint8_t *Data) {
@@ -51,7 +55,7 @@ int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
 
     {
         for (uint8_t i = 0; i < 8; i++) {
-            if (Self->DigitalData[i] == 0) {
+            if (Self->DigitalData[i]) {
                 OnLineIndex = i;
             }
 
@@ -107,14 +111,23 @@ int32_t GWGray_CaculateAnalogError(GWGray_t *Self) {
 
 RoudStatus_t GWGray_GetRoudStatus(GWGray_t *Self) {
     uint8_t LeftOnRoad =
-        (Self->DigitalData[0] == 0) || (Self->DigitalData[1] == 0);
-    uint8_t MidOnRoad =
-        (Self->DigitalData[2] == 0) || (Self->DigitalData[3] == 0) ||
-        (Self->DigitalData[4] == 0) || (Self->DigitalData[5] == 0);
+        Self->DigitalData[0] && Self->DigitalData[1] && Self->DigitalData[2];
+    uint8_t MidOnRoad = Self->DigitalData[3] || Self->DigitalData[4];
     uint8_t RightOnRoad =
-        (Self->DigitalData[6] == 0) || (Self->DigitalData[7] == 0);
+        Self->DigitalData[5] && Self->DigitalData[6] && Self->DigitalData[7];
 
-    return (RoudStatus_t)((LeftOnRoad << 2) | (MidOnRoad << 1) | RightOnRoad);
+    uint8_t OnRoad = 0;
+    for (uint8_t i = 0; i < 8; i++) {
+        OnRoad = OnRoad | Self->DigitalData[i];
+    }
+
+    RoudStatus_t RoudStatus =
+        (RoudStatus_t)((LeftOnRoad << 2) | (MidOnRoad << 1) | RightOnRoad);
+    if (RoudStatus == RoudStatus_DeadEnd && OnRoad) {
+        RoudStatus = RoudStatus_OnRoad;
+    }
+
+    return RoudStatus;
 }
 
 ErrorStatus GWGray_ScanAddress(GWGray_t *Self) {

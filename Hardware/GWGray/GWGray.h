@@ -72,12 +72,14 @@
 // 广播重置地址所需要发的数据
 #define GW_GRAY_BROADCAST_RESET "\xB8\xD0\xCE\xAA\xBF\xC6\xBC\xBC"
 
+static const uint8_t DeadEnd = 0;
 static const uint8_t LeftOnRoad = 0b100;
 static const uint8_t MidtOnRoad = 0b010;
 static const uint8_t RightOnRoad = 0b001;
+static const uint8_t OnRoad = 0b1000;
 
 typedef enum {
-    RoudStatus_DeadEnd = 0b000,
+    RoudStatus_DeadEnd = DeadEnd,
     RoudStatus_RightSide = RightOnRoad,
     RoudStatus_Straight = MidtOnRoad,
     RoudStatus_RightSideJunction = MidtOnRoad | RightOnRoad,
@@ -85,12 +87,14 @@ typedef enum {
     RoudStatus_TJunction = LeftOnRoad | RightOnRoad,
     RoudStatus_LeftSideJunction = LeftOnRoad | MidtOnRoad,
     RoudStatus_Cross = LeftOnRoad | MidtOnRoad | RightOnRoad,
+    RoudStatus_OnRoad = OnRoad,
 } RoudStatus_t;
 static char *RoudStatusString[] = {
     "RoudStatus_DeadEnd",          "RoudStatus_RightSide",
     "RoudStatus_Straight",         "RoudStatus_RightSideJunction",
     "RoudStatus_LeftSide",         "RoudStatus_TJunction",
     "RoudStatus_LeftSideJunction", "RoudStatus_Cross",
+    "RoudStatus_OnRoad",
 };
 
 typedef struct {
