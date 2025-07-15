@@ -210,13 +210,14 @@ ICM42688_t ICM42688 = {
 
 CLI_t CLI = {
     .Serial = &SerialBluetooth,
-    .DataCount = 4,
+    .DataCount = 5,
     .Datas =
         (CLIData_t[]){
-            CLIData("s", CLIData_Int),
-            CLIData("p", CLIData_Float),
-            CLIData("i", CLIData_Float),
-            CLIData("d", CLIData_Float),
+            CLIData("status", CLIData_Int),
+            CLIData("angle", CLIData_Float),
+            CLIData("kp", CLIData_Float),
+            CLIData("ki", CLIData_Float),
+            CLIData("kd", CLIData_Float),
         },
 };
 

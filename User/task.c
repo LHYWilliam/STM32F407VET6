@@ -22,9 +22,8 @@ PID_t GrayPositionPID = {
 };
 
 PID_t AnglePID = {
-    .Kp = 30,
-    .Ki = 1,
-    .IMax = 10000,
+    .Kp = 90,
+    .Kd = 10,
 };
 
 typedef enum {
@@ -105,9 +104,10 @@ void vMainTaskCode(void *pvParameters) {
         OptionPage->IntParameterPtr = &CarStatus;
 
         CLI.Datas[0].IntDataPtr = &CarStatus;
-        CLI.Datas[1].FloatDataPtr = &GrayPositionPID.Kp;
-        CLI.Datas[2].FloatDataPtr = &GrayPositionPID.Ki;
-        CLI.Datas[3].FloatDataPtr = &GrayPositionPID.Kd;
+        CLI.Datas[1].FloatDataPtr = &TargetAngle;
+        CLI.Datas[2].FloatDataPtr = &AnglePID.Kp;
+        CLI.Datas[3].FloatDataPtr = &AnglePID.Ki;
+        CLI.Datas[4].FloatDataPtr = &AnglePID.Kd;
     }
 
     // ---------------- Trace Line Test ---------------- //
@@ -329,9 +329,9 @@ void vMainTaskCode(void *pvParameters) {
         //               ICM42688.Angles[0], ICM42688.Angles[1],
         //               ICM42688.Angles[2]);
 
-        if (TargetAngle == 0.) {
-            TargetAngle = ICM42688.Angles[0];
-        }
+        // if (TargetAngle == 0.) {
+        //     TargetAngle = ICM42688.Angles[0];
+        // }
 
         EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
         EncoderRightCounter = Encoder_GetCounter(&EncoderRight);
@@ -377,9 +377,18 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case Angle:
-            AdvanceSpeed = BaseSpeed;
-            DiffSpeed =
-                PID_Caculate(&AnglePID, TargetAngle - ICM42688.Angles[0]);
+            AdvanceSpeed = 0;
+
+            float Yaw = ICM42688.Angles[0];
+            float AngelError = TargetAngle - Yaw;
+
+            if (AngelError > 180.0f) {
+                AngelError -= 360.0f;
+            } else if (AngelError < -180.0f) {
+                AngelError += 360.0f;
+            }
+
+            DiffSpeed = PID_Caculate(&AnglePID, AngelError);
 
             Serial_Printf(&SerialBluetooth, "{Angel}%.2f,%.2f\n",
                           ICM42688.Angles[0], TargetAngle);
