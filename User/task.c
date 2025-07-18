@@ -59,6 +59,8 @@ int32_t RoundSpeed = 500;
 float TargetAngle;
 
 void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
+void Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed, float NowAngle,
+                     float TargetAngle);
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                          float NowAngle, float TurnBeginAngle,
                          TurnDirection_t TurnDirection);
@@ -369,8 +371,7 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case CarStatus_Advance:
-            AdvanceSpeed = BaseSpeed;
-            DiffSpeed = 0;
+            Advance_Handler(&AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], 0);
             break;
 
         case CarStatus_Cross:
@@ -488,6 +489,19 @@ void vApplicationTickHook() { HAL_IncTick(); }
 void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     *AdvanceSpeed = 0;
     *DiffSpeed = 0;
+}
+
+void Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed, float NowAngle,
+                     float TargetAngle) {
+    float AngelError = TargetAngle - NowAngle;
+    if (AngelError > 180.0f) {
+        AngelError -= 360.0f;
+    } else if (AngelError < -180.0f) {
+        AngelError += 360.0f;
+    }
+
+    *AdvanceSpeed = BaseSpeed;
+    *DiffSpeed = PID_Caculate(&AnglePID, AngelError);
 }
 
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
