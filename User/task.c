@@ -59,8 +59,9 @@ int32_t RoundSpeed = 500;
 float TargetAngle;
 
 void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
-void Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed, float NowAngle,
-                     float TargetAngle);
+FlagStatus Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                           float NowAngle, float TargetAngle, int32_t NowCount,
+                           int32_t _TargetCount);
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                          float NowAngle, float TurnBeginAngle,
                          TurnDirection_t TurnDirection);
@@ -68,6 +69,8 @@ ErrorStatus Trace_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                           RoadStatus_t RoadStatus);
 FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                          float NowAngle, float _TargetAngle);
+
+void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
 
 void vMainTaskCode(void *pvParameters) {
     {
@@ -127,13 +130,14 @@ void vMainTaskCode(void *pvParameters) {
 
         OptionPage->IntParameterPtr = &CarStatus;
 
-        CLI.Datas[0].IntDataPtr = &CarStatus;
-        CLI.Datas[1].IntDataPtr = &BaseSpeed;
-        CLI.Datas[2].IntDataPtr = &RoundSpeed;
-        CLI.Datas[3].FloatDataPtr = &TargetAngle;
-        CLI.Datas[4].FloatDataPtr = &AnglePID.Kp;
-        CLI.Datas[5].FloatDataPtr = &AnglePID.Ki;
-        CLI.Datas[6].FloatDataPtr = &AnglePID.Kd;
+        CLI.Datas[0].IntDataPtr = &TaskOption;
+        CLI.Datas[1].IntDataPtr = &CarStatus;
+        CLI.Datas[2].IntDataPtr = &BaseSpeed;
+        CLI.Datas[3].IntDataPtr = &RoundSpeed;
+        CLI.Datas[4].FloatDataPtr = &TargetAngle;
+        CLI.Datas[5].FloatDataPtr = &AnglePID.Kp;
+        CLI.Datas[6].FloatDataPtr = &AnglePID.Ki;
+        CLI.Datas[7].FloatDataPtr = &AnglePID.Kd;
     }
 
     // ---------------- Trace Line Test ---------------- //
@@ -355,14 +359,6 @@ void vMainTaskCode(void *pvParameters) {
             continue;
         }
 
-        // Serial_Printf(&SerialBluetooth, "{ICM42688}%6.2f,%6.2f,%6.2f\n",
-        //               ICM42688.Angles[0], ICM42688.Angles[1],
-        //               ICM42688.Angles[2]);
-
-        // Serial_Printf(&SerialBluetooth, "{Encoder}%d,%d\n",
-        // EncoderLeftCounter,
-        //               EncoderRightCounter);
-
         int32_t AdvanceSpeed = 0, DiffSpeed = 0;
         switch (CarStatus) {
         case CarStatus_None:
@@ -371,14 +367,21 @@ void vMainTaskCode(void *pvParameters) {
             break;
 
         case CarStatus_Advance:
-            Advance_Handler(&AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], 0);
+            FlagStatus AdvanceStatus = Advance_Handler(
+                &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], 0,
+                (EncoderLeftCounter + EncoderRightCounter) / 2, 3000);
+
+            if (AdvanceStatus == SET) {
+                CarStatus = CarStatus_Stop;
+                Stop_Handler(&AdvanceSpeed, &DiffSpeed);
+            }
             break;
 
         case CarStatus_Cross:
-            FlagStatus TurnFinished = Cross_Handler(
+            FlagStatus TurnStatus = Cross_Handler(
                 &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], NULL, NULL);
 
-            if (TurnFinished) {
+            if (TurnStatus == SET) {
                 CarStatus = CarStatus_Trace;
                 Trace_Handler(&AdvanceSpeed, &DiffSpeed, GWGray.RoadStatus);
             }
@@ -408,11 +411,17 @@ void vMainTaskCode(void *pvParameters) {
             Serial_Printf(&SerialBluetooth, "{Angle}%.2f,%.2f\r\n",
                           ICM42688.Angles[0], TargetAngle);
 
-            // if (AngleStatus == SET) {
-            //     CarStatus = CarStatus_Stop;
-            //     Stop_Handler(&AdvanceSpeed, &DiffSpeed);
-            // }
+            if (AngleStatus == SET) {
+                CarStatus = CarStatus_Stop;
+                Stop_Handler(&AdvanceSpeed, &DiffSpeed);
+            }
 
+            break;
+        }
+
+        switch (TaskOption) {
+        case TaskOption_Task1:
+            Task1_Handler(&AdvanceSpeed, &DiffSpeed);
             break;
         }
 
@@ -489,22 +498,143 @@ void vLEDTimerCallback(TimerHandle_t pxTimer) { LED_Toggle(&LEDRed); }
 
 void vApplicationTickHook() { HAL_IncTick(); }
 
+void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
+    static uint8_t TaskStep = 1;
+    static FlagStatus AdvanceStatus = RESET;
+    static FlagStatus AngleStatus = RESET;
+
+    int32_t AdvancetCount = 3000;
+
+    switch (TaskStep) {
+    case 1:
+        AngleStatus =
+            Angle_Handler(AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 45);
+
+        if (AngleStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 2:
+        AdvanceStatus = Advance_Handler(
+            AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 45,
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+
+        if (AdvanceStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 3:
+        AngleStatus =
+            Angle_Handler(AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], -90);
+
+        if (AngleStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 4:
+        AdvanceStatus = Advance_Handler(
+            AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], -90,
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+
+        if (AdvanceStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 5:
+        AngleStatus =
+            Angle_Handler(AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 135);
+
+        if (AngleStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 6:
+        AdvanceStatus = Advance_Handler(
+            AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 135,
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+
+        if (AdvanceStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 7:
+        AngleStatus =
+            Angle_Handler(AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], -90);
+
+        if (AngleStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 8:
+        AdvanceStatus = Advance_Handler(
+            AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], -90,
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+
+        if (AdvanceStatus == SET) {
+            TaskStep += 1;
+        }
+        break;
+
+    case 9:
+        AngleStatus =
+            Angle_Handler(AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 0);
+
+        if (AngleStatus == SET) {
+            TaskStep = 1;
+        }
+        break;
+    }
+}
+
 void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     *AdvanceSpeed = 0;
     *DiffSpeed = 0;
 }
 
-void Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed, float NowAngle,
-                     float TargetAngle) {
-    float AngelError = TargetAngle - NowAngle;
-    if (AngelError > 180.0f) {
-        AngelError -= 360.0f;
-    } else if (AngelError < -180.0f) {
-        AngelError += 360.0f;
+FlagStatus Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
+                           float NowAngle, float TargetAngle, int32_t NowCount,
+                           int32_t _TargetCount) {
+    static int32_t TotalCount = 0;
+    static int32_t TargetCount = 0;
+    static FlagStatus FirstHandle = SET;
+
+    if (FirstHandle == SET) {
+        TotalCount = 0;
+        TargetCount = _TargetCount;
+
+        FirstHandle = RESET;
+    } else {
+        TotalCount += NowCount;
     }
 
-    *AdvanceSpeed = BaseSpeed;
-    *DiffSpeed = PID_Caculate(&AnglePID, AngelError);
+    if (TotalCount < TargetCount) {
+        float AngelError = TargetAngle - NowAngle;
+        if (AngelError > 180.0f) {
+            AngelError -= 360.0f;
+        } else if (AngelError < -180.0f) {
+            AngelError += 360.0f;
+        }
+
+        *AdvanceSpeed = BaseSpeed;
+        *DiffSpeed = PID_Caculate(&AnglePID, AngelError);
+
+        return RESET;
+
+    } else {
+        FirstHandle = SET;
+
+        *AdvanceSpeed = 0;
+        *DiffSpeed = 0;
+
+        return SET;
+    }
 }
 
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
