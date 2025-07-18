@@ -2,6 +2,8 @@
 
 const float EncoderLeftToPWM = 10000. / 178.;
 const float EncoderRightToPWM = 10000. / 187.;
+const float EncoderToCM = (M_PI * 4.8) / (4 * 13 * 20.409);
+const float CMToEncoder = (4 * 13 * 20.409) / (M_PI * 4.8);
 
 PID_t MotorLeftSpeedPID = {
     .Kp = 5,
@@ -61,7 +63,7 @@ float TargetAngle;
 void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
 FlagStatus Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                            float NowAngle, float TargetAngle, int32_t NowCount,
-                           int32_t _TargetCount);
+                           int32_t TargetCM);
 FlagStatus Cross_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                          float NowAngle, float TurnBeginAngle,
                          TurnDirection_t TurnDirection);
@@ -369,7 +371,7 @@ void vMainTaskCode(void *pvParameters) {
         case CarStatus_Advance:
             FlagStatus AdvanceStatus = Advance_Handler(
                 &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], 0,
-                (EncoderLeftCounter + EncoderRightCounter) / 2, 3000);
+                (EncoderLeftCounter + EncoderRightCounter) / 2, 60);
 
             if (AdvanceStatus == SET) {
                 CarStatus = CarStatus_Stop;
@@ -503,7 +505,7 @@ void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     static FlagStatus AdvanceStatus = RESET;
     static FlagStatus AngleStatus = RESET;
 
-    int32_t AdvancetCount = 3000;
+    int32_t AdvancetCM = 60;
 
     switch (TaskStep) {
     case 1:
@@ -518,7 +520,7 @@ void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     case 2:
         AdvanceStatus = Advance_Handler(
             AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 45,
-            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCM);
 
         if (AdvanceStatus == SET) {
             TaskStep += 1;
@@ -537,7 +539,7 @@ void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     case 4:
         AdvanceStatus = Advance_Handler(
             AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], -90,
-            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCM);
 
         if (AdvanceStatus == SET) {
             TaskStep += 1;
@@ -556,7 +558,7 @@ void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     case 6:
         AdvanceStatus = Advance_Handler(
             AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], 135,
-            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCM);
 
         if (AdvanceStatus == SET) {
             TaskStep += 1;
@@ -575,7 +577,7 @@ void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
     case 8:
         AdvanceStatus = Advance_Handler(
             AdvanceSpeed, DiffSpeed, ICM42688.Angles[0], -90,
-            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCount);
+            (EncoderLeftCounter + EncoderRightCounter) / 2, AdvancetCM);
 
         if (AdvanceStatus == SET) {
             TaskStep += 1;
@@ -600,14 +602,14 @@ void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed) {
 
 FlagStatus Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                            float NowAngle, float TargetAngle, int32_t NowCount,
-                           int32_t _TargetCount) {
+                           int32_t TargetCM) {
     static int32_t TotalCount = 0;
     static int32_t TargetCount = 0;
     static FlagStatus FirstHandle = SET;
 
     if (FirstHandle == SET) {
         TotalCount = 0;
-        TargetCount = _TargetCount;
+        TargetCount = TargetCM * CMToEncoder;
 
         FirstHandle = RESET;
     } else {
@@ -622,7 +624,11 @@ FlagStatus Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
             AngelError += 360.0f;
         }
 
-        *AdvanceSpeed = BaseSpeed;
+        if (TargetCount > 0) {
+            *AdvanceSpeed = BaseSpeed;
+        } else {
+            *AdvanceSpeed = -BaseSpeed;
+        }
         *DiffSpeed = PID_Caculate(&AnglePID, AngelError);
 
         return RESET;
