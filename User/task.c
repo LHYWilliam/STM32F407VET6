@@ -22,8 +22,8 @@ PID_t GrayPositionPID = {
 };
 
 PID_t AnglePID = {
-    .Kp = 90,
-    .Kd = 10,
+    .Kp = 60,
+    .Kd = 6,
 };
 
 typedef enum {
@@ -405,6 +405,9 @@ void vMainTaskCode(void *pvParameters) {
             FlagStatus AngleStatus = Angle_Handler(
                 &AdvanceSpeed, &DiffSpeed, ICM42688.Angles[0], TargetAngle);
 
+            Serial_Printf(&SerialBluetooth, "{Angle}%.2f,%.2f\r\n",
+                          ICM42688.Angles[0], TargetAngle);
+
             // if (AngleStatus == SET) {
             //     CarStatus = CarStatus_Stop;
             //     Stop_Handler(&AdvanceSpeed, &DiffSpeed);
@@ -611,7 +614,7 @@ FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
         AngelError += 360.0f;
     }
 
-    if (fabs(AngelError) < 0.25) {
+    if (fabs(AngelError) < 0.5) {
         if (OnAngleTime == 0) {
             OnAngleTime = xTaskGetTickCount();
         }
@@ -623,6 +626,10 @@ FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
             *DiffSpeed = 0;
 
             return SET;
+
+        } else {
+            *AdvanceSpeed = 0;
+            *DiffSpeed = PID_Caculate(&AnglePID, AngelError);
         }
 
     } else {
