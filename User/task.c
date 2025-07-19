@@ -60,6 +60,10 @@ int32_t BaseSpeed = 1000;
 int32_t RoundSpeed = 500;
 float TargetAngle;
 
+void CLI_Bind(void);
+void TextPage_Bind(void);
+void Test_Hnadler(void);
+
 void Stop_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
 FlagStatus Advance_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
                            float NowAngle, float TargetAngle, int32_t NowCount,
@@ -75,275 +79,9 @@ FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
 void Task1_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed);
 
 void vMainTaskCode(void *pvParameters) {
-    {
-        TextPage_t *ICM42688MonitorPage =
-            &ParameterPage.LowerPages[1].LowerPages[1];
-        TextPage_t *GWGrayMonitorPage =
-            &ParameterPage.LowerPages[1].LowerPages[2];
-        TextPage_t *EncoderMonitorPage =
-            &ParameterPage.LowerPages[1].LowerPages[3];
-        TextPage_t *MotorLeftSpeedPIDAdjustPage =
-            &ParameterPage.LowerPages[2].LowerPages[1];
-        TextPage_t *MotorRightSpeedPIDAdjustPage =
-            &ParameterPage.LowerPages[2].LowerPages[2];
-        TextPage_t *GWGrayPositionPIDAdjustPage =
-            &ParameterPage.LowerPages[2].LowerPages[3];
-        TextPage_t *AnglePIDAdjustPage =
-            &ParameterPage.LowerPages[2].LowerPages[4];
-        TextPage_t *OptionPage = &ParameterPage.LowerPages[4];
-
-        ICM42688MonitorPage->LowerPages[1].FloatParameterPtr =
-            &ICM42688.Angles[0];
-        ICM42688MonitorPage->LowerPages[2].FloatParameterPtr =
-            &ICM42688.Angles[1];
-        ICM42688MonitorPage->LowerPages[3].FloatParameterPtr =
-            &ICM42688.Angles[2];
-
-        GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GWGray.GrayError;
-
-        EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
-        EncoderMonitorPage->LowerPages[2].IntParameterPtr =
-            &EncoderRightCounter;
-
-        MotorLeftSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
-            &MotorLeftSpeedPID.Kp;
-        MotorLeftSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
-            &MotorLeftSpeedPID.Ki;
-        MotorLeftSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
-            &MotorLeftSpeedPID.Kd;
-
-        MotorRightSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
-            &MotorRightSpeedPID.Kp;
-        MotorRightSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
-            &MotorRightSpeedPID.Ki;
-        MotorRightSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
-            &MotorRightSpeedPID.Kd;
-
-        GWGrayPositionPIDAdjustPage->LowerPages[1].FloatParameterPtr =
-            &GrayPositionPID.Kp;
-        GWGrayPositionPIDAdjustPage->LowerPages[2].FloatParameterPtr =
-            &GrayPositionPID.Ki;
-        GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
-            &GrayPositionPID.Kd;
-
-        AnglePIDAdjustPage->LowerPages[1].FloatParameterPtr = &AnglePID.Kp;
-        AnglePIDAdjustPage->LowerPages[2].FloatParameterPtr = &AnglePID.Ki;
-        AnglePIDAdjustPage->LowerPages[3].FloatParameterPtr = &AnglePID.Kd;
-
-        OptionPage->IntParameterPtr = &CarStatus;
-
-        CLI.Datas[0].IntDataPtr = &TaskOption;
-        CLI.Datas[1].IntDataPtr = &CarStatus;
-        CLI.Datas[2].IntDataPtr = &BaseSpeed;
-        CLI.Datas[3].IntDataPtr = &RoundSpeed;
-        CLI.Datas[4].FloatDataPtr = &TargetAngle;
-        CLI.Datas[5].FloatDataPtr = &AnglePID.Kp;
-        CLI.Datas[6].FloatDataPtr = &AnglePID.Ki;
-        CLI.Datas[7].FloatDataPtr = &AnglePID.Kd;
-    }
-
-    // ---------------- Trace Line Test ---------------- //
-    // int16_t BaseSpeed = 500;
-    // while (!Key_IsPressing(&Key1))
-    //     ;
-    // for (;;) {
-    //     int16_t CounterLeft = Encoder_GetCounter(&EncoderLeft);
-    //     int16_t CounterRight = Encoder_GetCounter(&EncoderRight);
-    //     int16_t GrayError = GWGray_CaculateAnalogError(&GWGray);
-    //     int16_t GrayDiffSpeed = PID_Caculate(&GrayPID, GrayError);
-    //     int16_t LeftOut = PID_Caculate(&MotorLeftSpeedPID,
-    //                                    BaseSpeed + GrayDiffSpeed -
-    //                                        CounterLeft * EncoderLeftToPWM);
-    //     int16_t RightOut = PID_Caculate(&MotorRightSpeedPID,
-    //                                     BaseSpeed - GrayDiffSpeed -
-    //                                         CounterRight *
-    //                                         EncoderRightToPWM);
-    //     Motor_SetSpeed(&MotorLeft, LeftOut);
-    //     Motor_SetSpeed(&MotorRight, RightOut);
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
-
-    // ---------------- Serial Test -------------------- //
-    // for (;;) {
-    //     Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
-    //     Serial_Printf(&SerialBluetooth, "Hello from SerialBluetooth\n");
-    //     Serial_Printf(&SerialK230, "Hello from SerialK230\n");
-    //     Serial_Printf(&SerialJY61P, "Hello from SerialJY61P\n");
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    // ---------------- Serial Pack Test -------------------- //
-    // for (;;) {
-    //     if (SerialBoard.PackRecieved == SET) {
-    //         switch (SerialBoard.PackType) {
-    //         case SerialPack_Int8:
-    //         case SerialPack_Int16:
-    //         case SerialPack_Int32:
-    //         case SerialPack_Uint8:
-    //         case SerialPack_Uint16:
-    //         case SerialPack_Uint32:
-    //         case SerialPack_Float32:
-    //             Serial_Printf(&SerialBoard, "Receive HexPack [");
-    //             for (uint8_t i = 0; i < SerialBoard.ParsedCount; i++) {
-    //                 Serial_Printf(&SerialBoard, i == 0 ? "%#X" : " %#X",
-    //                               SerialBoard.Pack[i]);
-    //             }
-    //             Serial_Printf(&SerialBoard, "]\n");
-    //             break;
-    //         case SerialPack_String:
-    //             Serial_Printf(&SerialBoard, "Receive StringPack [%s]\n",
-    //                           SerialBoard.Pack);
-    //             break;
-    //         }
-    //         Serial_Clear(&SerialBoard);
-    //     }
-    //     vTaskDelay(pdMS_TO_TICKS(1));
-    // }
-
-    // ---------------- Key Test ----------------------- //
-    // for (;;) {
-    //     if (Key_IsPressing(&Key1)) {
-    //         printf("Key1 is pressing\n");
-    //     }
-    //     if (Key_IsPressing(&Key2)) {
-    //         printf("Key2 is pressing\n");
-    //     }
-    //     if (Key_IsPressing(&Key3)) {
-    //         printf("Key3 is pressing\n");
-    //     }
-    //     if (Key_IsPressing(&Key4)) {
-    //         printf("Key4 is pressing\n");
-    //     }
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    // ---------------- LED Test ----------------------- //
-    // for (;;) {
-    //     if (Key_IsPressing(&Key1)) {
-    //         LED_On(&LEDRed);
-    //     } else {
-    //         LED_Off(&LEDRed);
-    //     }
-    //     if (Key_IsPressing(&Key2)) {
-    //         LED_On(&LEDGreen);
-    //     } else {
-    //         LED_Off(&LEDGreen);
-    //     }
-    //     if (Key_IsPressing(&Key3)) {
-    //         LED_On(&LEDBlue);
-    //     } else {
-    //         LED_Off(&LEDBlue);
-    //     }
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    // ---------------- Motor Test --------------------- //
-    // while (!Key_IsPressing(&Key1))
-    //     ;
-    // Motor_SetSpeed(&MotorLeft, 1000);
-    // Motor_SetSpeed(&MotorRight, -1000);
-
-    // ---------------- Encoder Test ------------------- //
-    // while (!Key_IsPressing(&Key1))
-    //     ;
-    // Motor_SetSpeed(&MotorLeft, 10000);
-    // Motor_SetSpeed(&MotorRight, 10000);
-    // for (;;) {
-    //     int16_t CountLeft = Encoder_GetCounter(&EncoderLeft);
-    //     int16_t CountRight = Encoder_GetCounter(&EncoderRight);
-    //     printf("CountLeft, CountRight: %d, %d\n", CountLeft, CountRight);
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
-
-    // ---------------- Servo Test --------------------- //
-    // while (!Key_IsPressing(&Key1))
-    //     ;
-    // for (;;) {
-    //     for (uint8_t i = 0; i < 60; i++) {
-    //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
-    //         Servo_SetAngle180(&Servo1, 2, 45. + 90. / 60 * i);
-    //         Servo_SetAngle180(&Servo2, 3, 45. + 90. / 60 * i);
-    //         Servo_SetAngle180(&Servo2, 4, 45. + 90. / 60 * i);
-    //         vTaskDelay(pdMS_TO_TICKS(100));
-    //     }
-    //     for (uint8_t i = 60; i > 0; i--) {
-    //         Servo_SetAngle180(&Servo1, 1, 135. - 90. / 60 * (60 - i));
-    //         Servo_SetAngle180(&Servo1, 2, 135. - 90. / 60 * (60 - i));
-    //         Servo_SetAngle180(&Servo2, 3, 135. - 90. / 60 * (60 - i));
-    //         Servo_SetAngle180(&Servo2, 4, 135. - 90. / 60 * (60 - i));
-    //         vTaskDelay(pdMS_TO_TICKS(100));
-    //     }
-    // }
-
-    // ---------------- ICM42688 Test ------------------ //
-    // float YawPitchRoll[3];
-    // for (;;) {
-    //     ICM42688_AHRS_Update(&ICM42688);
-    //     if (ICM42688.CalibrationFinished == RESET) {
-    //         vTaskDelay(pdMS_TO_TICKS(10));
-    //         continue;
-    //     }
-    //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
-    //     printf(" Yaw, Pitch, Roll: %6.2f, %6.2f, %6.2f\n", YawPitchRoll[0],
-    //            YawPitchRoll[1], YawPitchRoll[2]);
-    //     // printf("{ICM42688}%6.2f,%6.2f,%6.2f\n", YawPitchRoll[0],
-    //     //        YawPitchRoll[1], YawPitchRoll[2]);
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
-
-    // ---------------- Gray PID Test ------------------ //
-    // for (;;) {
-    //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
-    //     printf("%d\n", Error);
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
-
-    // ---------------- MotorSpeedPID Test ------------- //
-    // while (!Key_IsPressing(&Key1))
-    //     ;
-    // Motor_SetSpeed(&MotorLeft, BaseSpeed);
-    // for (;;) {
-    //     CLI_Handler(&CLI);
-    //     EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
-    //     float Error = BaseSpeed - EncoderLeftCounter * EncoderLeftToPWM;
-    //     int32_t Out = (int32_t)PID_Caculate(&MotorLeftSpeedPID, Error);
-    //     Motor_SetSpeed(&MotorLeft, Out);
-    //     Serial_Printf(&SerialBoard, "{MotorSpeedPID}%d, %f\r\n", BaseSpeed,
-    //                   EncoderLeftCounter * EncoderLeftToPWM);
-    //     vTaskDelay(pdMS_TO_TICKS(10));
-    // }
-
-    // ---------------- K230 Test ---------------------- //
-    // Servo_SetAngle180(&Servo, 1, 110.);
-    // Servo_SetAngle270(&Servo, 2, 135.);
-    // vTaskDelay(pdMS_TO_TICKS(1000));
-    // for (;;) {
-    //     if (Serial2.RecieveFlag == SET) {
-    //         int16_t dH =
-    //             (int16_t)((Serial2.HexData[0] << 8) | Serial2.HexData[1]);
-    //         int16_t dV =
-    //             (int16_t)((Serial2.HexData[2] << 8) | Serial2.HexData[3]);
-    //         Servo_UpdateCompare180(&Servo, 1, dV);
-    //         Servo_UpdateCompare270(&Servo, 2, dH);
-    //         Serial_Clear(&Serial2);
-    //         Serial_Printf(&Serial1, "dx, dy: %d, %d\n", dH, dV);
-    //     }
-    //     vTaskDelay(pdMS_TO_TICKS(1));
-    // }
-
-    // ---------------- Sampler Test ------------------- //
-    // for (;;) {
-    //     printf("%4d, %4d,  %4d\n", Sampler.Data[0], Sampler.Data[1],
-    //            Sampler.Data[2]);
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
-
-    // ---------------- OLED Test ---------------------- //
-    // for (;;) {
-    //     OLED_Reverse(&OLED);
-    //     OLED_SendBuffer(&OLED);
-    //     vTaskDelay(pdMS_TO_TICKS(100));
-    // }
+    CLI_Bind();
+    TextPage_Bind();
+    Test_Hnadler();
 
     TickType_t xLastWakeTime;
     const TickType_t xFrequency = pdMS_TO_TICKS(10);
@@ -778,4 +516,271 @@ FlagStatus Angle_Handler(int32_t *AdvanceSpeed, int32_t *DiffSpeed,
     }
 
     return RESET;
+}
+
+void CLI_Bind() {
+    CLI.Datas[0].IntDataPtr = &TaskOption;
+    CLI.Datas[1].IntDataPtr = &CarStatus;
+    CLI.Datas[2].IntDataPtr = &BaseSpeed;
+    CLI.Datas[3].IntDataPtr = &RoundSpeed;
+    CLI.Datas[4].FloatDataPtr = &TargetAngle;
+    CLI.Datas[5].FloatDataPtr = &AnglePID.Kp;
+    CLI.Datas[6].FloatDataPtr = &AnglePID.Ki;
+    CLI.Datas[7].FloatDataPtr = &AnglePID.Kd;
+}
+
+void TextPage_Bind() {
+    TextPage_t *ICM42688MonitorPage =
+        &ParameterPage.LowerPages[1].LowerPages[1];
+    TextPage_t *GWGrayMonitorPage = &ParameterPage.LowerPages[1].LowerPages[2];
+    TextPage_t *EncoderMonitorPage = &ParameterPage.LowerPages[1].LowerPages[3];
+    TextPage_t *MotorLeftSpeedPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[1];
+    TextPage_t *MotorRightSpeedPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[2];
+    TextPage_t *GWGrayPositionPIDAdjustPage =
+        &ParameterPage.LowerPages[2].LowerPages[3];
+    TextPage_t *AnglePIDAdjustPage = &ParameterPage.LowerPages[2].LowerPages[4];
+    TextPage_t *OptionPage = &ParameterPage.LowerPages[4];
+
+    ICM42688MonitorPage->LowerPages[1].FloatParameterPtr = &ICM42688.Angles[0];
+    ICM42688MonitorPage->LowerPages[2].FloatParameterPtr = &ICM42688.Angles[1];
+    ICM42688MonitorPage->LowerPages[3].FloatParameterPtr = &ICM42688.Angles[2];
+
+    GWGrayMonitorPage->LowerPages[1].IntParameterPtr = &GWGray.GrayError;
+
+    EncoderMonitorPage->LowerPages[1].IntParameterPtr = &EncoderLeftCounter;
+    EncoderMonitorPage->LowerPages[2].IntParameterPtr = &EncoderRightCounter;
+
+    MotorLeftSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &MotorLeftSpeedPID.Kp;
+    MotorLeftSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &MotorLeftSpeedPID.Ki;
+    MotorLeftSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &MotorLeftSpeedPID.Kd;
+
+    MotorRightSpeedPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &MotorRightSpeedPID.Kp;
+    MotorRightSpeedPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &MotorRightSpeedPID.Ki;
+    MotorRightSpeedPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &MotorRightSpeedPID.Kd;
+
+    GWGrayPositionPIDAdjustPage->LowerPages[1].FloatParameterPtr =
+        &GrayPositionPID.Kp;
+    GWGrayPositionPIDAdjustPage->LowerPages[2].FloatParameterPtr =
+        &GrayPositionPID.Ki;
+    GWGrayPositionPIDAdjustPage->LowerPages[3].FloatParameterPtr =
+        &GrayPositionPID.Kd;
+
+    AnglePIDAdjustPage->LowerPages[1].FloatParameterPtr = &AnglePID.Kp;
+    AnglePIDAdjustPage->LowerPages[2].FloatParameterPtr = &AnglePID.Ki;
+    AnglePIDAdjustPage->LowerPages[3].FloatParameterPtr = &AnglePID.Kd;
+
+    OptionPage->IntParameterPtr = &CarStatus;
+}
+
+void Test_Hnadler() {
+    // ---------------- Trace Line Test ---------------- //
+    // int16_t BaseSpeed = 500;
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+    // for (;;) {
+    //     int16_t CounterLeft = Encoder_GetCounter(&EncoderLeft);
+    //     int16_t CounterRight = Encoder_GetCounter(&EncoderRight);
+    //     int16_t GrayError = GWGray_CaculateAnalogError(&GWGray);
+    //     int16_t GrayDiffSpeed = PID_Caculate(&GrayPID, GrayError);
+    //     int16_t LeftOut = PID_Caculate(&MotorLeftSpeedPID,
+    //                                    BaseSpeed + GrayDiffSpeed -
+    //                                        CounterLeft * EncoderLeftToPWM);
+    //     int16_t RightOut = PID_Caculate(&MotorRightSpeedPID,
+    //                                     BaseSpeed - GrayDiffSpeed -
+    //                                         CounterRight *
+    //                                         EncoderRightToPWM);
+    //     Motor_SetSpeed(&MotorLeft, LeftOut);
+    //     Motor_SetSpeed(&MotorRight, RightOut);
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
+    // ---------------- Serial Test -------------------- //
+    // for (;;) {
+    //     Serial_Printf(&SerialBoard, "Hello from SerialBoard\n");
+    //     Serial_Printf(&SerialBluetooth, "Hello from SerialBluetooth\n");
+    //     Serial_Printf(&SerialK230, "Hello from SerialK230\n");
+    //     Serial_Printf(&SerialJY61P, "Hello from SerialJY61P\n");
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- Serial Pack Test -------------------- //
+    // for (;;) {
+    //     if (SerialBoard.PackRecieved == SET) {
+    //         switch (SerialBoard.PackType) {
+    //         case SerialPack_Int8:
+    //         case SerialPack_Int16:
+    //         case SerialPack_Int32:
+    //         case SerialPack_Uint8:
+    //         case SerialPack_Uint16:
+    //         case SerialPack_Uint32:
+    //         case SerialPack_Float32:
+    //             Serial_Printf(&SerialBoard, "Receive HexPack [");
+    //             for (uint8_t i = 0; i < SerialBoard.ParsedCount; i++) {
+    //                 Serial_Printf(&SerialBoard, i == 0 ? "%#X" : " %#X",
+    //                               SerialBoard.Pack[i]);
+    //             }
+    //             Serial_Printf(&SerialBoard, "]\n");
+    //             break;
+    //         case SerialPack_String:
+    //             Serial_Printf(&SerialBoard, "Receive StringPack [%s]\n",
+    //                           SerialBoard.Pack);
+    //             break;
+    //         }
+    //         Serial_Clear(&SerialBoard);
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(1));
+    // }
+
+    // ---------------- Key Test ----------------------- //
+    // for (;;) {
+    //     if (Key_IsPressing(&Key1)) {
+    //         printf("Key1 is pressing\n");
+    //     }
+    //     if (Key_IsPressing(&Key2)) {
+    //         printf("Key2 is pressing\n");
+    //     }
+    //     if (Key_IsPressing(&Key3)) {
+    //         printf("Key3 is pressing\n");
+    //     }
+    //     if (Key_IsPressing(&Key4)) {
+    //         printf("Key4 is pressing\n");
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- LED Test ----------------------- //
+    // for (;;) {
+    //     if (Key_IsPressing(&Key1)) {
+    //         LED_On(&LEDRed);
+    //     } else {
+    //         LED_Off(&LEDRed);
+    //     }
+    //     if (Key_IsPressing(&Key2)) {
+    //         LED_On(&LEDGreen);
+    //     } else {
+    //         LED_Off(&LEDGreen);
+    //     }
+    //     if (Key_IsPressing(&Key3)) {
+    //         LED_On(&LEDBlue);
+    //     } else {
+    //         LED_Off(&LEDBlue);
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- Motor Test --------------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+    // Motor_SetSpeed(&MotorLeft, 1000);
+    // Motor_SetSpeed(&MotorRight, -1000);
+
+    // ---------------- Encoder Test ------------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+    // Motor_SetSpeed(&MotorLeft, 10000);
+    // Motor_SetSpeed(&MotorRight, 10000);
+    // for (;;) {
+    //     int16_t CountLeft = Encoder_GetCounter(&EncoderLeft);
+    //     int16_t CountRight = Encoder_GetCounter(&EncoderRight);
+    //     printf("CountLeft, CountRight: %d, %d\n", CountLeft, CountRight);
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
+    // ---------------- Servo Test --------------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+    // for (;;) {
+    //     for (uint8_t i = 0; i < 60; i++) {
+    //         Servo_SetAngle180(&Servo1, 1, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo1, 2, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo2, 3, 45. + 90. / 60 * i);
+    //         Servo_SetAngle180(&Servo2, 4, 45. + 90. / 60 * i);
+    //         vTaskDelay(pdMS_TO_TICKS(100));
+    //     }
+    //     for (uint8_t i = 60; i > 0; i--) {
+    //         Servo_SetAngle180(&Servo1, 1, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo1, 2, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo2, 3, 135. - 90. / 60 * (60 - i));
+    //         Servo_SetAngle180(&Servo2, 4, 135. - 90. / 60 * (60 - i));
+    //         vTaskDelay(pdMS_TO_TICKS(100));
+    //     }
+    // }
+
+    // ---------------- ICM42688 Test ------------------ //
+    // float YawPitchRoll[3];
+    // for (;;) {
+    //     ICM42688_AHRS_Update(&ICM42688);
+    //     if (ICM42688.CalibrationFinished == RESET) {
+    //         vTaskDelay(pdMS_TO_TICKS(10));
+    //         continue;
+    //     }
+    //     ICM42688_AHRS_GetYawPitchRoll(&ICM42688, YawPitchRoll);
+    //     printf(" Yaw, Pitch, Roll: %6.2f, %6.2f, %6.2f\n", YawPitchRoll[0],
+    //            YawPitchRoll[1], YawPitchRoll[2]);
+    //     // printf("{ICM42688}%6.2f,%6.2f,%6.2f\n", YawPitchRoll[0],
+    //     //        YawPitchRoll[1], YawPitchRoll[2]);
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
+    // ---------------- Gray PID Test ------------------ //
+    // for (;;) {
+    //     int16_t Error = GWGray_CaculateAnalogError(&GWGray);
+    //     printf("%d\n", Error);
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
+    // ---------------- MotorSpeedPID Test ------------- //
+    // while (!Key_IsPressing(&Key1))
+    //     ;
+    // Motor_SetSpeed(&MotorLeft, BaseSpeed);
+    // for (;;) {
+    //     CLI_Handler(&CLI);
+    //     EncoderLeftCounter = Encoder_GetCounter(&EncoderLeft);
+    //     float Error = BaseSpeed - EncoderLeftCounter * EncoderLeftToPWM;
+    //     int32_t Out = (int32_t)PID_Caculate(&MotorLeftSpeedPID, Error);
+    //     Motor_SetSpeed(&MotorLeft, Out);
+    //     Serial_Printf(&SerialBoard, "{MotorSpeedPID}%d, %f\r\n", BaseSpeed,
+    //                   EncoderLeftCounter * EncoderLeftToPWM);
+    //     vTaskDelay(pdMS_TO_TICKS(10));
+    // }
+
+    // ---------------- K230 Test ---------------------- //
+    // Servo_SetAngle180(&Servo, 1, 110.);
+    // Servo_SetAngle270(&Servo, 2, 135.);
+    // vTaskDelay(pdMS_TO_TICKS(1000));
+    // for (;;) {
+    //     if (Serial2.RecieveFlag == SET) {
+    //         int16_t dH =
+    //             (int16_t)((Serial2.HexData[0] << 8) | Serial2.HexData[1]);
+    //         int16_t dV =
+    //             (int16_t)((Serial2.HexData[2] << 8) | Serial2.HexData[3]);
+    //         Servo_UpdateCompare180(&Servo, 1, dV);
+    //         Servo_UpdateCompare270(&Servo, 2, dH);
+    //         Serial_Clear(&Serial2);
+    //         Serial_Printf(&Serial1, "dx, dy: %d, %d\n", dH, dV);
+    //     }
+    //     vTaskDelay(pdMS_TO_TICKS(1));
+    // }
+
+    // ---------------- Sampler Test ------------------- //
+    // for (;;) {
+    //     printf("%4d, %4d,  %4d\n", Sampler.Data[0], Sampler.Data[1],
+    //            Sampler.Data[2]);
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
+
+    // ---------------- OLED Test ---------------------- //
+    // for (;;) {
+    //     OLED_Reverse(&OLED);
+    //     OLED_SendBuffer(&OLED);
+    //     vTaskDelay(pdMS_TO_TICKS(100));
+    // }
 }
